@@ -11,12 +11,13 @@ using namespace std;
 LaShell::LaShell(const char* vtk_fn)
 {
 
-	// Read from file 
-	vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New(); 
-	reader->SetFileName(vtk_fn); 
-	reader->Update(); 
+	// Read from file
+	vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+	reader->SetFileName(vtk_fn);
+	reader->ReadAllScalarsOn(); 
+	reader->Update();
 
-	_mesh_3d = vtkSmartPointer<vtkPolyData>::New(); 
+	_mesh_3d = vtkSmartPointer<vtkPolyData>::New();
 	_mesh_3d->DeepCopy(reader->GetOutput());
 
 }
@@ -29,7 +30,7 @@ LaShell::LaShell()
 vector<double> LaShell::GetMeshVertexValues()
 {
 	vtkSmartPointer<vtkFloatArray> scalar_array = vtkSmartPointer<vtkFloatArray>::New();
-	
+
 
 	if (_mesh_3d->GetPointData()->GetNumberOfArrays() > 0)
 	{
@@ -40,7 +41,7 @@ vector<double> LaShell::GetMeshVertexValues()
 			_mesh_vertex_values.push_back(this_scalar);
 		}
 	}
-	return _mesh_vertex_values; 
+	return _mesh_vertex_values;
 }
 
 
@@ -62,14 +63,14 @@ void LaShell::ExportVTK(char* vtk_fn)
 
 void LaShell::GetMinimumMaximum(double& min, double& max)
 {
-	// Not yet implemented 
-	min=0; 
+	// Not yet implemented
+	min=0;
 	max=3;
 }
 
 void LaShell::BinaryImageToShell(LaImage *la_mask, double threshold)
 {
-	char* temp_vtk_fn = "mask.vtk"; 
+	char* temp_vtk_fn = "mask.vtk";
 	la_mask->ConvertToVTKImage(temp_vtk_fn);
 
 	vtkSmartPointer<vtkFileOutputWindow> fileOutputWindow = vtkSmartPointer<vtkFileOutputWindow>::New();
@@ -87,7 +88,7 @@ void LaShell::BinaryImageToShell(LaImage *la_mask, double threshold)
 
 	vtkSmartPointer<vtkStructuredPoints> temp_poly = vtkSmartPointer<vtkStructuredPoints>::New();
 
-	temp_poly = reader->GetOutput(); 
+	temp_poly = reader->GetOutput();
 
 	vtkSmartPointer<vtkMarchingCubes> surface = vtkSmartPointer<vtkMarchingCubes>::New();
 	surface->SetInputData(temp_poly);
@@ -97,18 +98,18 @@ void LaShell::BinaryImageToShell(LaImage *la_mask, double threshold)
 	vtkSmartPointer<vtkDecimatePro> deci = vtkSmartPointer<vtkDecimatePro>::New();
 
 	smoother->SetNumberOfIterations(1000);
-	smoother->SetInputConnection(surface->GetOutputPort()); 
+	smoother->SetInputConnection(surface->GetOutputPort());
 	smoother->Update();
-	
+
 	vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
 	normals->ComputeCellNormalsOn();
 	normals->SetInputConnection(smoother->GetOutputPort());
-	//normals->FlipNormalsOn(); 
+	//normals->FlipNormalsOn();
 	//vtkSmartPointer<vtkPolyDataMapper> surfaceMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	normals->Update();
 	//surfaceMapper->SetInputConnection(normals->GetOutputPort());
-	
-	_mesh_3d = normals->GetOutput(); 
+
+	_mesh_3d = normals->GetOutput();
 }
 
 
@@ -116,11 +117,11 @@ void LaShell::BinaryImageToShell(LaImage *la_mask, double threshold)
 
 void LaShell::ConvertToPointData()
 {
-	vtkSmartPointer<vtkCellDataToPointData> cell_to_point = vtkSmartPointer<vtkCellDataToPointData>::New(); 
-	cell_to_point->SetInputData(_mesh_3d); 
-	cell_to_point->PassCellDataOn(); 
+	vtkSmartPointer<vtkCellDataToPointData> cell_to_point = vtkSmartPointer<vtkCellDataToPointData>::New();
+	cell_to_point->SetInputData(_mesh_3d);
+	cell_to_point->PassCellDataOn();
 	cell_to_point->Update();
-	_mesh_3d->DeepCopy(cell_to_point->GetPolyDataOutput()); 
+	_mesh_3d->DeepCopy(cell_to_point->GetPolyDataOutput());
 }
 
 void LaShell::ComputeMeshNeighbourhoodTransform(vtkSmartPointer<vtkPolyData> mesh_output)

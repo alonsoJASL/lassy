@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
- 
+
 project(lassy)
- 
+
 find_package(ITK REQUIRED)
 find_package(VTK REQUIRED)
 
@@ -12,8 +12,9 @@ SET(LASSY_INCLUDES
 	"./lassy++/include/"
 )
 
-add_subdirectory(lassy++/src) 
+add_subdirectory(lassy++/src)
 include_directories(${LASSY_INCLUDES})
+add_executable(mesh2vtk applications/mesh2vtk.cxx)
 add_executable(lassy main.cxx)
 add_executable(twall applications/wallthickness.cxx)
 add_executable(surf applications/surf.cxx)
