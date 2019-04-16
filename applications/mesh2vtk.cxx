@@ -1,5 +1,7 @@
 #define HAS_VTK 1
 
+#include "LaShell.h"
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -22,15 +24,15 @@ using namespace std;
 *
 */
 int main(int argc, char * argv[]){
-	char* input_csv_fn, *output_fn;
-	bool convert=true;
+	char* input_fn, *output_fn;
 	bool foundArgs1 = false, foundArgs2 = false;
+
 
 	if (argc >= 1){
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
 				if (string(argv[i]) == "-vtk"){
-					input_csv_fn = argv[i + 1];
+					input_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 
@@ -50,6 +52,13 @@ int main(int argc, char * argv[]){
 
 		exit(1);
 	}
+
+	cout<<"Creating object"<<endl;
+	LaShell* la = new LaShell(input_fn);
+	cout<<"Converting to point data."<<endl;
+	la->ConvertToPointData();
+	cout<<"Exporting mesh"<<endl;
+	la->ExportVTK(output_fn);
 
   cout<<"Success!"<<endl;
 }   // end function
