@@ -223,25 +223,56 @@ void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int
 
 bool LaShellGapsInBinary::IsThisNeighbourhoodCompletelyFilled(vector<int> points)
 {
-	double isFilled = 0;
+	double fillingcounter = 0;
+	double total = points.size();
+
+	// bring al lthe scalars to an array
 	vtkFloatArray* scalars = vtkFloatArray::New();
-	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());  // bring al lthe scalars to an array
+	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
 	cout << "Now exploring this point's neighbourhood: " << endl;
-	for (int i=0;i<points.size();i++)
-	{
+	for (int i=0;i<points.size();i++){
 		cout << "neighbour point = " << points[i] << ", scar value = " << scalars->GetTuple1(points[i]) << ", threshold satisfy? " << (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No") << endl;
 		if (scalars->GetTuple1(points[i]) > _fill_threshold)
-			isFilled++;
+			fillingcounter++;
 	}
 
-	double total = points.size();
-	double percentage_scar_in_this_neighbourhood =  100*(isFilled/total);
-	cout << "% scar in this neighbourhood = " << percentage_scar_in_this_neighbourhood << ", threshold satisfy? " << (percentage_scar_in_this_neighbourhood > _neighbourhood_size ? "Yes":"No") <<"\n\n";
+	double percentage_in_neighbourhood =  100*(fillingcounter/total);
+	cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
+			<< ", threshold satisfy? "
+			<< (percentage_in_neighbourhood > _neighbourhood_size ? "Yes":"No")
+			<<"\n\n";
 
-	if (percentage_scar_in_this_neighbourhood > _neighbourhood_size)
+	if (percentage_in_neighbourhood > _neighbourhood_size)
 		return true;
 	else
 		return false;
+}
+
+void LaShellGapsInBinary::NeighbourhoodFillingPercentage(vector<int> points){
+	double fillingcounter = 0;
+	double total = points.size();
+
+	// bring al lthe scalars to an array
+	vtkFloatArray* scalars = vtkFloatArray::New();
+	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
+	cout << "Exploring the predeteremined neighbourhood at threshold = "
+			<< _fill_threshold << endl;
+	for (int i=0;i<points.size();i++){
+		cout << "Neighbour point = " << points[i]
+				<< ", scar value = " << scalars->GetTuple1(points[i])
+				<< ", threshold satisfy? "
+				<< (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No")
+				<< endl;
+		if (scalars->GetTuple1(points[i]) > _fill_threshold)
+			fillingcounter++;
+	}
+
+	double percentage_in_neighbourhood =  100*(fillingcounter/total);
+	cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
+			<< ", threshold satisfy? "
+			<< (percentage_in_neighbourhood > _neighbourhood_size ? "Yes":"No")
+			<<"\n\n";
+
 }
 
 
@@ -289,44 +320,45 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	// default is 3 levels deep, meaning neighbours neighbours neighbour.
 	int order = _neighbourhood_size;
 
+	// bring al lthe scalars to an array
 	vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
-	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());  // bring al lthe scalars to an array
+	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
 
-	vtkSmartPointer<vtkIntArray> exploration_corridor = vtkSmartPointer<vtkIntArray>::New();		// this will indicate what is vertices are in the exploration corridor
-	for (int i=0;i<_SourcePolyData->GetNumberOfPoints();i++)
-	{
+	// this will indicate what is vertices are in the exploration corridor
+	vtkSmartPointer<vtkIntArray> exploration_corridor = vtkSmartPointer<vtkIntArray>::New();
+	for (int i=0;i<_SourcePolyData->GetNumberOfPoints();i++){
 		exploration_corridor->InsertNextTuple1(0);
 	}
 
 	// collect all vertex ids lying in shortest path
-	for (int i=0;i<allShortestPaths.size();i++)
-	{
+	for (int i=0;i<allShortestPaths.size();i++){
+		// getting vertex id for each shortest path
 		vtkIdList* vertices_in_shortest_path = vtkIdList::New();
-		vertices_in_shortest_path = allShortestPaths[i]->GetIdList();		// getting vertex id for each shortest path
+		vertices_in_shortest_path = allShortestPaths[i]->GetIdList();
 
-		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++)
-		{
-			 vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));		// map avoids duplicates
+		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++){
+			// map avoids duplicates
+			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
 																			// only using keys, no associated value always -2
 		}
 	}
 
-	cout << "There were a total of " << vertex_ids.size() << " vertices in the shortest path you have selected\n" << endl;
+	cout << "There were a total of " << vertex_ids.size()
+			<< " vertices in the shortest path you have selected\n" << endl;
 
-
-
-	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++)
-	{
-		cout << "Exploring around vertex with id = " << iterator->first << "\n============================\n";
+	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
+		cout << "Exploring around vertex with id = "
+			<< iterator->first << "\n============================\n";
 		double scalar = -1;
 
 		exploration_corridor->SetTuple1(iterator->first, 1);
-		if (iterator->first > 0 && iterator->first < _SourcePolyData->GetNumberOfPoints())
-		{
+		if (iterator->first > 0 && iterator->first < _SourcePolyData->GetNumberOfPoints()){
 			_SourcePolyData->GetPoint(iterator->first, xyz);
 			scalar = scalars->GetTuple1(iterator->first);
 		}
-		out <<  count << "," << iterator->first << "," << xyz[0] << "," << xyz[1] << "," << xyz[2] << "," << 0 << "," << scalar << endl;
+		out <<  count << "," << iterator->first << ","
+				<< xyz[0] << "," << xyz[1] << "," << xyz[2]
+				<< "," << 0 << "," << scalar << endl;
 		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the vertex id
 		//RetainPointsInGlobalContainer(pointNeighbours);
 		//pointNeighbours.clear();
@@ -347,8 +379,6 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 			out <<  count << "," << pointNeighborID << "," << xyz[0] << "," << xyz[1] << "," << xyz[2] << "," << pointNeighborOrder << "," << scalar << endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
 		}
-
-
 
 		pointNeighbours.clear();
 		count++;
@@ -393,8 +423,11 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
                                       void* clientdata,
                                       void* vtkNotUsed(calldata))
 {
-	/* Remember you are marking your pick position with sphere. First step is to pick and then to place a sphere in the cell you have picked
-		The code below picks a cell, and you mark one of the cell's vertex with a sphere
+	/* Remember you are marking your pick position with sphere.
+	First step is to pick and then to place a sphere in the cell you have
+	picked_pointidarray
+
+	The code below picks a cell, and you mark one of the cell's vertex with a sphere
 	*/
 	double screenX, screenY;		// where in the screen you wil be clicking
 	vtkIdType cellID, pointID=-1;		// to store cellID of the picked cell
@@ -403,15 +436,14 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 
 	vtkSmartPointer<vtkRenderWindowInteractor> iren = vtkRenderWindowInteractor::SafeDownCast(obj);
-	//vtkSmartPointer<vtkRenderWindowInteractor> iren = this_class_obj->GetWindowInteractor();
-	//iren = this_class_obj->_InteractorRenderWindow;
-	vtkSmartPointer<vtkRenderWindow> renderWin = iren->GetRenderWindow();			// and from there you get your renderer and your renderwindow
-	vtkSmartPointer<vtkRendererCollection> rendererCollection = renderWin->GetRenderers();		// a render collection is a collection of your renderers but you only have one
+	vtkSmartPointer<vtkRenderWindow> renderWin = iren->GetRenderWindow();
+	// and from there you get your renderer and your renderwindow
+	vtkSmartPointer<vtkRendererCollection> rendererCollection = renderWin->GetRenderers();
+	// a render collection is a collection of your renderers but you only have one
 	vtkSmartPointer<vtkRenderer> renderer = rendererCollection->GetFirstRenderer();
 
 	vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
 	poly_data = this_class_obj->GetSourcePolyData();
-
 
 	// x is for picking points
 	if (iren->GetKeyCode()=='x')
@@ -419,8 +451,8 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 		double *pick_position = new double[3];
 
-
-		screenX = iren->GetEventPosition()[0];			// get the x and y co-ordinates on the screen where you have hit 'x'
+		// get the x and y co-ordinates on the screen where you have hit 'x'
+		screenX = iren->GetEventPosition()[0];
 		screenY = iren->GetEventPosition()[1];
 
 		vtkSmartPointer<vtkCellPicker> cell_picker = this_class_obj->_cell_picker;
@@ -431,10 +463,12 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 		pointID = LaShellGapsInBinary::GetFirstCellVertex(poly_data, cellID, pick_position);
 
-		cout << "Point id picked = " << pointID << " and co-ordinates of its position = " << pick_position[0] << ", " << pick_position[1] << "," << pick_position[2] << ")\n";
+		cout << "Point id picked = " << pointID
+			<< " and co-ordinates of its position = "
+			<< pick_position[0] << ", " << pick_position[1] << "," << pick_position[2]
+			<< ")\n";
 
 		this_class_obj->_pointidarray.push_back(pointID);
-
 
 		LaShellGapsInBinary::CreateSphere(renderer, 1.5, pick_position);		// now draw the sphere
 
@@ -495,6 +529,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 				// compute percentage encirlcement
 				this_class_obj->ExtractImageDataAlongTrajectory(this_class_obj->_shortestPaths);
+				this_class_obj->NeighbourhoodFillingPercentage(this_class_obj->_pointidarray);
 
 				this_class_obj->_pointidarray.clear();
 				this_class_obj->_paths.clear();
@@ -549,8 +584,8 @@ void LaShellGapsInBinary::Run()
 		if (s < min_scalar)
 			min_scalar = s;
 	}
-	cout << "Maximum: " << max_scalar << ", and minimum" << min_scalar
-			 << "scalars " << endl;
+	cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
+			 << ") scalars " << endl;
 	// this is your polydata mapper object
 	mapper->SetScalarRange(min_scalar, max_scalar);      // you must tell your mapper and lookuptable what is the range of scalars first
 	mapper->SetScalarModeToUsePointData();    // mapper->SetScalarModeToUsePointData(); is also possible if you are using cell data
@@ -590,10 +625,11 @@ void LaShellGapsInBinary::Run()
 	_InteractorRenderWindow->SetPicker(_cell_picker);
 
 	vtkCallbackCommand *callback = vtkCallbackCommand::New();
-    callback->SetCallback(LaShellGapsInBinary::KeyPressEventHandler);
+  callback->SetCallback(LaShellGapsInBinary::KeyPressEventHandler);
 	callback->SetClientData(this);
-    _InteractorRenderWindow->AddObserver(vtkCommand::KeyPressEvent, callback);		// invoke callback when key is pressed
 
+	// invoke callback when key is pressed
+	_InteractorRenderWindow->AddObserver(vtkCommand::KeyPressEvent, callback);
 	_InteractorRenderWindow->Start();
 
 
