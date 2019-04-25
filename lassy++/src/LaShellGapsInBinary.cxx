@@ -326,8 +326,10 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 
 	// this will indicate what is vertices are in the exploration corridor
 	vtkSmartPointer<vtkIntArray> exploration_corridor = vtkSmartPointer<vtkIntArray>::New();
+	vtkSmartPointer<vtkIntArray> exploration_scalars = vtkSmartPointer<vtkIntArray>::New();
 	for (int i=0;i<_SourcePolyData->GetNumberOfPoints();i++){
 		exploration_corridor->InsertNextTuple1(0);
+		exploration_scalars->InsertNextTuple1(0);
 	}
 
 	// collect all vertex ids lying in shortest path
@@ -350,8 +352,10 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 		cout << "Exploring around vertex with id = "
 			<< iterator->first << "\n============================\n";
 		double scalar = -1;
+		double thresscalar = 0;
 
 		exploration_corridor->SetTuple1(iterator->first, 1);
+		exploration_scalars->SetTuple1(iterator->first, 1);
 		if (iterator->first > 0 && iterator->first < _SourcePolyData->GetNumberOfPoints()){
 			_SourcePolyData->GetPoint(iterator->first, xyz);
 			scalar = scalars->GetTuple1(iterator->first);
@@ -370,14 +374,18 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 			int pointNeighborID = pointNeighbours[j].first;
 			int pointNeighborOrder = pointNeighbours[j].second;
 			scalar = -1;
+			thresscalar = 0;
 			// simple sanity check
-			if (pointNeighborID > 0 && pointNeighborID < _SourcePolyData->GetNumberOfPoints())
-			{
+			if (pointNeighborID > 0 && pointNeighborID < _SourcePolyData->GetNumberOfPoints()){
 				 scalar = scalars->GetTuple1(pointNeighborID);
 				 _SourcePolyData->GetPoint(pointNeighborID, xyz);
+				 if(scalar > _fill_threshold){
+					 thresscalar = 1;
+				 }
 			}
 			out <<  count << "," << pointNeighborID << "," << xyz[0] << "," << xyz[1] << "," << xyz[2] << "," << pointNeighborOrder << "," << scalar << endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
+			exploration_scalars->SetTuple1(pointNeighborID, thresscalar);
 		}
 
 		pointNeighbours.clear();
@@ -391,6 +399,14 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	writer->SetFileName("exploration_corridor.vtk");
 	writer->SetInputData(temp);
 	writer->Update();
+
+	vtkSmartPointer<vtkPolyData> temp2 = vtkSmartPointer<vtkPolyData>::New();
+	temp2->DeepCopy(_SourcePolyData);
+	temp2->GetPointData()->SetScalars(exploration_scalars);
+	vtkSmartPointer<vtkPolyDataWriter> writer2 = vtkSmartPointer<vtkPolyDataWriter>::New();
+	writer2->SetFileName("exploration_scalars.vtk");
+	writer2->SetInputData(temp2);
+	writer2->Update();
 
 	out.close();
 
