@@ -505,6 +505,9 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 				for(int i=0; i<lim; i++){
 					vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
 					dijkstra->SetInputData(poly_data);
+					dijkstra->UseScalarWeightsOn();
+					dijkstra->Update();
+
 					if(i<lim-1){
 						dijkstra->SetStartVertex(this_class_obj->_pointidarray[i]);
 						dijkstra->SetEndVertex(this_class_obj->_pointidarray[i+1]);
