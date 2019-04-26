@@ -257,6 +257,7 @@ void LaShellGapsInBinary::NeighbourhoodFillingPercentage(vector<int> points){
 	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
 	cout << "Exploring the predeteremined neighbourhood at threshold = "
 			<< _fill_threshold << endl;
+	cout << "Number of points: " << total << endl;
 	for (int i=0;i<points.size();i++){
 		cout << "Neighbour point = " << points[i]
 				<< ", scar value = " << scalars->GetTuple1(points[i])
@@ -391,7 +392,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 		pointNeighbours.clear();
 		count++;
 	}
-
+points
 	vtkSmartPointer<vtkPolyData> temp = vtkSmartPointer<vtkPolyData>::New();
 	temp->DeepCopy(_SourcePolyData);
 	temp->GetPointData()->SetScalars(exploration_corridor);
@@ -462,9 +463,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 	poly_data = this_class_obj->GetSourcePolyData();
 
 	// x is for picking points
-	if (iren->GetKeyCode()=='x')
-	{
-
+	if (iren->GetKeyCode()=='x'){
 		double *pick_position = new double[3];
 
 		// get the x and y co-ordinates on the screen where you have hit 'x'
@@ -490,17 +489,13 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 		iren->Render();
 		delete[] pick_position;
-
 	}
 	/*
 	*	l for line, c for compeleting the circle from picked points
 	*/
 	else if (iren->GetKeyCode()=='l' || iren->GetKeyCode()=='c') {
 
-				///////////////////////////////////////////////Dijkstra////////////////////////////////////////////////////////////////
-
-				//dijkstra->SetInputConnection(reader->GetOutputPort());
-
+				//////////////////Dijkstra//////////////////////////////////////////
 				int lim = this_class_obj->_pointidarray.size();
 				for(int i=0; i<lim; i++){
 					vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
@@ -536,7 +531,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 					pathActor->GetProperty()->SetColor(1,0,0); // Red
 					pathActor->GetProperty()->SetLineWidth(4);
 
-					///////////////////////////////////////////////Dijkstra///////////////////////////////////////////////////////////////////
+					//////////////////Dijkstra//////////////////////////////////////////
 					this_class_obj->_actors.push_back(pathActor);
 				}
 
