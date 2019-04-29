@@ -20,6 +20,7 @@ LaShellGapsInBinary::LaShellGapsInBinary()
 	_fill_threshold = 0.5;
 	_run_count = 0;
 	_fileOutName = "encircle_data_r";
+	_fileOutName = "exploration_corridor";
 	_fileOutNameUserDefined = false;
 }
 
@@ -35,39 +36,33 @@ void LaShellGapsInBinary::SetInputData(LaShell* shell) {
 
 }
 
-void LaShellGapsInBinary::SetNeighbourhoodSize(int s)
-{
+void LaShellGapsInBinary::SetNeighbourhoodSize(int s){
 	_neighbourhood_size = s;
 }
 
-void LaShellGapsInBinary::SetFillThreshold(double s)
-{
+void LaShellGapsInBinary::SetFillThreshold(double s){
 	_fill_threshold = s;
 }
 
-void LaShellGapsInBinary::SetOutputFileName(const char* filename)
-{
-	_fileOutName = std::string(filename);
+void LaShellGapsInBinary::SetOutputShellName(const char* filename){
+	_fileOutShellName = std::string(filename);
+}
+void LaShellGapsInBinary::SetOutputFileName(const char* filename){
+	_fileOutShellName = std::string(filename);
 	_fileOutNameUserDefined = true;
 }
 
-vtkSmartPointer<vtkRenderWindowInteractor> LaShellGapsInBinary::GetWindowInteractor()
-{
+vtkSmartPointer<vtkRenderWindowInteractor> LaShellGapsInBinary::GetWindowInteractor(){
 	return _InteractorRenderWindow;
 }
 
-vtkSmartPointer<vtkPolyData> LaShellGapsInBinary::GetSourcePolyData()
-{
+vtkSmartPointer<vtkPolyData> LaShellGapsInBinary::GetSourcePolyData(){
 	return _SourcePolyData;
 }
 
-
-vtkSmartPointer<vtkCellPicker> LaShellGapsInBinary::GetCellPicker()
-{
+vtkSmartPointer<vtkCellPicker> LaShellGapsInBinary::GetCellPicker(){
 	return _cell_picker;
 }
-
-
 
 /*
 *	Get N-order neighbours of a vertex
@@ -213,7 +208,7 @@ void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int
 	RecursivePointNeighbours(pointID, order);
 
 	for (int i=0;i<_visited_point_list.size();i++) {
-		pointNeighbours.push_back(_visited_point_list[i]);
+		pointNeighbours.push_back(ote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertic_visited_point_list[i]);
 
 	}
 	cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
@@ -392,7 +387,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 		pointNeighbours.clear();
 		count++;
 	}
-points
+
 	vtkSmartPointer<vtkPolyData> temp = vtkSmartPointer<vtkPolyData>::New();
 	temp->DeepCopy(_SourcePolyData);
 	temp->GetPointData()->SetScalars(exploration_corridor);
@@ -523,7 +518,6 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 					this_class_obj->_paths.push_back(dijkstra->GetOutput());	// and the path as polygonal data
 				}
 
-
 				// now draw all the paths
 				for (int i=0;i<this_class_obj->_paths.size();i++){
 					vtkSmartPointer<vtkActor> pathActor = vtkSmartPointer<vtkActor>::New();
@@ -553,10 +547,24 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 	}
 
+	else if (iren->GetKeyCode()=='s'){
+		ofstream out;
+		stringstream ss;
+		int lim = this_class_obj->_pointidarray.size();
+
+		ss << "pointsIDList.txt";
+		out.open(ss.str().c_str(), std::ios_base::app);
+		for(int ix=0;ix<lim;ix++)
+			out << this_class_obj->_pointidarray[ix] << endl;
+
+		out.close();
+
+		cout << "File: pointIDList.txt created. You can exit the application." << endl;
+	}
+
 	//delete [] pick_position;
 
 }
-
 
 // this wil draw a sphere of a given radus to the renderer
 void LaShellGapsInBinary::CreateSphere(vtkSmartPointer<vtkRenderer> renderer, double radius, double position3D[])

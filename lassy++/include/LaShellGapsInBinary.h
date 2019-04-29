@@ -77,6 +77,7 @@ public:
 
     vector<pair<int, int> > _visited_point_list;		// stores the neighbours around a point
     string _fileOutName;
+		string _fileOutShellName;
 
 
 	vector<vtkSmartPointer<vtkActor> > _actors;				// actors representing shortest path betwee points
@@ -103,6 +104,7 @@ public:
 	void SetInputData(LaShell* shell);
     void SetNeighbourhoodSize(int s);
     void SetOutputFileName(const char* filename);
+		void SetOutputShellName(const char* filename);
     void SetFillThreshold(double s);
     void ExtractImageDataAlongTrajectory(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
     bool InsertPointIntoVisitedList2(vtkIdType id, int order);

@@ -5,6 +5,9 @@
 
 #include "LaShellGapsInBinary.h"
 #include <numeric>
+#include <fstream>
+#include <string>
+#include <vector>
 
 /*
 *      Author:
@@ -22,7 +25,7 @@ int main(int argc, char * argv[])
 	double fill_threshold = 0.5;
 	int neighbourhood_size = 3;
 
-	bool foundArgs1 = false, foundArgs2 = false;
+	bool foundArgs1 = false, foundArgs2 = false; foundArgs3 = false;
 
 	if (argc >= 1)
 	{
@@ -44,10 +47,12 @@ int main(int argc, char * argv[])
 				}
 				else if (string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
-
+					output_shell = argv[i + 1]+"_corridor.vtk";
 				}
-
-
+				else if(string(argv[i]) == "-l"){
+					pointidlist_f = argv[i + 1];
+					foundArgs3 = true;
+				}
 			}
 
 		}
@@ -56,9 +61,11 @@ int main(int argc, char * argv[])
 	if (!(foundArgs1))
 	{
 		cerr << "Check your parameters\n\nUsage:"
-			"\nExtracts mesh data from a user-defined trajectory on mesh. Mesh data should be Point Scalars (VTK)"
+			"\nExtracts mesh data from a user-defined trajectory on mesh. Mesh data should be Point Scalars (VTK). Convert your Cell-Scalar meshes with ./mesh2vtk binary."
 			"\n(Mandatory)\n\t-i <source_mesh_vtk>"
-			"\n\n(optional)\n\t-t <the threshold value for determining filling>"
+			"\n\n(optional)"
+			"\n\t-t <list with point IDs for this shell. If empty, output pointID.txt is generated>"
+			"\n\t-t <the threshold value for determining filling>"
 			"\n\t-n <neighbourhood size, default = 3>"
 			"\n\t-o <specify output CSV filename, otherwise the name defaults to encircle.csv>"
 			"\n\nNote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertices are 1-order neighbours"<< endl;
@@ -82,16 +89,29 @@ int main(int argc, char * argv[])
 
 		if (strlen(output_f) > 0) {
 			application->SetOutputFileName(output_f);
+			application->SetOutputShellName(output_shell);
 		}
 
 		application->SetInputData(source);
 
-		cout << "Waiting for you to pick points on the mesh to draw a line, \nor I could complete a circle from your picked points"
-		"\n - Press x on keyboard for picking points on the mesh\n - Press l for drawing a line between your points and extract data\n - Press c to draw circle between points and extract data\n\n";
-		application->Run();
+		if(!(foundArgs3)){
+				cout << "Waiting for you to pick points on the mesh to draw a line, \n"
+				"or I could complete a circle from your picked points"
+				"\n - Press x on keyboard for picking points on the mesh\n - Press l for drawing a line between your points and extract data\n - Press c to draw circle between points and extract data\n\n";
+				application->Run();
+		}
+		else{
+			cout << "Reading from file: " <<  pointidlist_f << ", and generating an\n"
+			"exploration corridor with a neighbourhood depth of " << neighbourhood_size
+			<< "and threshold " << fill_threshold << ".\n "
+			
+			ifstream file(pointidlist_f);
 
 
+		}
 
+
+	}
 	}
 
 }
