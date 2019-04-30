@@ -36,6 +36,8 @@
 #include <vtkPolyDataReader.h>
 #include <vtkPlanes.h>
 #include <vtkPointData.h>
+#include <vtkThresholdPoints.h>
+#include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkTriangle.h>
@@ -77,20 +79,19 @@ public:
 
     vector<pair<int, int> > _visited_point_list;		// stores the neighbours around a point
     string _fileOutName;
-		string _fileOutShellName;
 
-
-	vector<vtkSmartPointer<vtkActor> > _actors;				// actors representing shortest path betwee points
+		vector<vtkSmartPointer<vtkActor> > _actors;				// actors representing shortest path betwee points
     vector<vtkSmartPointer<vtkPolyData> > _paths;
 
     vtkSmartPointer<vtkCellPicker> _cell_picker;
-	vtkSmartPointer<vtkPointPicker> _point_picker;
+		vtkSmartPointer<vtkPointPicker> _point_picker;
     vtkSmartPointer<vtkPolyData> _SourcePolyData;
     vtkSmartPointer<vtkRenderWindow> _RenderWindow;
     vtkSmartPointer<vtkRenderWindowInteractor> _InteractorRenderWindow;
 
     vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > _shortestPaths;
     vector<int> _pointidarray;
+		vector<int> _corridoridarray;
     vector<vtkSmartPointer<vtkPolyDataMapper> > _pathMappers;			// container to store shortest paths between points selected by user
 
     // Helper Functions
@@ -101,19 +102,20 @@ public:
 		void NeighbourhoodFillingPercentage(vector<int> points);
     void GetNeighboursAroundPoint2(int pointID, vector<pair<int, int> >& pointNeighbourAndOrder, int max_order);
     void StatsInNeighbourhood(vector<int> points, double& mean, double& variance);
-	void SetInputData(LaShell* shell);
+		void SetInputData(LaShell* shell);
     void SetNeighbourhoodSize(int s);
     void SetOutputFileName(const char* filename);
-		void SetOutputShellName(const char* filename);
     void SetFillThreshold(double s);
     void ExtractImageDataAlongTrajectory(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
-    bool InsertPointIntoVisitedList2(vtkIdType id, int order);
+		void getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
+		bool InsertPointIntoVisitedList2(vtkIdType id, int order);
+
 
 
     // Static functions
     static void KeyPressEventHandler(vtkObject* obj, unsigned long,void *sr, void *v);
     static void CreateSphere(vtkSmartPointer<vtkRenderer> iren, double radius, double position3D[]);
-	static vtkIdType GetFirstCellVertex(vtkPolyData* poly, vtkIdType cellID, double point_xyz[]);
+		static vtkIdType GetFirstCellVertex(vtkPolyData* poly, vtkIdType cellID, double point_xyz[]);
     // Get functions
     void GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh, int seed, vtkSmartPointer<vtkIdList> connectedVertices);
     vtkSmartPointer<vtkPolyData> GetSourcePolyData();
@@ -121,7 +123,7 @@ public:
     vtkSmartPointer<vtkCellPicker> GetCellPicker();
 
     void Run();
-
+		void CorridorFromPointList(std::vector<int> points);
 
 	LaShellGapsInBinary();
 	~LaShellGapsInBinary();

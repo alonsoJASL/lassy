@@ -20,7 +20,6 @@ LaShellGapsInBinary::LaShellGapsInBinary()
 	_fill_threshold = 0.5;
 	_run_count = 0;
 	_fileOutName = "encircle_data_r";
-	_fileOutName = "exploration_corridor";
 	_fileOutNameUserDefined = false;
 }
 
@@ -44,11 +43,8 @@ void LaShellGapsInBinary::SetFillThreshold(double s){
 	_fill_threshold = s;
 }
 
-void LaShellGapsInBinary::SetOutputShellName(const char* filename){
-	_fileOutShellName = std::string(filename);
-}
 void LaShellGapsInBinary::SetOutputFileName(const char* filename){
-	_fileOutShellName = std::string(filename);
+	_fileOutName = filename;
 	_fileOutNameUserDefined = true;
 }
 
@@ -208,7 +204,7 @@ void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int
 	RecursivePointNeighbours(pointID, order);
 
 	for (int i=0;i<_visited_point_list.size();i++) {
-		pointNeighbours.push_back(ote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertic_visited_point_list[i]);
+		pointNeighbours.push_back(_visited_point_list[i]);
 
 	}
 	cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
@@ -254,11 +250,11 @@ void LaShellGapsInBinary::NeighbourhoodFillingPercentage(vector<int> points){
 			<< _fill_threshold << endl;
 	cout << "Number of points: " << total << endl;
 	for (int i=0;i<points.size();i++){
-		cout << "Neighbour point = " << points[i]
-				<< ", scar value = " << scalars->GetTuple1(points[i])
-				<< ", threshold satisfy? "
-				<< (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No")
-				<< endl;
+		// cout << "Neighbour point = " << points[i]
+		// 		<< ", scar value = " << scalars->GetTuple1(points[i])
+		// 		<< ", threshold satisfy? "
+		// 		<< (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No")
+		// 		<< endl;
 		if (scalars->GetTuple1(points[i]) > _fill_threshold)
 			fillingcounter++;
 	}
@@ -298,6 +294,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	map<vtkIdType, int> vertex_ids;
 	int closestPointID=-1;
 	vector<pair<int, int> > pointNeighbours;
+
 	double pathSegmentHasScar=0;
 	int count=0;
 	ofstream out;
@@ -376,10 +373,13 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 				 scalar = scalars->GetTuple1(pointNeighborID);
 				 _SourcePolyData->GetPoint(pointNeighborID, xyz);
 				 if(scalar > _fill_threshold){
-					 thresscalar = 1;
+					 thresscalar = scalar;
+
 				 }
 			}
-			out <<  count << "," << pointNeighborID << "," << xyz[0] << "," << xyz[1] << "," << xyz[2] << "," << pointNeighborOrder << "," << scalar << endl;
+			out <<  count << "," << pointNeighborID << ","
+				<< xyz[0] << "," << xyz[1] << "," << xyz[2] << ","
+				<< pointNeighborOrder << "," << scalar << endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
 			exploration_scalars->SetTuple1(pointNeighborID, thresscalar);
 		}
@@ -399,13 +399,63 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	vtkSmartPointer<vtkPolyData> temp2 = vtkSmartPointer<vtkPolyData>::New();
 	temp2->DeepCopy(_SourcePolyData);
 	temp2->GetPointData()->SetScalars(exploration_scalars);
-	vtkSmartPointer<vtkPolyDataWriter> writer2 = vtkSmartPointer<vtkPolyDataWriter>::New();
+	vtkSmartPointer<vtkPolyDataWriter> writer2 =
+		vtkSmartPointer<vtkPolyDataWriter>::New();
 	writer2->SetFileName("exploration_scalars.vtk");
 	writer2->SetInputData(temp2);
 	writer2->Update();
 
+	vtkSmartPointer<vtkThresholdPoints> threshold =
+		vtkSmartPointer<vtkThresholdPoints>::New();
+  threshold->SetInputData(temp2);
+  threshold->ThresholdByLower(_fill_threshold);
+  threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "index");
+  threshold->Update();
+	vtkSmartPointer<vtkPolyDataWriter> writer3 =
+		vtkSmartPointer<vtkPolyDataWriter>::New();
+	writer3->SetFileName("exploration_threshold.vtk");
+	writer3->SetInputData(threshold->GetOutput());
+	writer3->Update();
+
+	vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
+    vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivityFilter->SetInputConnection(threshold->GetOutputPort());
+  connectivityFilter->SetExtractionModeToLargestRegion();
+	vtkSmartPointer<vtkPolyDataWriter> writer4 =
+		vtkSmartPointer<vtkPolyDataWriter>::New();
+	writer4->SetFileName("exploration_connectivity.vtk");
+	writer4->SetInputData(connectivityFilter->GetOutput());
+	writer4->Update();
+
 	out.close();
 
+}
+
+void LaShellGapsInBinary::getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths)
+{
+	typedef map<vtkIdType, int>::iterator it_type;
+	map<vtkIdType, int> vertex_ids;
+	vector<pair<int, int> > pointNeighbours;
+  vector<int> pointIDsInNeighbour;
+  int order = _neighbourhood_size;
+
+	for (int i=0;i<allShortestPaths.size();i++){
+		vtkIdList* vertices_in_shortest_path = vtkIdList::New();
+		vertices_in_shortest_path = allShortestPaths[i]->GetIdList();
+
+		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++)
+			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
+	}
+
+	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
+		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);
+
+		for (int j=0;j<pointNeighbours.size();j++)
+      pointIDsInNeighbour.push_back(pointNeighbours[j].first);
+
+		pointNeighbours.clear();
+	}
+  this->_corridoridarray = pointIDsInNeighbour;
 }
 
 
@@ -426,8 +476,45 @@ vtkIdType LaShellGapsInBinary::GetFirstCellVertex(vtkPolyData* poly, vtkIdType c
 	return vertID;
 }
 
+void LaShellGapsInBinary::CorridorFromPointList(vector<int> points){
+	vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
+	poly_data = this->GetSourcePolyData();
+	this->_pointidarray = points;
 
+	int lim = this->_pointidarray.size();
+	for(int i=0; i<lim; i++){
+		vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+		dijkstra->SetInputData(poly_data);
+		dijkstra->UseScalarWeightsOn();
+		dijkstra->Update();
 
+		if(i<lim-1){
+			dijkstra->SetStartVertex(this->_pointidarray[i]);
+			dijkstra->SetEndVertex(this->_pointidarray[i+1]);
+			// cout << "Computing shortest paths between points "
+			// 	<< this->_pointidarray[i] << " and  "
+			// 	<< this->_pointidarray[i+1]  << endl;
+		}
+		else {
+			dijkstra->SetStartVertex(this->_pointidarray[i]);
+			dijkstra->SetEndVertex(this->_pointidarray[0]);
+			// cout << "Computing shortest paths between points "
+			// 	<< this->_pointidarray[i] << " and  "
+			// 	<< this->_pointidarray[0]  << endl;
+		}
+		dijkstra->Update();
+		this->_shortestPaths.push_back(dijkstra);
+		this->_paths.push_back(dijkstra->GetOutput());
+	}
+	// compute percentage encirlcement
+	this->ExtractImageDataAlongTrajectory(this->_shortestPaths);
+	this->getCorridorPoints(this->_shortestPaths);
+	this->NeighbourhoodFillingPercentage(this->_corridoridarray);
+
+	this->_pointidarray.clear();
+	this->_corridoridarray.clear();
+
+}
 /*
 *	This will handle the event when a user presses the 'x' on the keyboard
 */
@@ -537,7 +624,6 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 				// compute percentage encirlcement
 				this_class_obj->ExtractImageDataAlongTrajectory(this_class_obj->_shortestPaths);
-				this_class_obj->NeighbourhoodFillingPercentage(this_class_obj->_pointidarray);
 
 				this_class_obj->_pointidarray.clear();
 				this_class_obj->_paths.clear();
@@ -552,8 +638,8 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		stringstream ss;
 		int lim = this_class_obj->_pointidarray.size();
 
-		ss << "pointsIDList.txt";
-		out.open(ss.str().c_str(), std::ios_base::app);
+		ss << "pointsIDlist.txt";
+		out.open(ss.str().c_str(), std::ios_base::trunc);
 		for(int ix=0;ix<lim;ix++)
 			out << this_class_obj->_pointidarray[ix] << endl;
 
