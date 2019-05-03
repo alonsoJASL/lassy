@@ -124,6 +124,14 @@ void LaShell::ConvertToPointData()
 	_mesh_3d->DeepCopy(cell_to_point->GetPolyDataOutput());
 }
 
+void LaShell::ConvertToCellData(){
+  vtkSmartPointer<vtkPointDataToCellData> point_to_cell = vtkSmartPointer<vtkPointDataToCellData>::New();
+  point_to_cell->SetInputData(_mesh_3d);
+  point_to_cell->PassPointDataOn();
+  point_to_cell->Update();
+  _mesh_3d->DeepCopy(point_to_cell->GetPolyDataOutput());
+}
+
 void LaShell::ComputeMeshNeighbourhoodTransform(vtkSmartPointer<vtkPolyData> mesh_output)
 {
 	ShellEntropy* entropy = new ShellEntropy(_mesh_3d);
