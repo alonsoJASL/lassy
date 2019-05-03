@@ -405,16 +405,19 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	writer2->SetInputData(temp2);
 	writer2->Update();
 
-	vtkSmartPointer<vtkThresholdPoints> threshold =
-		vtkSmartPointer<vtkThresholdPoints>::New();
+	vtkSmartPointer<vtkThreshold> threshold =
+		vtkSmartPointer<vtkThreshold>::New();
   threshold->SetInputData(temp2);
-  threshold->ThresholdByLower(_fill_threshold);
-  threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "index");
+  threshold->ThresholdByUpper(_fill_threshold);
+  threshold->SetInputArrayToProcess(0, 0, 0,
+		vtkDataObject::FIELD_ASSOCIATION_POINTS_THEN_CELLS,
+		vtkDataSetAttributes::SCALARS);
   threshold->Update();
 	vtkSmartPointer<vtkPolyDataWriter> writer3 =
 		vtkSmartPointer<vtkPolyDataWriter>::New();
 	writer3->SetFileName("exploration_threshold.vtk");
-	writer3->SetInputData(threshold->GetOutput());
+	//writer3->SetInputData(threshold->GetOutput());
+	writer3->SetInputConnection(threshold->GetOutputPort());
 	writer3->Update();
 
 	vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
