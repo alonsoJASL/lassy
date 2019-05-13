@@ -62,6 +62,7 @@ public:
 	//void SurfaceProjection(LaImage* raw_img, bool doLogging=false, LaImage* mask_img=NULL);
 
 	void ConvertToPointData();
+	void ConvertToCellData();
 
 	vector<double> GetMeshVertexValues();
 

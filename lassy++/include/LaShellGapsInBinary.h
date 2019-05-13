@@ -37,7 +37,7 @@
 #include <vtkPlanes.h>
 #include <vtkPointData.h>
 #include <vtkThreshold.h>
-// #include <vtkThresholdPoints.h>
+#include <vtkCellDataToPointData.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
