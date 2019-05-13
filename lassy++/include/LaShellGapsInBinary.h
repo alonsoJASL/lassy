@@ -37,12 +37,13 @@
 #include <vtkPlanes.h>
 #include <vtkPointData.h>
 #include <vtkThreshold.h>
-#include <vtkCellDataToPointData.h>
+#include <vtkThresholdPoints.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkTriangle.h>
 #include <vtkCellDataToPointData.h>
+#include <vtkPointDataToCellData.h>
 #include <vtkSelectPolyData.h>
 #include <vtkCamera.h>
 #include <vtkImageActor.h>

@@ -23,6 +23,7 @@
 #include <vtkPolyDataWriter.h>
 #include <vtkCellData.h>
 #include <vtkCellDataToPointData.h>
+#include <vtkPointDataToCellData.h>
 #include <string>
 #include "LaImage.h"
 
