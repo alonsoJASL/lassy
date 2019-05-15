@@ -106,11 +106,7 @@ void LaShellGapsInBinary::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
 				  }
 			}
 		}
-
-
 	}
-
-
    // cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << endl;
 }
 
@@ -267,7 +263,6 @@ void LaShellGapsInBinary::NeighbourhoodFillingPercentage(vector<int> points){
 
 }
 
-
 void LaShellGapsInBinary::StatsInNeighbourhood(vector<int> points, double& mean, double& variance)
 {
 	vector<double> point_neighbours;
@@ -284,9 +279,8 @@ void LaShellGapsInBinary::StatsInNeighbourhood(vector<int> points, double& mean,
 	variance = std*std;
 }
 
-
-void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths)
-{
+void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
+	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
 	double xyz[3];
 	bool ret;
 	double mean, variance;
@@ -294,6 +288,114 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	map<vtkIdType, int> vertex_ids;
 	int closestPointID=-1;
 	vector<pair<int, int> > pointNeighbours;
+
+	double pathSegmentHasScar=0;
+	int count=0;
+	ofstream out;
+	xyz[0]=1e-10; xyz[1]=1e-10; xyz[2]=1e-10;
+
+	stringstream ss;
+
+	if (_fileOutNameUserDefined == false)
+		ss << _fileOutName << _run_count << ".csv";
+	else
+		ss << _fileOutName;
+
+	out.open(ss.str().c_str(), std::ios_base::app);
+	out << "MainVertexSeq,VertexID,X,Y,Z,VertexDepth,MeshScalar" << endl;
+	// the recursive order - how many levels deep around a point do you want to explore?
+	// default is 3 levels deep, meaning neighbours neighbours neighbour.
+	int order = _neighbourhood_size;
+
+	// bring al lthe scalars to an array
+	vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
+	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
+
+	// this will indicate what is vertices are in the exploration corridor
+	vtkSmartPointer<vtkIntArray> exploration_corridor =
+		vtkSmartPointer<vtkIntArray>::New();
+
+	for (int i=0;i<_SourcePolyData->GetNumberOfPoints();i++){
+		exploration_corridor->InsertNextTuple1(0);
+	}
+
+	// collect all vertex ids lying in shortest path
+	for (int i=0;i<allShortestPaths.size();i++){
+		// getting vertex id for each shortest path
+		vtkIdList* vertices_in_shortest_path = vtkIdList::New();
+		vertices_in_shortest_path = allShortestPaths[i]->GetIdList();
+
+		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++){
+			// map avoids duplicates
+			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
+																			// only using keys, no associated value always -2
+		}
+	}
+
+	cout << "There were a total of " << vertex_ids.size()
+			<< " vertices in the shortest path you have selected\n" << endl;
+
+	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
+		cout << "Exploring around vertex with id = "
+			<< iterator->first << "\n============================\n";
+		double scalar = -1;
+
+		exploration_corridor->SetTuple1(iterator->first, 1);
+		if (iterator->first > 0 && iterator->first < _SourcePolyData->GetNumberOfPoints()){
+			_SourcePolyData->GetPoint(iterator->first, xyz);
+			scalar = scalars->GetTuple1(iterator->first);
+		}
+		out <<  count << "," << iterator->first << ","
+				<< xyz[0] << "," << xyz[1] << "," << xyz[2]
+				<< "," << 0 << "," << scalar << endl;
+		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the vertex id
+		//RetainPointsInGlobalContainer(pointNeighbours);
+		//pointNeighbours.clear();
+
+		//StatsInNeighbourhood(pointNeighbours, mean, variance);
+
+		for (int j=0;j<pointNeighbours.size();j++)
+		{
+			int pointNeighborID = pointNeighbours[j].first;
+			int pointNeighborOrder = pointNeighbours[j].second;
+			scalar = -1;
+			// simple sanity check
+			if (pointNeighborID > 0 && pointNeighborID < _SourcePolyData->GetNumberOfPoints()){
+				 scalar = scalars->GetTuple1(pointNeighborID);
+				 _SourcePolyData->GetPoint(pointNeighborID, xyz);
+			}
+			out <<  count << "," << pointNeighborID << ","
+				<< xyz[0] << "," << xyz[1] << "," << xyz[2] << ","
+				<< pointNeighborOrder << "," << scalar << endl;
+			exploration_corridor->SetTuple1(pointNeighborID, 1);
+		}
+
+		pointNeighbours.clear();
+		count++;
+	}
+
+	vtkSmartPointer<vtkPolyData> temp = vtkSmartPointer<vtkPolyData>::New();
+	temp->DeepCopy(_SourcePolyData);
+	temp->GetPointData()->SetScalars(exploration_corridor);
+	vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+	writer->SetFileName("exploration_corridor.vtk");
+	writer->SetInputData(temp);
+	writer->Update();
+
+	out.close();
+
+}
+
+void LaShellGapsInBinary::ExtractCorridorData(
+	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
+	double xyz[3];
+	bool ret;
+	double mean, variance;
+	typedef map<vtkIdType, int>::iterator it_type;
+	map<vtkIdType, int> vertex_ids;
+	int closestPointID=-1;
+	vector<pair<int, int> > pointNeighbours;
+  vector<int> pointIDsInCorridor;
 
 	double pathSegmentHasScar=0;
 	int count=0;
@@ -342,8 +444,6 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 			<< " vertices in the shortest path you have selected\n" << endl;
 
 	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
-		cout << "Exploring around vertex with id = "
-			<< iterator->first << "\n============================\n";
 		double scalar = -1;
 		double thresscalar = 0;
 
@@ -356,14 +456,11 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 		out <<  count << "," << iterator->first << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2]
 				<< "," << 0 << "," << scalar << endl;
-		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the vertex id
-		//RetainPointsInGlobalContainer(pointNeighbours);
-		//pointNeighbours.clear();
+		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the
 
-		//StatsInNeighbourhood(pointNeighbours, mean, variance);
+		for (int j=0;j<pointNeighbours.size();j++){
+      pointIDsInCorridor.push_back(pointNeighbours[j].first);
 
-		for (int j=0;j<pointNeighbours.size();j++)
-		{
 			int pointNeighborID = pointNeighbours[j].first;
 			int pointNeighborOrder = pointNeighbours[j].second;
 			scalar = -1;
@@ -373,20 +470,21 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 				 scalar = scalars->GetTuple1(pointNeighborID);
 				 _SourcePolyData->GetPoint(pointNeighborID, xyz);
 				 if(scalar > _fill_threshold){
+					 // START HERE!! 
 					 thresscalar = scalar;
-
 				 }
 			}
 			out <<  count << "," << pointNeighborID << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2] << ","
 				<< pointNeighborOrder << "," << scalar << endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
-			exploration_scalars->SetTuple1(pointNeighborID, thresscalar);
+			exploration_scalars->SetTuple1(pointNeighborID, scalar);
 		}
 
 		pointNeighbours.clear();
 		count++;
 	}
+  this->_corridoridarray = pointIDsInCorridor;
 
 	vtkSmartPointer<vtkPolyData> temp = vtkSmartPointer<vtkPolyData>::New();
 	temp->DeepCopy(_SourcePolyData);
@@ -399,55 +497,66 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(vector<vtkSmartPointer
 	vtkSmartPointer<vtkPolyData> temp2 = vtkSmartPointer<vtkPolyData>::New();
 	temp2->DeepCopy(_SourcePolyData);
 	temp2->GetPointData()->SetScalars(exploration_scalars);
-
-
 	vtkSmartPointer<vtkPolyDataWriter> writer2 =
 		vtkSmartPointer<vtkPolyDataWriter>::New();
 	writer2->SetFileName("exploration_scalars.vtk");
 	writer2->SetInputData(temp2);
 	writer2->Update();
 
-
-	vtkSmartPointer<vtkThreshold> threshold =
-		vtkSmartPointer<vtkThreshold>::New();
-	vtkSmartPointer<vtkPointDataToCellData> point_to_cell =
-		vtkSmartPointer<vtkPointDataToCellData>::New();
-	point_to_cell->SetInputData(temp2);
-  point_to_cell->PassPointDataOn();
-	point_to_cell->Update();
-  threshold->SetInputData(point_to_cell->GetPolyDataOutput());
+	vtkSmartPointer<vtkThresholdPoints> threshold =
+		vtkSmartPointer<vtkThresholdPoints>::New();
+  threshold->SetInputData(_SourcePolyData);
   threshold->ThresholdByUpper(_fill_threshold);
   threshold->SetInputArrayToProcess(0, 0, 0,
-		vtkDataObject::FIELD_ASSOCIATION_POINTS_THEN_CELLS,
+		vtkDataObject::FIELD_ASSOCIATION_POINTS,
 		vtkDataSetAttributes::SCALARS);
   threshold->Update();
 	vtkSmartPointer<vtkPolyDataWriter> writer3 =
 		vtkSmartPointer<vtkPolyDataWriter>::New();
 	writer3->SetFileName("exploration_threshold.vtk");
-	//writer3->SetInputData(threshold->GetOutput());
-	writer3->SetInputConnection(threshold->GetOutputPort());
+	writer3->SetInputData(threshold->GetOutput());
+	//writer3->SetInputConnection(threshold->GetOutputPort());
 	writer3->Update();
 
-	vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
-    vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  connectivityFilter->SetInputConnection(threshold->GetOutputPort());
-  connectivityFilter->SetExtractionModeToLargestRegion();
+	vtkSmartPointer<vtkPolyData> temp3 = vtkSmartPointer<vtkPolyData>::New();
+	vtkSmartPointer<vtkPointDataToCellData> p2c =
+		vtkSmartPointer<vtkPointDataToCellData>::New();
+	temp3->ShallowCopy(_SourcePolyData);
+	temp3->GetPointData()->SetScalars(exploration_scalars);
+	p2c->SetInputData(temp3);
+	p2c->PassPointDataOn();
+	p2c->Update();
 	vtkSmartPointer<vtkPolyDataWriter> writer4 =
 		vtkSmartPointer<vtkPolyDataWriter>::New();
-	writer4->SetFileName("exploration_connectivity.vtk");
-	writer4->SetInputData(connectivityFilter->GetOutput());
+	writer4->SetFileName("exploration_temp3.vtk");
+	writer4->SetInputData(temp3);
 	writer4->Update();
+	vtkSmartPointer<vtkPolyDataWriter> writer5 =
+		vtkSmartPointer<vtkPolyDataWriter>::New();
+	writer5->SetFileName("exploration_p2c.vtk");
+	writer5->SetInputData(p2c->GetPolyDataOutput());
+	writer5->Update();
+
+	// vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
+  //   vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  // connectivityFilter->SetInputConnection(threshold->GetOutputPort());
+  // connectivityFilter->SetExtractionModeToLargestRegion();
+	// vtkSmartPointer<vtkPolyDataWriter> writer4 =
+	// 	vtkSmartPointer<vtkPolyDataWriter>::New();
+	// writer4->SetFileName("exploration_connectivity.vtk");
+	// writer4->SetInputData(connectivityFilter->GetOutput());
+	// writer4->Update();
 
 	out.close();
 
 }
 
-void LaShellGapsInBinary::getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths)
-{
+void LaShellGapsInBinary::getCorridorPoints(
+	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
 	typedef map<vtkIdType, int>::iterator it_type;
 	map<vtkIdType, int> vertex_ids;
 	vector<pair<int, int> > pointNeighbours;
-  vector<int> pointIDsInNeighbour;
+  vector<int> pointIDsInCorridor;
   int order = _neighbourhood_size;
 
 	for (int i=0;i<allShortestPaths.size();i++){
@@ -462,11 +571,11 @@ void LaShellGapsInBinary::getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGr
 		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);
 
 		for (int j=0;j<pointNeighbours.size();j++)
-      pointIDsInNeighbour.push_back(pointNeighbours[j].first);
+      pointIDsInCorridor.push_back(pointNeighbours[j].first);
 
 		pointNeighbours.clear();
 	}
-  this->_corridoridarray = pointIDsInNeighbour;
+  this->_corridoridarray = pointIDsInCorridor;
 }
 
 
@@ -518,8 +627,9 @@ void LaShellGapsInBinary::CorridorFromPointList(vector<int> points){
 		this->_paths.push_back(dijkstra->GetOutput());
 	}
 	// compute percentage encirlcement
-	this->ExtractImageDataAlongTrajectory(this->_shortestPaths);
-	this->getCorridorPoints(this->_shortestPaths);
+	//this->ExtractImageDataAlongTrajectory(this->_shortestPaths);
+	this->ExtractCorridorData(this->_shortestPaths);
+	//this->getCorridorPoints(this->_shortestPaths);
 	this->NeighbourhoodFillingPercentage(this->_corridoridarray);
 
 	this->_pointidarray.clear();

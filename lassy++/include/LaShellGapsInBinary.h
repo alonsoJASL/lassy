@@ -109,9 +109,9 @@ public:
     void SetOutputFileName(const char* filename);
     void SetFillThreshold(double s);
     void ExtractImageDataAlongTrajectory(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
+		void ExtractCorridorData(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
 		void getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
 		bool InsertPointIntoVisitedList2(vtkIdType id, int order);
-
 
 
     // Static functions
