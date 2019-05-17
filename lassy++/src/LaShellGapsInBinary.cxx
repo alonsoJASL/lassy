@@ -470,7 +470,6 @@ void LaShellGapsInBinary::ExtractCorridorData(
 				 scalar = scalars->GetTuple1(pointNeighborID);
 				 _SourcePolyData->GetPoint(pointNeighborID, xyz);
 				 if(scalar > _fill_threshold){
-					 // START HERE!! 
 					 thresscalar = scalar;
 				 }
 			}
@@ -503,49 +502,43 @@ void LaShellGapsInBinary::ExtractCorridorData(
 	writer2->SetInputData(temp2);
 	writer2->Update();
 
-	vtkSmartPointer<vtkThresholdPoints> threshold =
-		vtkSmartPointer<vtkThresholdPoints>::New();
-  threshold->SetInputData(_SourcePolyData);
-  threshold->ThresholdByUpper(_fill_threshold);
-  threshold->SetInputArrayToProcess(0, 0, 0,
-		vtkDataObject::FIELD_ASSOCIATION_POINTS,
-		vtkDataSetAttributes::SCALARS);
-  threshold->Update();
-	vtkSmartPointer<vtkPolyDataWriter> writer3 =
-		vtkSmartPointer<vtkPolyDataWriter>::New();
-	writer3->SetFileName("exploration_threshold.vtk");
-	writer3->SetInputData(threshold->GetOutput());
-	//writer3->SetInputConnection(threshold->GetOutputPort());
-	writer3->Update();
-
-	vtkSmartPointer<vtkPolyData> temp3 = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkPointDataToCellData> p2c =
 		vtkSmartPointer<vtkPointDataToCellData>::New();
-	temp3->ShallowCopy(_SourcePolyData);
-	temp3->GetPointData()->SetScalars(exploration_scalars);
-	p2c->SetInputData(temp3);
+	p2c->SetInputData(temp2);
 	p2c->PassPointDataOn();
 	p2c->Update();
-	vtkSmartPointer<vtkPolyDataWriter> writer4 =
-		vtkSmartPointer<vtkPolyDataWriter>::New();
-	writer4->SetFileName("exploration_temp3.vtk");
-	writer4->SetInputData(temp3);
-	writer4->Update();
-	vtkSmartPointer<vtkPolyDataWriter> writer5 =
-		vtkSmartPointer<vtkPolyDataWriter>::New();
-	writer5->SetFileName("exploration_p2c.vtk");
-	writer5->SetInputData(p2c->GetPolyDataOutput());
-	writer5->Update();
 
-	// vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter =
-  //   vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
-  // connectivityFilter->SetInputConnection(threshold->GetOutputPort());
-  // connectivityFilter->SetExtractionModeToLargestRegion();
-	// vtkSmartPointer<vtkPolyDataWriter> writer4 =
-	// 	vtkSmartPointer<vtkPolyDataWriter>::New();
-	// writer4->SetFileName("exploration_connectivity.vtk");
-	// writer4->SetInputData(connectivityFilter->GetOutput());
-	// writer4->Update();
+	vtkSmartPointer<vtkPolyDataWriter> writerp2c =
+      vtkSmartPointer<vtkPolyDataWriter>::New();
+	writerp2c->SetFileName("exploration_p2c.vtk");
+	writerp2c->SetInputData(p2c->GetPolyDataOutput());
+	writerp2c->Update();
+
+	vtkSmartPointer<vtkThreshold> threshold =
+		vtkSmartPointer<vtkThreshold>::New();
+	threshold->ThresholdByUpper(_fill_threshold);
+	threshold->SetInputArrayToProcess(0, 0, 0,
+		vtkDataObject::FIELD_ASSOCIATION_POINTS,
+		vtkDataSetAttributes::SCALARS);
+	threshold->SetInputData(p2c->GetPolyDataOutput());
+	threshold->Update();
+
+	vtkSmartPointer<vtkUnstructuredGridWriter> writerogth =
+		vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+	writerogth->SetFileName("exploration_thugrid.vtk");
+	writerogth->SetInputData(threshold->GetOutput());
+	writerogth->Write();
+
+	vtkSmartPointer<vtkConnectivityFilter> connectivityFilter =
+    vtkSmartPointer<vtkConnectivityFilter>::New();
+  connectivityFilter->SetInputConnection(threshold->GetOutputPort());
+  connectivityFilter->SetExtractionModeToLargestRegion();
+	
+	vtkSmartPointer<vtkUnstructuredGridWriter> writercf =
+		vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+	writercf->SetFileName("exploration_connectivity.vtk");
+	writercf->SetInputData(connectivityFilter->GetUnstructuredGridOutput());
+	writercf->Write();
 
 	out.close();
 

@@ -15,7 +15,10 @@
 */
 #pragma once
 
-
+#include <vtkAppendFilter.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkUnstructuredGridWriter.h>
+#include <vtkConnectivityFilter.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
