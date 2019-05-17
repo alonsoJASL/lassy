@@ -533,11 +533,12 @@ void LaShellGapsInBinary::ExtractCorridorData(
     vtkSmartPointer<vtkConnectivityFilter>::New();
   connectivityFilter->SetInputConnection(threshold->GetOutputPort());
   connectivityFilter->SetExtractionModeToLargestRegion();
-	
+
+
 	vtkSmartPointer<vtkUnstructuredGridWriter> writercf =
 		vtkSmartPointer<vtkUnstructuredGridWriter>::New();
 	writercf->SetFileName("exploration_connectivity.vtk");
-	writercf->SetInputData(connectivityFilter->GetUnstructuredGridOutput());
+	writercf->SetInputConnection(connectivityFilter->GetOutputPort());
 	writercf->Write();
 
 	out.close();
