@@ -93,7 +93,10 @@ int main(int argc, char * argv[])
 		if(!(foundArgs3)){
 				cout << "Waiting for you to pick points on the mesh to draw a line, \n"
 				"or I could complete a circle from your picked points"
-				"\n - Press x on keyboard for picking points on the mesh\n - Press l for drawing a line between your points and extract data\n - Press c to draw circle between points and extract data\n\n";
+				"\n - Press x on keyboard for picking points on the mesh"
+				"\n - Press l for drawing a line between your points and extract data"
+				"\n - Press c to draw circle between points and extract data"
+				"\n - Press s to SAVE your selected points for easier access!\n\n";;
 				application->Run();
 		}
 		else{
