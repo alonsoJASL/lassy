@@ -8,23 +8,35 @@
 using namespace std;
 
 
-LaShell::LaShell(const char* vtk_fn)
-{
-
+LaShell::LaShell(const char* vtk_fn, bool ugrid_bool){
 	// Read from file
-	vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
-	reader->SetFileName(vtk_fn);
-	reader->ReadAllScalarsOn(); 
-	reader->Update();
+	if(ugrid_bool){
+		vtkSmartPointer<vtkUnstructuredGridReader> reader = vtkSmartPointer<vtkUnstructuredGridReader>::New();
+		reader->SetFileName(vtk_fn);
+		reader->Update();
 
-	_mesh_3d = vtkSmartPointer<vtkPolyData>::New();
-	_mesh_3d->DeepCopy(reader->GetOutput());
+		_ugrid_3d = vtkSmartPointer<vtkUnstructuredGrid>::New();
+		_ugrid_3d = reader->GetOutput();
+
+		_mesh_3d = vtkSmartPointer<vtkPolyData>::New();
+
+	}else{
+		vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+		reader->SetFileName(vtk_fn);
+		reader->ReadAllScalarsOn();
+		reader->Update();
+
+		_mesh_3d = vtkSmartPointer<vtkPolyData>::New();
+		_mesh_3d->DeepCopy(reader->GetOutput());
+		_ugrid_3d = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	}
 
 }
 
 LaShell::LaShell()
 {
 	_mesh_3d = vtkSmartPointer<vtkPolyData>::New();
+	_ugrid_3d = vtkSmartPointer<vtkUnstructuredGrid>::New();
 }
 
 vector<double> LaShell::GetMeshVertexValues()
@@ -130,6 +142,14 @@ void LaShell::ConvertToCellData(){
   point_to_cell->PassPointDataOn();
   point_to_cell->Update();
   _mesh_3d->DeepCopy(point_to_cell->GetPolyDataOutput());
+}
+
+void LaShell::Ugrid2PolyData(){
+	vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+  surfaceFilter->SetInputData(_ugrid_3d);
+  surfaceFilter->Update();
+
+	_mesh_3d = surfaceFilter->GetOutput();
 }
 
 void LaShell::ComputeMeshNeighbourhoodTransform(vtkSmartPointer<vtkPolyData> mesh_output)

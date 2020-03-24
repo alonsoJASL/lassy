@@ -19,6 +19,7 @@ SET(LASSY_INCLUDES
 	"../include/LaShellAtlas.h"
 	"../include/LaShellStatistics.h"
 	"../include/LaShellGapsInBinary.h"
+	"../include/LaShellAssignLabels.h"
 	"../include/LaImageFeatures.h"
 	"../include/LaMaskDataShellOperations.h"
 	"../include/LaImageCrop.h"
@@ -34,19 +35,19 @@ SET(LASSY_INCLUDES
 	"../include/LaShellShellIntersectionMultiArray.h"
 )
 
-SET(LASSY_SRCS 
+SET(LASSY_SRCS
 	LaShell.cxx
 	LaImage.cxx
 	LaImageFloat.cxx
 	MathBox.cxx
 	VizBox.cxx
 	ShellEntropy.cxx
-	LaShellShellIntersection.cxx 
-	LaShellAlgorithms.cxx 
-	LaImageAlgorithms.cxx 
-	LaImageShellAlgorithms.cxx 
+	LaShellShellIntersection.cxx
+	LaShellAlgorithms.cxx
+	LaImageAlgorithms.cxx
+	LaImageShellAlgorithms.cxx
 	LaShellShellArithmetic.cxx
-	LaImageSurfaceNormalAnalysis.cxx 
+	LaImageSurfaceNormalAnalysis.cxx
 	LaImageNormalInterrogator.cxx
 	LaShellEnclosureDistance.cxx
 	LaShellShellDisplacement.cxx
@@ -55,6 +56,7 @@ SET(LASSY_SRCS
 	LaShellAtlas.cxx
 	LaShellStatistics.cxx
 	LaShellGapsInBinary.cxx
+	LaShellAssignLabels.cxx
 	LaImageFeatures.cxx
 	LaMaskDataShellOperations.cxx
 	LaImageCrop.cxx
@@ -66,7 +68,7 @@ SET(LASSY_SRCS
 	LaImageHoleFilling.cxx
 	LaShell2ShellPointsCSV.cxx
 	LaShellShellIntersectionMultiArray.cxx
-) 
+)
 
 ADD_LIBRARY(lassy++ ${LASSY_SRCS} ${LASSY_INCLUDES})
 target_link_libraries(lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})

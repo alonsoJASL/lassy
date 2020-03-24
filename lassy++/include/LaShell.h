@@ -19,11 +19,16 @@
 #include <vtkSmartPointer.h>
 #include <vtkDoubleArray.h>
 #include <vtkPolyDataReader.h>
+#include <vtkUnstructuredGridReader.h>
 #include <vtkFileOutputWindow.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkCellData.h>
 #include <vtkCellDataToPointData.h>
 #include <vtkPointDataToCellData.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkCellArray.h>
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkPointSource.h>
 #include <string>
 #include "LaImage.h"
 
@@ -34,14 +39,14 @@ using namespace std;
 class LaShell {
 private:
 	vtkSmartPointer<vtkPolyData> _mesh_3d;
-
+	vtkSmartPointer<vtkUnstructuredGrid> _ugrid_3d;
 	vector<double> _mesh_vertex_values;
 
 
 public:
 	// Constructor with default values for data members
 	LaShell();
-	LaShell(const char* vtk_filename);
+	LaShell(const char* vtk_filename, bool ugrid_bool=false);
 
 	void SetMesh3D(vtkSmartPointer<vtkPolyData> input);
 
@@ -64,6 +69,7 @@ public:
 
 	void ConvertToPointData();
 	void ConvertToCellData();
+	void Ugrid2PolyData();
 
 	vector<double> GetMeshVertexValues();
 

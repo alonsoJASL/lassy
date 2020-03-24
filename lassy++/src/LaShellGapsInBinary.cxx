@@ -675,7 +675,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 		pointID = LaShellGapsInBinary::GetFirstCellVertex(poly_data, cellID, pick_position);
 
-		cout << "Point id picked = " << pointID
+		cout << "Point id picked = " << pointID 
 			<< " and co-ordinates of its position = "
 			<< pick_position[0] << ", " << pick_position[1] << "," << pick_position[2]
 			<< ")\n";
@@ -815,7 +815,7 @@ void LaShellGapsInBinary::Run()
 	mapper->ScalarVisibilityOn();
 	vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
 	lut->SetTableRange(min_scalar, max_scalar);
-	lut->SetHueRange(0.3, 0.0);  // this is the way you tell which colors you want to be displayed.
+	lut->SetHueRange(0.6, 0.0);  // this is the way you tell which colors you want to be displayed.
 	lut->Build();     // this is important
 	mapper->SetLookupTable(lut);
 
