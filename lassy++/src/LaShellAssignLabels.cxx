@@ -216,7 +216,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		out_CSV.open(ss_CSV.str().c_str(), std::ios_base::trunc);
 		for(int ix=0;ix<lim;ix++){
 			out_ID  << this_class_obj->_pointidarray[ix] << endl;
-			out_CSV << this_class_obj->_assignedlabels[ix] << ","
+			out_CSV << this_class_obj->_assignedlabels[ix] << " "
 							<< this_class_obj->_codearray[ix] << endl;
 		}
 		out_ID.close();
@@ -293,7 +293,7 @@ void LaShellAssignLabels::Run(){
 	mapper->ScalarVisibilityOn();
 	vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
 	lut->SetTableRange(min_scalar, max_scalar);
-	lut->SetHueRange(0.6, 0.0);
+	lut->SetHueRange(0.65, 0.0);
 	lut->Build(); // this is important
 	mapper->SetLookupTable(lut);
 
