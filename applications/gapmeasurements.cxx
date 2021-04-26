@@ -13,7 +13,7 @@
 *      Author:
 *      Dr. Jose Alonso solis-Lemums
 *      Department of Biomedical Engineering, King's College London
-*      Email: jose_alonso 'dot' solis_lemus @kcl.ac.uk
+*      Email: jose 'dot' solislemus @kcl.ac.uk
 *      Copyright (c) 2019
 *
 *	   This application computes the gaps within a user-defined path on a
