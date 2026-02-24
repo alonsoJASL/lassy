@@ -4,7 +4,7 @@
 #include <istream>
 #include <string>
 #include <vector>
-using namespace std;
+;
 
 
 class CSVReader
@@ -18,10 +18,10 @@ class CSVReader
             QuotedQuote
         };
 
-        static vector<string> readCSVRow(const std::string &row) {
+        static std::vector<std::string> readCSVRow(const std::string &row) {
             CSVState state = CSVState::UnquotedField;
             const char *vinit[] = {""};
-            vector<string> fields(vinit, end(vinit));   
+            std::vector<std::string> fields(vinit, std::end(vinit));   
             size_t i = 0; // index of the current field
             for (char c : row) {
                 switch (state) {
@@ -67,10 +67,10 @@ class CSVReader
     /*
     * An example usage can be found in LaImage::FileToPixel() 
     */
-        static  vector<vector<string> > readCSV(istream &in) {
+        static  std::vector<std::vector<std::string> > readCSV(std::istream &in) {
             
-            vector<vector<string> > table;
-            string row;
+            std::vector<std::vector<std::string> > table;
+            std::string row;
             while (!in.eof()) {
                 std::getline(in, row);
                 if (in.bad() || in.fail()) {

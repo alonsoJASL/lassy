@@ -18,7 +18,7 @@
 int main(int argc, char * argv[])
 {
 	char* input_f1, *output_f;
-	int operation = ADD;
+	Operation operation = Operation::Add;
     double scaling_value;
 	bool foundArgs1 = false, foundArgs2 = false, foundArgs3 = false, foundArgs4=false;
 
@@ -27,22 +27,27 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
 
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs2 = true;
 				}
-				else if (string(argv[i]) == "-p") {
-					operation = atoi(argv[i + 1]);
+				else if (std::string(argv[i]) == "-p") {
+					operation = static_cast<Operation>(std::atoi(argv[i + 1]));
+					if (operation < Operation::Add || operation > Operation::Divide) {
+						std::cerr << "Invalid operation value\n";
+						exit(1);
+					}
+
 					foundArgs3 = true;
 				}
-                else if (string(argv[i]) == "-v") {
-					scaling_value = atof(argv[i + 1]);
+                else if (std::string(argv[i]) == "-v") {
+					scaling_value = std::atof(argv[i + 1]);
 					foundArgs4 = true;
 				}
 
@@ -53,12 +58,12 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3 && foundArgs4))
 	{
-		cerr << "Performs simple arithmetic operations on scalars contained within two VTK meshes\nCheck your parameters\n\nUsage:"
+		std::cerr << "Performs simple arithmetic operations on scalars contained within two VTK meshes\nCheck your parameters\n\nUsage:"
 			"\n(Mandatory)\n\t-i <1st Mesh in VTK> "
 			"\n\t-o <output_vtk>"
             "\n\t-v <scaling value>"
 			"\n\n(Optional)"
-			"\n\t-p <which operation: 1-ADD, 2-SUBTRACT, 3-MULTIPLY, 4-DIVIDE>\n" << endl;
+			"\n\t-p <which operation: 1-ADD, 2-SUBTRACT, 3-MULTIPLY, 4-DIVIDE>\n" << std::endl;
 
 
 		exit(1);
@@ -77,16 +82,16 @@ int main(int argc, char * argv[])
 		
 		switch (operation)
 		{
-		case ADD:
+		case Operation::Add:
 			algorithm->SetArithmetricOperationToAdd();
 			break;
-		case SUBTRACT:
+		case Operation::Subtract:
 			algorithm->SetArithmetricOperationToSubtract();
 			break;
-		case MULTIPLY:
+		case Operation::Multiply:
 			algorithm->SetArithmetricOperationToMultiply();
 			break;
-		case DIVIDE:
+		case Operation::Divide:
 			algorithm->SetArithmetricOperationToDivide();
 			break;
 

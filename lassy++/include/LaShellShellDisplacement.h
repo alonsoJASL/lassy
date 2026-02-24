@@ -43,11 +43,11 @@ protected:
 	LaShell* _target_la;
 	LaShell* _output_la;
 
-	string _multiple_target_fn; 
-	vector<string> _filename_list; 
-	vector<vector< double> > _displacements; 
+	std::string _multiple_target_fn; 
+	std::vector<std::string> _filename_list; 
+	std::vector<std::vector< double> > _displacements; 
 
-	//vector<vector< double> > _displacement_direction; 
+	//std::vector<std::vector< double> > _displacement_direction; 
 
 	int _num_targets;		
 	int _num_targets_read;
@@ -59,8 +59,8 @@ protected:
 
 	double GetEuclidean(double*, double*);
 	bool ReadShellNameList(const char* fn);
-	void PrepareDisplacementContainer(string first_file, vector<vector< double> >& scalar_container);
-	void ReadShellComputeDisplacement(string); 
+	void PrepareDisplacementContainer(std::string first_file, std::vector<std::vector< double> >& scalar_container);
+	void ReadShellComputeDisplacement(std::string); 
 	void AggregateAllDisplacements();
 	int IsPointOutsideOrInsideShell(vtkIdType shell_point, double* test_point);
 

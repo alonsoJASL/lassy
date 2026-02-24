@@ -25,22 +25,22 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-csv") {
+				if (std::string(argv[i]) == "-csv") {
 					input_csv_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-img") {
+				else if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs2 = true; 
 				}
 			
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_fn = argv[i + 1];
                     foundArgs3 = true; 
 					
 				}
-                else if (string(argv[i]) == "-scaling") {
+                else if (std::string(argv[i]) == "-scaling") {
 					scaling = atof(argv[i + 1]);
                     
 					
@@ -54,9 +54,9 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nDraw points in a greyscale image, points are input as csv"
-			"\n(Mandatory)\n\t-img <greyscale img> \n\t-csv <csv containing points>\n\t-o <new image filename>\n\n" << endl; 
+			"\n(Mandatory)\n\t-img <greyscale img> \n\t-csv <csv containing points>\n\t-o <new image filename>\n\n" << std::endl; 
 			
 		exit(1);
 	}

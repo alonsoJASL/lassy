@@ -13,10 +13,16 @@
 */
 #pragma once
 
-#define ADD 1 
-#define SUBTRACT 2 
-#define MULTIPLY 3 
-#define DIVIDE 4
+enum class Operation : int {
+	Add = 1,
+	Subtract = 2,
+	Multiply = 3,
+	Divide = 4
+};
+// #define ADD 1 
+// #define SUBTRACT 2 
+// #define MULTIPLY 3 
+// #define DIVIDE 4
 
 
 #include "LaShellAlgorithms.h"
@@ -29,7 +35,7 @@ class LaShellShellArithmetic : public LaShellAlgorithms {
 	LaShell* _source_la_2;
 	LaShell* _output_la;
 
-	int _operation; 
+	Operation _operation; 
 	double _factor;
 	double 	_single_shell_value;
 	bool _single_shell; 

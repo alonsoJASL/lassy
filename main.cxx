@@ -24,29 +24,29 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					
 				}
-				else if (string(argv[i]) == "-i3") {
+				else if (std::string(argv[i]) == "-i3") {
 					input_f3 = argv[i + 1];
 
 				}
-				else if (string(argv[i]) == "-m")
+				else if (std::string(argv[i]) == "-m")
 				{
 					method = atoi(argv[i + 1]); 
 
 				}
-				else if (string(argv[i]) == "-v")
+				else if (std::string(argv[i]) == "-v")
 				{
 					i_value = atof(argv[i + 1]);
 
 				}
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs2 = true;
 				}
@@ -57,19 +57,19 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 ))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\n(Mandatory)\n\t-i <file_with_filenmes.txt> \n\t-m <which method>"
 			"\n\n(Optional)\n\t-i2 <second input>\n\t-i3 <third input>"
-			"\n\t-o <output file> \n\t-m <which method>" << endl;
+			"\n\t-o <output file> \n\t-m <which method>" << std::endl;
 
-		cerr << "\nAvailable methods\n=================\n"
+		std::cerr << "\nAvailable methods\n=================\n"
 			"\n1. Compute mean of mesh vertex scalars (m=1)\n\tinputs: \n\t-i - Mesh vtk"
 			"\n\n2. Pixel value at all image locations (m=2)\n\tinputs: \n\t-i - Input 3D image in NIFTII/NRRD/GIPL format\n\t-o - Output text file"
 			"\n\n3. Surface normal interrogation (scar3D) (m=3)\n\tinputs: \n\t-i - Input 3D binary mask\n\t-i2 - Input 3D MRI/CT image\n\t-o - Output VTK mesh"
 			"\n\n4. Surface normal interrogation within mask (m=4)\n\tinputs: \n\t-i - Input 3D binary mask\n\t-i2 - Input 3D MRI/CT image\n\t-i3 - Scar 3D mask image\n\t-o - Output VTK mesh" 
 			"\n\n5. Visualising a mesh and image from file (m=5)\n\tinputs: \n\t-i - VTK mesh\n\t-i2 - Input 3D MRI/CT image" 
 			"\n\n6. Entropy around a point (m=6)\n\tinputs: \n\t-i - VTK mesh\n\t-v - Point ID" 
-			"\n\n7. Display contours on mesh (m=7)\n\tinputs: \n\t-i - VTK mesh" << endl;
+			"\n\n7. Display contours on mesh (m=7)\n\tinputs: \n\t-i - VTK mesh" << std::endl;
 		exit(1);
 	}
 
@@ -77,17 +77,17 @@ int main(int argc, char * argv[])
 	if (method == 1)
 	{
 		LaShell* la = new LaShell(input_f);
-		vector<double> v = la->GetMeshVertexValues(); 
+		std::vector<double> v = la->GetMeshVertexValues(); 
 
 		float average = accumulate(v.begin(), v.end(), 0.0) / v.size();
-		cout << "Mean vertex scalar = " << average << endl; 
+		std::cout << "Mean vertex scalar = " << average << std::endl; 
 		
 
 	}
 	else if (method == 2)
 	{
 		LaImage *la = new LaImage(input_f);
-		ofstream out; 
+		std::ofstream out; 
 		out.open(output_f); 
 		short pixelValue; 
 
@@ -102,9 +102,9 @@ int main(int argc, char * argv[])
 					la->GetIntensityAt(i, j, k, pixelValue); 
 					//out << pixelValue << ",";
 				}
-				out << endl; 
+				out << std::endl; 
 			}
-			out << endl; 
+			out << std::endl; 
 		}
 		out.close(); 
 
@@ -145,7 +145,7 @@ int main(int argc, char * argv[])
 	}
 	else if (method == 5)
 	{
-		cout << "\nMethod = " << method << ", Visualising a 3D mesh and its corresponding 3D image slices, from file" << endl;
+		std::cout << "\nMethod = " << method << ", Visualising a 3D mesh and its corresponding 3D image slices, from file" << std::endl;
 		//LaImage *bp_mask_img = new LaImage(input_f);
 		LaShell* la_mesh = new LaShell(input_f);
 		LaImage *lge_img = new LaImage(input_f2);
@@ -158,7 +158,7 @@ int main(int argc, char * argv[])
 	}
 	else if (method == 6)
 	{
-		cout << "\nMethod = " << method << ", Entropy of a mesh vertex around point with ID " << i_value << endl;
+		std::cout << "\nMethod = " << method << ", Entropy of a mesh vertex around point with ID " << i_value << std::endl;
 		//LaShell* la_mesh = new LaShell(input_f);
 
 		ShellEntropy* entropy = new ShellEntropy(input_f); 

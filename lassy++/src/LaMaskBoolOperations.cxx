@@ -6,7 +6,7 @@
 #include "../include/LaMaskBoolOperations.h"
 #include "../include/LaImage.h"
 
-using namespace std;
+;
 
 
 LaMaskBoolOperations::LaMaskBoolOperations()
@@ -42,25 +42,25 @@ LaImage* LaMaskBoolOperations::GetOutput() {
 
 void LaMaskBoolOperations::SetBooleanOperationToAND() 
 {
-	cout << "\n\ntPerforming AND ...\n";
+	std::cout << "\n\ntPerforming AND ...\n";
 	_which_operation = BOOL_AND; 
 }
 
 void LaMaskBoolOperations::SetBooleanOperationToOR() 
 {
-	cout << "\n\ntPerforming OR ...\n";
+	std::cout << "\n\ntPerforming OR ...\n";
 	_which_operation = BOOL_OR; 
 }
 
 void LaMaskBoolOperations::SetBooleanOperationToXOR() 
 {
-	cout << "\n\ntPerforming XOR ...\n";
+	std::cout << "\n\ntPerforming XOR ...\n";
 	_which_operation = BOOL_XOR; 
 }
 
 void LaMaskBoolOperations::SetBooleanOperationToANOTB() 
 {
-	cout << "\n\ntPerforming A not B ...\n";
+	std::cout << "\n\ntPerforming A not B ...\n";
 	_which_operation = BOOL_ANOTB; 
 }
 

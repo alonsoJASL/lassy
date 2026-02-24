@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include <numeric>
-using namespace std;
+;
 
 /*
 *      Author:
@@ -31,12 +31,12 @@ int main(int argc, char * argv[]){
 	if (argc >= 1){
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-vtk"){
+				if (std::string(argv[i]) == "-vtk"){
 					input_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 
-				else if (string(argv[i]) == "-o"){
+				else if (std::string(argv[i]) == "-o"){
 					output_fn = argv[i + 1];
 					foundArgs2 = true;
 				}
@@ -45,20 +45,20 @@ int main(int argc, char * argv[]){
 	}
 
 	if (!(foundArgs1 && foundArgs2)){
-		cerr << "Check your parameters\n\nUsage:"
+		std::cerr << "Check your parameters\n\nUsage:"
 			"\nVTK mesh turned into vtkPolyData"
 			"\n(Mandatory)\n\t-vtk <vtk file with mesh> \n\t-o <output filename>"
-       << endl;
+       << std::endl;
 
 		exit(1);
 	}
 
-	cout<<"Creating object"<<endl;
+	std::cout<<"Creating object"<<std::endl;
 	LaShell* la = new LaShell(input_fn);
-	cout<<"Converting to point data."<<endl;
+	std::cout<<"Converting to point data."<<std::endl;
 	la->ConvertToPointData();
-	cout<<"Exporting mesh"<<endl;
+	std::cout<<"Exporting mesh"<<std::endl;
 	la->ExportVTK(output_fn);
 
-  cout<<"Success!"<<endl;
+  std::cout<<"Success!"<<std::endl;
 }   // end function

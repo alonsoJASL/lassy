@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellAlgorithms.h"
 
-using namespace std;
+;
 
 
 LaShellAlgorithms::LaShellAlgorithms()

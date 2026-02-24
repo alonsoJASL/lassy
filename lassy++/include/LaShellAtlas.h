@@ -40,7 +40,7 @@ class LaShellAtlas : public LaShellShellDisplacement {
 private: 
 	int _which_method;
 public:
-	void ReadShellComputeDisplacement(string poly_data_fn);
+	void ReadShellComputeDisplacement(std::string poly_data_fn);
 	
 	void SetAtlasConstructionToUseDirectCopy();				// must ensure that all meshes have the same topology
 

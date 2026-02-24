@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellStatistics.h"
 
-using namespace std;
+;
 
 
 LaShellStatistics::LaShellStatistics()
@@ -30,7 +30,7 @@ void LaShellStatistics::SetOperationToStandardStats()
 
 double LaShellStatistics::GetOutputValue(const char* label)
 {
-    stringstream ss; 
+    std::stringstream ss; 
     ss << label; 
     auto search = _stats.find(ss.str()); 
     if (search != _stats.end())
@@ -39,7 +39,7 @@ double LaShellStatistics::GetOutputValue(const char* label)
     }
     else 
     {
-        cout << "Wrong stats label used, see documentation!" << endl; 
+        std::cout << "Wrong stats label used, see documentation!" << std::endl; 
         return -1e10;
     }
 }
@@ -54,7 +54,7 @@ void LaShellStatistics::Update() {
 	{
 		outputWindow->SetInstance(fileOutputWindow);
 	}
-    vector<double> value_container; 
+    std::vector<double> value_container; 
 
 	vtkSmartPointer<vtkPolyData> Source_Poly1 = vtkSmartPointer<vtkPolyData>::New();
 	vtkSmartPointer<vtkFloatArray> Scalars_Poly1 = vtkSmartPointer<vtkFloatArray>::New();
@@ -76,12 +76,12 @@ void LaShellStatistics::Update() {
             double mean = MathBox::CalcMean(value_container);
             double median = MathBox::CalcMedian(value_container);
             double std = MathBox::CalcStd(value_container, mean);
-            string mean_label = "mean";
-            string median_label = "median";
-            string std_label = "std";
-            _stats.insert(pair<string, double>(mean_label, mean));
-            _stats.insert(pair<string, double>(median_label, median));
-            _stats.insert(pair<string, double>(std_label, std));
+            std::string mean_label = "mean";
+            std::string median_label = "median";
+            std::string std_label = "std";
+            _stats.insert(std::pair<std::string, double>(mean_label, mean));
+            _stats.insert(std::pair<std::string, double>(median_label, median));
+            _stats.insert(std::pair<std::string, double>(std_label, std));
         break; 
     }
     

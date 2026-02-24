@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaImageNormalInterrogator.h"
 
-using namespace std;
+;
 
 
 LaImageNormalInterrogator::LaImageNormalInterrogator()
@@ -134,14 +134,14 @@ void LaImageNormalInterrogator::Update() {
 	scar_step_max = _direction[1] * _steps;
 
 
-	vector<Point3> pointsOnAndAroundNormal;
+	std::vector<Point3> pointsOnAndAroundNormal;
 /*
 	std::ofstream ofs;
 	if (_doLoggingLevel1) {
 		ofs.open("intensity_log.csv", std::ofstream::out | std::ofstream::app);
 
-		//ofs << "NormalStep,CentrePixel_X,CentrePixelY,CentrePixelZ,PixelVaue" << endl;
-		//ofs << "==========,=============,===========,=============,=========" << endl;
+		//ofs << "NormalStep,CentrePixel_X,CentrePixelY,CentrePixelZ,PixelVaue" << std::endl;
+		//ofs << "==========,=============,===========,=============,=========" << std::endl;
 	}*/
 	int MaxX, MaxY, MaxZ;
 	_image->GetImageSize(MaxX, MaxY, MaxZ);
@@ -198,7 +198,7 @@ void LaImageNormalInterrogator::Update() {
 			short pixelValue = -1;
 			_image->GetIntensityAt(x, y, z, pixelValue);
 
-			//ofs << i << "," << x << "," << y << "," << z << "," << pixelValue << endl;
+			//ofs << i << "," << x << "," << y << "," << z << "," << pixelValue << std::endl;
 		}
 
 	}		// end for
@@ -208,7 +208,7 @@ void LaImageNormalInterrogator::Update() {
 	if (pointsOnAndAroundNormal.size() > 0) {
 		GetStatisticalMeasure(pointsOnAndAroundNormal, _aggregation_method, insty);			// statistical measure 2 returns max
 		if (_doLoggingLevel2) {
-			//ofs << ",,,aggregate=,"<<insty<<endl;
+			//ofs << ",,,aggregate=,"<<insty<<std::endl;
 		}
 	}
 	else {
@@ -225,7 +225,7 @@ void LaImageNormalInterrogator::Update() {
 
 
 
-void LaImageNormalInterrogator::GetStatisticalMeasure(vector<Point3> vals, int measure, double& returnVal)
+void LaImageNormalInterrogator::GetStatisticalMeasure(std::vector<Point3> vals, int measure, double& returnVal)
 {
 	double sum = 0, max = -1;
 	//double visitedStatus;

@@ -44,7 +44,7 @@
 #include "LaImage.h"
 #include "LaImageAlgorithms.h"
 
-using namespace std;
+;
 
 
 class LaImageFeatures : public LaImageAlgorithms {
@@ -53,13 +53,13 @@ private:
 	LaImage* _image; 
 	LaImage* _mask_image;
 	
-	string _csv_filename; 
+	std::string _csv_filename; 
 	short _which_value;
 	short _mask_val_SMD; /* which mask value for Signed Maurer Distance Filter */
 	int _max_features; 
 	long _total_size;
 	double _my_nan;			/* Our own NaN, just a large number telling us there is no number present */
-	vector<vector<double> > _image_features;
+	std::vector<std::vector<double> > _image_features;
 	
 	typedef unsigned int PixelTypeInt;
 	typedef itk::Image< PixelTypeInt, 3 >  ImageTypeInt;

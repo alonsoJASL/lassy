@@ -6,7 +6,7 @@
 #include "../include/LaMaskDataShellOperations.h"
 #include "../include/LaShell.h"
 
-using namespace std;
+;
 
 
 LaMaskDataShellOperations::LaMaskDataShellOperations()
@@ -47,19 +47,19 @@ LaShell* LaMaskDataShellOperations::GetOutput() {
 
 void LaMaskDataShellOperations::SetOperationToMean() 
 {
-	//cout << "\n\ntPerforming Mean ...\n";
+	//std::cout << "\n\ntPerforming Mean ...\n";
 	_which_operation = MEAN; 
 }
 
 void LaMaskDataShellOperations::SetOperationToMedian() 
 {
-	//cout << "\n\ntPerforming Mean ...\n";
+	//std::cout << "\n\ntPerforming Mean ...\n";
 	_which_operation = MEDIAN; 
 }
 
 void LaMaskDataShellOperations::SetOperationToStdev() 
 {
-	//cout << "\n\ntPerforming Mean ...\n";
+	//std::cout << "\n\ntPerforming Mean ...\n";
 	_which_operation = STDEV; 
 }
 
@@ -94,7 +94,7 @@ void LaMaskDataShellOperations::Update() {
 	
 	
 	double m[3];
-	vector<double> data_in_mask; 
+	std::vector<double> data_in_mask; 
 
 	// initialise output scalars
 	for (int i=0;i<Data_Poly->GetNumberOfPoints();i++)

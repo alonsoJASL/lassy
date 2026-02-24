@@ -55,7 +55,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		pointID = LaShellAssignLabels::GetFirstCellVertex(poly_data, cellID, pick_position);
 		double picked_scalar = poly_data->GetPointData()->GetScalars()->GetTuple1(pointID);
 
-		cout << "Point id picked = " << pointID << " with value:" << picked_scalar
+		std::cout << "Point id picked = " << pointID << " with value:" << picked_scalar
 			<< " and co-ordinates of its position = "
 			<< pick_position[0] << ", " << pick_position[1] << "," << pick_position[2]
 			<< ")\n";
@@ -87,7 +87,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		this_class_obj->_labelsAssigned.at(picked_scalar-0) = 1;
 		this_class_obj->_codearray.push_back(sectionCode);
 
-		cout << "Key pressed = [" << key << "] with label: " << picked_scalar
+		std::cout << "Key pressed = [" << key << "] with label: " << picked_scalar
 			<< " and code:" << sectionCode
 			<< "\n";
 
@@ -97,8 +97,8 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		delete[] pick_position;
 	}
 	else if (iren->GetKeyCode()=='s'){
-		ofstream out_ID, out_CSV;
-		stringstream ss_ID, ss_CSV;
+		std::ofstream out_ID, out_CSV;
+		std::stringstream ss_ID, ss_CSV;
 		int lim = this_class_obj->_pointidarray.size();
 
 		ss_ID << "pointsIDlist.txt";
@@ -106,19 +106,19 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		out_ID.open(ss_ID.str().c_str(), std::ios_base::trunc);
 		out_CSV.open(ss_CSV.str().c_str(), std::ios_base::trunc);
 		for(int ix=0;ix<lim;ix++){
-			out_ID  << this_class_obj->_pointidarray[ix] << endl;
+			out_ID  << this_class_obj->_pointidarray[ix] << std::endl;
 			out_CSV << this_class_obj->_assignedlabels[ix] << ","
-							<< this_class_obj->_codearray[ix] << endl;
+							<< this_class_obj->_codearray[ix] << std::endl;
 		}
 		out_ID.close();
 		out_CSV.close();
 
-		cout << "File: pointIDList.txt created. You can exit the application." << endl;
+		std::cout << "File: pointIDList.txt created. You can exit the application." << std::endl;
 	}
 	else if(iren->GetKeyCode()=='m'){ //look for missing labels
 		int N = this_class_obj->_labelsinmesh.size();
 		for(int ix=0; ix<N; ix++){
-			cout << this_class_obj->_labelsinmesh[ix] << " "
+			std::cout << this_class_obj->_labelsinmesh[ix] << " "
 					 << this_class_obj->_labelsAssigned[ix];
 		}
 	}

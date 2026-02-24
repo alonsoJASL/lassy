@@ -27,22 +27,22 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs2 = true; 
 				}
 
-				else if (string(argv[i]) == "-t") {
+				else if (std::string(argv[i]) == "-t") {
 					input_f2 = argv[i + 1];
 					foundArgs3 = true;
 				}
 
-				else if (string(argv[i]) == "-m") {
+				else if (std::string(argv[i]) == "-m") {
 					method = atoi(argv[i + 1]);
 				
 				}
@@ -54,11 +54,11 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nCalculates the displacement between a source and target shells. "
 			"\nNote that multiple target shells can be specified with their filenames as a list within a txt file" 
 			"\nNote that by defalt the median displacement is computed\n"
-			"\n(Mandatory)\n\t-i <source_mesh_vtk> \n\t-t <target mesh filenames as list txt>\n\t-o <output file>\n== Optional ==\n\t-m (1=mean, 2=median)" << endl; 
+			"\n(Mandatory)\n\t-i <source_mesh_vtk> \n\t-t <target mesh filenames as list txt>\n\t-o <output file>\n== Optional ==\n\t-m (1=mean, 2=median)" << std::endl; 
 			
 		exit(1);
 	}

@@ -7,7 +7,7 @@
 #include "../include/VizBox.h"
 
 
-using namespace std;
+;
 
 
 VizBox::VizBox()
@@ -44,7 +44,7 @@ VizBox::VizBox()
 void VizBox::SetLookupTable_image3d(LaImage* img3d)
 {
 	short min, max; 
-	cout << "Setting black-white lookup table ... ";
+	std::cout << "Setting black-white lookup table ... ";
 	img3d->GetMinimumMaximum(min, max);
 	_bwLut = vtkSmartPointer<vtkLookupTable>::New();
 
@@ -53,14 +53,14 @@ void VizBox::SetLookupTable_image3d(LaImage* img3d)
 	_bwLut->SetSaturationRange(0.0, 0.0); // no color saturation
 	_bwLut->SetRampToLinear();
 	_bwLut->Build();
-	cout << "completed! ";
+	std::cout << "completed! ";
 
 }
 
 void VizBox::SetLookupTable_mesh3d(LaShell* mesh3d)
 {
 	double min, max; 
-	cout << "Setting colour lookup table ... ";
+	std::cout << "Setting colour lookup table ... ";
 	mesh3d->GetMinimumMaximum(min, max);
 	_colLut = vtkSmartPointer<vtkLookupTable>::New();
 
@@ -71,7 +71,7 @@ void VizBox::SetLookupTable_mesh3d(LaShell* mesh3d)
 	_colLut->SetSaturationRange (1.0, 1.0);
 	_colLut->SetValueRange (1.0, 1.0);
 	_colLut->Build();
-	cout << "completed! ";
+	std::cout << "completed! ";
 
 }
 
@@ -79,7 +79,7 @@ void VizBox::ConstructImageOrthogonalPlanes(LaImage* img3d)
 {
 	
 	// Convert image to structured points 
-	char* temp_vtk_fn = "temp_123234.vtk";
+	const char* temp_vtk_fn = "temp_123234.vtk";
 	img3d->ConvertToVTKImage(temp_vtk_fn);
 	vtkSmartPointer<vtkStructuredPointsReader > reader = vtkSmartPointer<vtkStructuredPointsReader >::New();
 	reader->SetFileName(temp_vtk_fn);
@@ -95,8 +95,8 @@ void VizBox::ConstructImageOrthogonalPlanes(LaImage* img3d)
 	img3d->GetImageSize(_maxX, _maxY, _maxZ);
 	_zPos = _maxZ/2, _yPos = _maxY/2, _xPos = _maxX/2;
 
-	cout << "X = " << _maxX << " ," << "Y = " << _maxY << ", Z = " << _maxZ << endl;
-	cout << "xPos= " << _xPos << ", yPos=" << _yPos << ", zPos= " << _zPos << endl;
+	std::cout << "X = " << _maxX << " ," << "Y = " << _maxY << ", Z = " << _maxZ << std::endl;
+	std::cout << "xPos= " << _xPos << ", yPos=" << _yPos << ", zPos= " << _zPos << std::endl;
 
 	this->SetLookupTable_image3d(img3d);
 
@@ -295,11 +295,11 @@ void VizBox::KeypressCallbackFunction( vtkObject* caller, long unsigned int vtkN
 void VizBox::ChangeMeshOpacity(double amount)
 {
 	double opac = _mesh3DActor_opacity; 
-	cout << "changing opacity, currently = " << opac; 
+	std::cout << "changing opacity, currently = " << opac; 
 	if (opac + amount >= 0 && opac + amount <= 1)
 	{
 		_mesh3DActor_opacity += amount;
-		cout << ", changing to = " << _mesh3DActor_opacity << endl;
+		std::cout << ", changing to = " << _mesh3DActor_opacity << std::endl;
 		_mesh3DActor->GetProperty()->SetOpacity(_mesh3DActor_opacity);
 		_renWin->Render();
 	}
@@ -308,14 +308,14 @@ void VizBox::ChangeMeshOpacity(double amount)
 void VizBox::MoveSlice(int slice_dir, int increment)
 {	
 	vtkSmartPointer<vtkImageActor> slice;
-	cout << "Moving slice: direction = " << slice_dir << ", increment = " << increment; 
+	std::cout << "Moving slice: direction = " << slice_dir << ", increment = " << increment; 
 	switch (slice_dir) {
 		case 1:
 			slice = _xSlice;
 			
 			if (_xPos+increment > 0 && _xPos + increment < _maxX)
 			{
-				cout << ", x direction\n";
+				std::cout << ", x direction\n";
 				_xPos = _xPos+increment; 
 				slice->SetDisplayExtent(_xPos, _xPos, 0, _maxY - 1, 0, _maxZ - 1);
 				CalculateContours(1);

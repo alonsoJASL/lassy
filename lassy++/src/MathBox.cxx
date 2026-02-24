@@ -4,7 +4,7 @@
 #include <iostream>    // using IO functions
 #include <string>      // using string
 #include "../include/MathBox.h"
-using namespace std;
+;
 
 
 
@@ -25,7 +25,7 @@ double MathBox::EuclideanDistance(double *p1, double *p2)
 }
 
 
-double MathBox::CalcMedian(vector<double> scores)
+double MathBox::CalcMedian(std::vector<double> scores)
 {
 	double median;
 	size_t size = scores.size();
@@ -48,7 +48,7 @@ double MathBox::CalcMedian(vector<double> scores)
 /*
 * Calculates Mean from a list of values
 */
-double MathBox::CalcMean(vector<double> scores)
+double MathBox::CalcMean(std::vector<double> scores)
 {
 	double sum = 0; double n = 0;
 	for (int i = 0; i < scores.size(); i++)
@@ -63,7 +63,7 @@ double MathBox::CalcMean(vector<double> scores)
 /*
 * Calculates Mean from a list of values
 */
-double MathBox::CalcStd(vector<double> scores, double mean)
+double MathBox::CalcStd(std::vector<double> scores, double mean)
 {
 	double sum = 0; double n = 0;
 	for (int i = 0; i < scores.size(); i++)

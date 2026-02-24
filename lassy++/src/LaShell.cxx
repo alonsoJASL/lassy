@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShell.h"
 #include "../include/ShellEntropy.h"
-using namespace std;
+;
 
 
 LaShell::LaShell(const char* vtk_fn, bool ugrid_bool){
@@ -39,7 +39,7 @@ LaShell::LaShell()
 	_ugrid_3d = vtkSmartPointer<vtkUnstructuredGrid>::New();
 }
 
-vector<double> LaShell::GetMeshVertexValues()
+std::vector<double> LaShell::GetMeshVertexValues()
 {
 	vtkSmartPointer<vtkFloatArray> scalar_array = vtkSmartPointer<vtkFloatArray>::New();
 
@@ -82,7 +82,7 @@ void LaShell::GetMinimumMaximum(double& min, double& max)
 
 void LaShell::BinaryImageToShell(LaImage *la_mask, double threshold)
 {
-	char* temp_vtk_fn = "mask.vtk";
+	const char *temp_vtk_fn = "mask.vtk";
 	la_mask->ConvertToVTKImage(temp_vtk_fn);
 
 	vtkSmartPointer<vtkFileOutputWindow> fileOutputWindow = vtkSmartPointer<vtkFileOutputWindow>::New();

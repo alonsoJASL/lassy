@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaImageAlgorithms.h"
 
-using namespace std;
+;
 
 
 LaImageAlgorithms::LaImageAlgorithms()

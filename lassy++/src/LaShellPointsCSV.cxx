@@ -3,7 +3,7 @@
 #include <string>      // using string
 #include "../include/LaShellPointsCSV.h"
 #include "../include/MathBox.h"
-using namespace std;
+;
 
 
 LaShellPointsCSV::LaShellPointsCSV() {
@@ -38,7 +38,7 @@ void LaShellPointsCSV::SetCopyMethodToNeighbourCopy()
 void LaShellPointsCSV::SetNeighbourRadius(int radius)
 {
     _neighbour_radius = _scaling_factor*radius;
-    cout << "Warning: using a scaling factor of " << _scaling_factor << ", hence radius becomes = " << _neighbour_radius << "\n\n";
+    std::cout << "Warning: using a scaling factor of " << _scaling_factor << ", hence radius becomes = " << _neighbour_radius << "\n\n";
 }
 
 void LaShellPointsCSV::SetArrayName(const char* array_name)
@@ -72,7 +72,7 @@ void LaShellPointsCSV::ReadCSVFile(const char* input_fn) {
 
 	_csvfilestream.open(input_fn);
 
-    vector<vector<string> > csv_content = CSVReader::readCSV(_csvfilestream);
+    std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(_csvfilestream);
     double x,y,z, p[3];
     double scalar;
 	// The CSV iterator is from here:
@@ -80,7 +80,7 @@ void LaShellPointsCSV::ReadCSVFile(const char* input_fn) {
 	for (int i=0;i<csv_content.size();i++)
     {
         x=-1e10; y=-1e10; z=-1e10; scalar=-1;
-		vector<string> line = csv_content[i];
+		std::vector<std::string> line = csv_content[i];
 
         for (int j=0;j<line.size();j++)
 		{
@@ -91,21 +91,21 @@ void LaShellPointsCSV::ReadCSVFile(const char* input_fn) {
                 else if (j==2) z = num ;
                 else if (j==3) scalar = num;
             }else {
-                cout << "Encountered an entry that is not a number, header? " << line[j] << endl;
+                std::cout << "Encountered an entry that is not a number, header? " << line[j] << std::endl;
             }
 		}
 
         if (x>-1e10 && y>-1e10 && z>-1e10)
         {
             p[0] = _scaling_factor*x; p[1] = _scaling_factor*y; p[2] = _scaling_factor*z;
-            //cout << "reading point " << x << "," << y << "," << z << "," << scalar << endl;
+            //std::cout << "reading point " << x << "," << y << "," << z << "," << scalar << std::endl;
             _point_set->InsertNextPoint(p);
 
         }
 
         if (scalar > -1e9 && scalar < 1e9 )
         {
-            //cout << scalar << endl;
+            //std::cout << scalar << std::endl;
             _scalars.push_back(scalar);         // _scalars correspond to points in _point_set
         }
         else  {
@@ -170,7 +170,7 @@ void LaShellPointsCSV::LocateNeighboursOfPoints()
         }
     }
 
-    cout << "Neigbbour point size = " << _neighbour_point_set.size() << endl;
+    std::cout << "Neigbbour point size = " << _neighbour_point_set.size() << std::endl;
 
 }
 
@@ -231,7 +231,7 @@ void LaShellPointsCSV::InsertScalarData() {
         mesh->GetPointData()->AddArray(new_scalar);
     }
     else {
-        cout << "Warning: Writing to field data .. ";
+        std::cout << "Warning: Writing to field data .. ";
         mesh->GetFieldData()->AddArray(new_scalar);
     }
 
@@ -268,7 +268,7 @@ void LaShellPointsCSV::Update()
 {
     LocatePoints();
 
-    ofstream out;
+    std::ofstream out;
     double xyz[3], xyz_t[3];
     vtkSmartPointer<vtkPolyData> mesh = vtkSmartPointer<vtkPolyData>::New();
     _source_la->GetMesh3D(mesh);
@@ -293,13 +293,13 @@ void LaShellPointsCSV::Update()
                     {
                         out << "," << _neighbour_point_set[i][j];
                     }
-                    out << endl;
+                    out << std::endl;
                 }
                 else
-                    out << endl;
+                    out << std::endl;
             }
             else {
-                out << endl;
+                out << std::endl;
             }
         }
 

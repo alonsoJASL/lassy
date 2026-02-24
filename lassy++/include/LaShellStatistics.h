@@ -23,14 +23,14 @@
 #include <string>
 #include <map>
 
-using namespace std; 
+; 
 
 class LaShellStatistics : public LaShellAlgorithms {
 
 	LaShell* _source_la;
 	
 	int _operation; 
-    map<string, double> _stats;
+    std::map<std::string, double> _stats;
 
 public:
 		

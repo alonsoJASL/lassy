@@ -6,7 +6,7 @@
 #include <string>      // using string
 #include "../include/LaShellAssignLabels.h"
 
-using namespace std;
+;
 
 
 LaShellAssignLabels::LaShellAssignLabels(){
@@ -46,14 +46,14 @@ void LaShellAssignLabels::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
   vtkSmartPointer<vtkIdList> cellIdList = vtkSmartPointer<vtkIdList>::New();
   mesh->GetPointCells(seed, cellIdList);
 
-  //cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << endl;
+  //std::cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << std::endl;
 
   //loop through all the cells that use the seed point
 	for(vtkIdType i = 0; i < cellIdList->GetNumberOfIds(); i++)
 	{
 
 		vtkCell* cell = mesh->GetCell(cellIdList->GetId(i));
-		//cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << endl;
+		//std::cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << std::endl;
 
 		//if the cell doesn't have any edges, it is a line
 		if(cell->GetNumberOfEdges() <= 0)
@@ -68,7 +68,7 @@ void LaShellAssignLabels::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
 			vtkCell* edge = cell->GetEdge(e);
 
 			vtkIdList* pointIdList = edge->GetPointIds();
-			//cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << endl;
+			//std::cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << std::endl;
 
 			if(pointIdList->GetId(0) == seed || pointIdList->GetId(1) == seed)
 			{
@@ -83,7 +83,7 @@ void LaShellAssignLabels::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
 			}
 		}
 	}
-   // cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << endl;
+   // std::cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << std::endl;
 }
 
 
@@ -133,7 +133,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 	bool isRV = keypressed =='r' || keypressed=='R';
 	bool isBa = keypressed =='b' || keypressed=='B';
 	bool isAp = keypressed =='a' || keypressed=='A';
-	bool isEpi = keypressed=='L' || keypressed=='R';
+	bool isEpi = keypressed=='L' || keypressed=='R';
 
 	int sectionCode;
 	if(isLV)
@@ -164,7 +164,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		pointID = LaShellAssignLabels::GetFirstCellVertex(poly_data, cellID, pick_position);
 		double picked_scalar = poly_data->GetPointData()->GetScalars()->GetTuple1(pointID);
 
-		cout << "Point id picked = " << pointID << " with value:" << picked_scalar
+		std::cout << "Point id picked = " << pointID << " with value:" << picked_scalar
 			<< " and co-ordinates of its position = "
 			<< pick_position[0] << ", " << pick_position[1] << "," << pick_position[2]
 			<< ")\n";
@@ -174,7 +174,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		iren->Render();
 		delete[] pick_position;
 	}
-	else if (isLV || isRV || isAp || isBa){
+	else if (isLV || isRV || isAp || isBa){
 		char key = iren->GetKeyCode();
 		double *pick_position = new double[3];
 
@@ -196,7 +196,7 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		this_class_obj->_labelsAssigned.at(picked_scalar-1) = 1;
 		this_class_obj->_codearray.push_back(sectionCode);
 
-		cout << "Key pressed = [" << key << "] with label: " << picked_scalar
+		std::cout << "Key pressed = [" << key << "] with label: " << picked_scalar
 			<< " and code:" << sectionCode
 			<< "\n";
 
@@ -206,8 +206,8 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		delete[] pick_position;
 	}
 	else if (iren->GetKeyCode()=='s'){
-		ofstream out_ID, out_CSV;
-		stringstream ss_ID, ss_CSV;
+		std::ofstream out_ID, out_CSV;
+		std::stringstream ss_ID, ss_CSV;
 		int lim = this_class_obj->_pointidarray.size();
 
 		ss_ID << "pointsIDlist.txt";
@@ -215,20 +215,20 @@ void LaShellAssignLabels::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 		out_ID.open(ss_ID.str().c_str(), std::ios_base::trunc);
 		out_CSV.open(ss_CSV.str().c_str(), std::ios_base::trunc);
 		for(int ix=0;ix<lim;ix++){
-			out_ID  << this_class_obj->_pointidarray[ix] << endl;
+			out_ID  << this_class_obj->_pointidarray[ix] << std::endl;
 			out_CSV << this_class_obj->_assignedlabels[ix] << " "
-							<< this_class_obj->_codearray[ix] << endl;
+							<< this_class_obj->_codearray[ix] << std::endl;
 		}
 		out_ID.close();
 		out_CSV.close();
 
-		cout << "File: pointIDList.txt created. You can exit the application." << endl;
+		std::cout << "File: pointIDList.txt created. You can exit the application." << std::endl;
 	}
 	else if(iren->GetKeyCode()=='m'){ //look for missing labels
 		int N = this_class_obj->_labelsinmesh.size();
 		for(int ix=0; ix<N; ix++){
-			cout << this_class_obj->_labelsinmesh[ix] << " "
-					 << this_class_obj->_labelsAssigned[ix] << endl;
+			std::cout << this_class_obj->_labelsinmesh[ix] << " "
+					 << this_class_obj->_labelsAssigned[ix] << std::endl;
 		}
 	}
 	else if(iren->GetKeyCode()=='d'){
@@ -280,8 +280,8 @@ void LaShellAssignLabels::Run(){
 		if (s < min_scalar)
 			min_scalar = s;
 	}
-	cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
-			 << ") scalars " << endl;
+	std::cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
+			 << ") scalars " << std::endl;
 
 	for(int ix=min_scalar; ix<=max_scalar; ix++){
 		_labelsinmesh.push_back(ix);

@@ -4,7 +4,7 @@
 #include <string>      // using string
 #include "../include/LaImageContour.h"
 
-using namespace std;
+;
 
 
 LaImageContour::LaImageContour()
@@ -49,7 +49,7 @@ void LaImageContour::Update()
 
 	if (max_x != max_x2 || max_y != max_y2 || max_z != max_z2)
 	{
-		cerr << "\n\nERROR: The greyscale and input image dimensions dont match!\n";
+		std::cerr << "\n\nERROR: The greyscale and input image dimensions dont match!\n";
 		exit(1); 
 	}
 

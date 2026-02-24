@@ -27,21 +27,21 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 
-				else if (string(argv[i]) == "-t") {
+				else if (std::string(argv[i]) == "-t") {
 					fill_threshold = atof(argv[i + 1]);
 					foundArgs2 = true;
 				}
 
-				else if (string(argv[i]) == "-n") {
+				else if (std::string(argv[i]) == "-n") {
 					neighbourhood_size = atoi(argv[i + 1]);
 					foundArgs2 = true;
 				}
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 
 				}
@@ -54,13 +54,13 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1))
 	{
-		cerr << "Check your parameters\n\nUsage:"
+		std::cerr << "Check your parameters\n\nUsage:"
 			"\nExtracts mesh data from a user-defined trajectory on mesh. Mesh data should be Point Scalars (VTK)"
 			"\n(Mandatory)\n\t-i <source_mesh_vtk>"
 			"\n\n(optional)\n\t-t <the threshold value for determining filling>"
 			"\n\t-n <neighbourhood size, default = 3>"
 			"\n\t-o <specify output CSV filename, otherwise the name defaults to encircle.csv>"
-			"\n\nNote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertices are 1-order neighbours"<< endl;
+			"\n\nNote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertices are 1-order neighbours"<< std::endl;
 
 
 		exit(1);
@@ -85,7 +85,7 @@ int main(int argc, char * argv[])
 
 		application->SetInputData(source);
 
-		cout << "Waiting for you to pick points on the mesh to draw a line, \nor I could complete a circle from your picked points"
+		std::cout << "Waiting for you to pick points on the mesh to draw a line, \nor I could complete a circle from your picked points"
 		"\n - Press x on keyboard for picking points on the mesh\n - Press l for drawing a line between your points and extract data\n - Press c to draw circle between points and extract data\n\n";
 		application->Run();
 

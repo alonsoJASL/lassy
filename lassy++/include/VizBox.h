@@ -37,7 +37,7 @@
 #include <vtkPlane.h>
 #include <vtkNamedColors.h>
 
-using namespace std; 
+; 
 
 #include "../include/LaImage.h"
 #include "../include/LaShell.h"

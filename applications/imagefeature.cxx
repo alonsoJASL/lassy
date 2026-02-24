@@ -29,29 +29,29 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs2 = true; 
 				}
 
-				else if (string(argv[i]) == "-m") {
+				else if (std::string(argv[i]) == "-m") {
 					input_f2 = argv[i + 1];
 					foundArgs3 = true;
 				}
 
-				else if (string(argv[i]) == "-p") {
+				else if (std::string(argv[i]) == "-p") {
 					pixel_value = atoi(argv[i + 1]);
 					
 				}
 
 			
 			}
-			else if (string(argv[i]) == "--haralick") {
+			else if (std::string(argv[i]) == "--haralick") {
 				isHaralick = true;
 			}
 			
@@ -60,16 +60,16 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nExtract image features"
 			"\n(Mandatory)\n\t-i <img> \n\t-m <binary mask>\n\t-o <new csv filename>\n\t-p pixel value to read\n\n"
-			"(Optional)\n\t--haralick - For Haralick feature output" << endl;
+			"(Optional)\n\t--haralick - For Haralick feature output" << std::endl;
 			
 		exit(1);
 	}
 	else
 	{
-		cout << "Only reading pixels with value " << pixel_value << endl;
+		std::cout << "Only reading pixels with value " << pixel_value << std::endl;
 		LaImage* org_img = new LaImage(input_f1);
 		LaImage* mask = new LaImage(input_f2);
 		

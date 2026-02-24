@@ -5,13 +5,13 @@
 #include <string>      // using string
 #include "../include/LaShellShellArithmetic.h"
 
-using namespace std;
+;
 
 
 LaShellShellArithmetic::LaShellShellArithmetic()
 {
 	_output_la = new LaShell();
-	_operation = ADD;
+	_operation = Operation::Add;
 	_factor = 1.0; 
 	_single_shell = false; 
 	_single_shell_value = 0;
@@ -45,19 +45,19 @@ LaShell* LaShellShellArithmetic::GetOutput() {
 }
 
 void LaShellShellArithmetic::SetArithmetricOperationToAdd() {
-	_operation = ADD; 
+	_operation = Operation::Add; 
 }
 
 void LaShellShellArithmetic::SetArithmetricOperationToSubtract() {
-	_operation = SUBTRACT;
+	_operation = Operation::Subtract;
 }
 
 void LaShellShellArithmetic::SetArithmetricOperationToMultiply(){
-	_operation = MULTIPLY;
+	_operation = Operation::Multiply;
 }
 
 void LaShellShellArithmetic::SetArithmetricOperationToDivide(){
-	_operation = DIVIDE; 
+	_operation = Operation::Divide; 
 }
 
 void LaShellShellArithmetic::SetFactor(double factor) {
@@ -91,12 +91,12 @@ void LaShellShellArithmetic::Update() {
 	Scalars_Poly1 = vtkFloatArray::SafeDownCast(Source_Poly1->GetPointData()->GetScalars()); 
 
 	if (!_single_shell) {
-		cout << "Two shells mode \n\n";
+		std::cout << "Two shells mode \n\n";
 		_source_la_2->GetMesh3D(Source_Poly2);
 		Scalars_Poly2 = vtkFloatArray::SafeDownCast(Source_Poly2->GetPointData()->GetScalars());
 	}
 	else {
-		cout << "Single shell model\n\n";
+		std::cout << "Single shell model\n\n";
 	}
 
 	double scalar2;
@@ -114,16 +114,16 @@ void LaShellShellArithmetic::Update() {
 
 		switch (_operation)
 		{
-			case ADD: 
+			case Operation::Add: 
 				result = scalar1 + scalar2; 
 				break;
-			case SUBTRACT:
+			case Operation::Subtract:
 				result = scalar1 - scalar2; 
 				break;
-			case MULTIPLY:
+			case Operation::Multiply:
 				result = scalar1 * scalar2; 
 				break;
-			case DIVIDE:
+			case Operation::Divide:
 				if (scalar2 != 0)
 					result = scalar1 / scalar2;
 				else

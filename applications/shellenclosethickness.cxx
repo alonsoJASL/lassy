@@ -23,12 +23,12 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs2 = true; 
 				}
@@ -40,10 +40,10 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 ))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nCalculates the distance within the shell enclosure"
 			"\nThe final enclosed thickness is mapped to the same shell structure"
-			"\n(Mandatory)\n\t-i <input_mesh_vtk> \n\t-o <output_vtk>" << endl; 
+			"\n(Mandatory)\n\t-i <input_mesh_vtk> \n\t-o <output_vtk>" << std::endl; 
 			
 		exit(1);
 	}

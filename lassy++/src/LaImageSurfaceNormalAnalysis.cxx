@@ -6,7 +6,7 @@
 #include <string>      // using string
 #include "../include/LaImageSurfaceNormalAnalysis.h"
 
-using namespace std;
+;
 
 
 LaImageSurfaceNormalAnalysis::LaImageSurfaceNormalAnalysis()
@@ -96,8 +96,8 @@ void LaImageSurfaceNormalAnalysis::SurfaceProjectionOnPoints()
 	// clear intensity log file
 	/*std::ofstream ofs;
 	ofs.open("intensity_log.csv", std::ofstream::out | std::ofstream::trunc);
-	ofs << "Please note: Pixels on the normal are printed below, but the aggregate (mean, max, integral, etc.) is obtained from 3x3x3 neighbourhood around each pixel " << endl;
-	ofs << "NormalStep,CentrePixel_X,CentrePixelY,CentrePixelZ,PixelValue" << endl;
+	ofs << "Please note: Pixels on the normal are printed below, but the aggregate (mean, max, integral, etc.) is obtained from 3x3x3 neighbourhood around each pixel " << std::endl;
+	ofs << "NormalStep,CentrePixel_X,CentrePixelY,CentrePixelZ,PixelValue" << std::endl;
 	ofs.close();*/
 
 	vtkSmartPointer<vtkFloatArray> pointNormals = vtkFloatArray::SafeDownCast(_mesh_3d->GetPointData()->GetNormals());
@@ -195,7 +195,7 @@ void LaImageSurfaceNormalAnalysis::Update() {
 
 	if  (!_shell_only_no_mapping) 
 	{
-		cout << "\nConverted mask to shell, now performing surface analysis  .. " << endl;
+		std::cout << "\nConverted mask to shell, now performing surface analysis  .. " << std::endl;
 		
 
 		//SurfaceProjection(_vtk_logging);

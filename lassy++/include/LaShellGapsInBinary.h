@@ -79,14 +79,14 @@ public:
     int _neighbourhood_size;
     int _run_count;
     double _fill_threshold;
-    vector<int> _GlobalPointContainer;
+    std::vector<int> _GlobalPointContainer;
     bool _fileOutNameUserDefined;
 
-    vector<pair<int, int> > _visited_point_list;		// stores the neighbours around a point
-    string _fileOutName;
+    std::vector<std::pair<int, int> > _visited_point_list;		// stores the neighbours around a point
+    std::string _fileOutName;
 
-		vector<vtkSmartPointer<vtkActor> > _actors;				// actors representing shortest path betwee points
-    vector<vtkSmartPointer<vtkPolyData> > _paths;
+		std::vector<vtkSmartPointer<vtkActor> > _actors;				// actors representing shortest path betwee points
+    std::vector<vtkSmartPointer<vtkPolyData> > _paths;
 
     vtkSmartPointer<vtkCellPicker> _cell_picker;
 		vtkSmartPointer<vtkPointPicker> _point_picker;
@@ -94,26 +94,26 @@ public:
     vtkSmartPointer<vtkRenderWindow> _RenderWindow;
     vtkSmartPointer<vtkRenderWindowInteractor> _InteractorRenderWindow;
 
-    vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > _shortestPaths;
-    vector<int> _pointidarray;
-		vector<int> _corridoridarray;
-    vector<vtkSmartPointer<vtkPolyDataMapper> > _pathMappers;			// container to store shortest paths between points selected by user
+    std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > _shortestPaths;
+    std::vector<int> _pointidarray;
+		std::vector<int> _corridoridarray;
+    std::vector<vtkSmartPointer<vtkPolyDataMapper> > _pathMappers;			// container to store shortest paths between points selected by user
 
     // Helper Functions
     int RecursivePointNeighbours(vtkIdType pointId, int order);
     bool InsertPointIntoVisitedList(vtkIdType id);
-    void RetainPointsInGlobalContainer(vector<int> p);
-    bool IsThisNeighbourhoodCompletelyFilled(vector<int>);
-		void NeighbourhoodFillingPercentage(vector<int> points);
-    void GetNeighboursAroundPoint2(int pointID, vector<pair<int, int> >& pointNeighbourAndOrder, int max_order);
-    void StatsInNeighbourhood(vector<int> points, double& mean, double& variance);
+    void RetainPointsInGlobalContainer(std::vector<int> p);
+    bool IsThisNeighbourhoodCompletelyFilled(std::vector<int>);
+		void NeighbourhoodFillingPercentage(std::vector<int> points);
+    void GetNeighboursAroundPoint2(int pointID, std::vector<std::pair<int, int> >& pointNeighbourAndOrder, int max_order);
+    void StatsInNeighbourhood(std::vector<int> points, double& mean, double& variance);
 		void SetInputData(LaShell* shell);
     void SetNeighbourhoodSize(int s);
     void SetOutputFileName(const char* filename);
     void SetFillThreshold(double s);
-    void ExtractImageDataAlongTrajectory(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
-		void ExtractCorridorData(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
-		void getCorridorPoints(vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
+    void ExtractImageDataAlongTrajectory(std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
+		void ExtractCorridorData(std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
+		void getCorridorPoints(std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths);
 		bool InsertPointIntoVisitedList2(vtkIdType id, int order);
 
 

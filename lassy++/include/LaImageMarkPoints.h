@@ -32,7 +32,7 @@
 #include "LaImageAlgorithms.h"
 #include "LaImage.h"
 
-using namespace std;
+;
 
 class LaImageMarkPoints : public LaImageAlgorithms {
 
@@ -41,7 +41,7 @@ protected:
 	LaImage* _input_img;
      typedef itk::Image< unsigned short, 3 >  ImageType;
 
-    ifstream _csvfilestream;
+    std::ifstream _csvfilestream;
     vtkSmartPointer<vtkPoints> _point_set;  // csv points - points listed in csv file
     vtkSmartPointer<vtkPoints> _point_set_t;  // csv points - closest point set (also in csv file)
     double _scaling_factor;

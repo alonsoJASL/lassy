@@ -33,7 +33,7 @@
 #include "LaShellAlgorithms.h"
 #include "LaShell.h"
 
-using namespace std;
+;
 
 class LaShell2ShellPointsCSV : public LaShellAlgorithms {
 
@@ -43,14 +43,14 @@ protected:
     LaShell* _target_la;
     LaShell* _source_in_target_la;
 
-    ifstream _csvfilestream;
+    std::ifstream _csvfilestream;
     vtkSmartPointer<vtkPoints> _point_set;  // csv points - points listed in csv file
     
     int _scaling_factor;
     
     // containers 
-    vector<int> _closest_point_ids_in_source;         // stores the  closest point's id to each xyz point listed on csv
-    vector<int> _closest_point_ids_in_target;
+    std::vector<int> _closest_point_ids_in_source;         // stores the  closest point's id to each xyz point listed on csv
+    std::vector<int> _closest_point_ids_in_target;
     char* _csv_filename;
     
 public:

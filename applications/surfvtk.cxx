@@ -20,16 +20,16 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i1") {
+				if (std::string(argv[i]) == "-i1") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs3 = true; 
 				}
@@ -41,8 +41,8 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
-			"\n(Mandatory)\n\t-i1 <3d image> \n\t-i2 <surface_mesh_vtk> \n\t-o <output_vtk>" << endl; 
+		std::cerr << "Cheeck your parameters\n\nUsage:"
+			"\n(Mandatory)\n\t-i1 <3d image> \n\t-i2 <surface_mesh_vtk> \n\t-o <output_vtk>" << std::endl; 
 			
 
 		exit(1);

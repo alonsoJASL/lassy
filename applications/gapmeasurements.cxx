@@ -31,24 +31,24 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
 
-				else if (string(argv[i]) == "-t") {
+				else if (std::string(argv[i]) == "-t") {
 					fill_threshold = atof(argv[i + 1]);
 					foundArgs2 = true;
 				}
 
-				else if (string(argv[i]) == "-n") {
+				else if (std::string(argv[i]) == "-n") {
 					neighbourhood_size = atoi(argv[i + 1]);
 					foundArgs2 = true;
 				}
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 				}
-				else if(string(argv[i]) == "-l"){
+				else if(std::string(argv[i]) == "-l"){
 					pointidlist_f = argv[i + 1];
 					foundArgs3 = true;
 				}
@@ -59,7 +59,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1))
 	{
-		cerr << "Check your parameters\n\nUsage:"
+		std::cerr << "Check your parameters\n\nUsage:"
 			"\nExtracts mesh data from a user-defined trajectory on mesh. "
 			" Mesh data should be Point Scalars (VTK).\n Convert your Cell-Scalar meshes with ./mesh2vtk binary."
 			"\n(Mandatory)\n\t-i <source_mesh_vtk>"
@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
 			"\n\t-t <the threshold value for determining filling>"
 			"\n\t-n <neighbourhood size, default = 3>"
 			"\n\t-o <specify output CSV filename, otherwise the name defaults to encircle.csv>"
-			"\n\nNote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertices are 1-order neighbours"<< endl;
+			"\n\nNote the neighbourhood size n is the n-th order neighbours that are included, adjacent vertices are 1-order neighbours"<< std::endl;
 		exit(1);
 	}
 	else{
@@ -88,10 +88,10 @@ int main(int argc, char * argv[])
 		}
 
 		application->SetInputData(source);
-		cout << "input data OK..." << endl;
+		std::cout << "input data OK..." << std::endl;
 
 		if(!(foundArgs3)){
-				cout << "Waiting for you to pick points on the mesh to draw a line, \n"
+				std::cout << "Waiting for you to pick points on the mesh to draw a line, \n"
 				"or I could complete a circle from your picked points"
 				"\n - Press x on keyboard for picking points on the mesh"
 				"\n - Press l for drawing a line between your points and extract data"
@@ -100,15 +100,15 @@ int main(int argc, char * argv[])
 				application->Run();
 		}
 		else{
-			cout << "Reading from file: " <<  pointidlist_f << ", and generating an "
+			std::cout << "Reading from file: " <<  pointidlist_f << ", and generating an "
 			"exploration corridor with a \nneighbourhood depth of " << neighbourhood_size
-			<< " and threshold " << fill_threshold << endl;
+			<< " and threshold " << fill_threshold << std::endl;
 
-			vector<int> pointsIDlist;
+			std::vector<int> pointsIDlist;
 			int auxID;
-			ifstream infile;
-			string line;
-			stringstream ss;
+			std::ifstream infile;
+			std::string line;
+			std::stringstream ss;
 			ss << "pointsIDlist.txt";
 			infile.open(ss.str().c_str(), std::ios_base::in);
 
@@ -117,16 +117,16 @@ int main(int argc, char * argv[])
 					pointsIDlist.push_back(auxID);
 				}
 				infile.close();
-				cout << "File: pointsIDlist.txt read. Calculating." << endl;
+				std::cout << "File: pointsIDlist.txt read. Calculating." << std::endl;
 
 				for (int ix=0; ix<pointsIDlist.size(); ix++){
-					cout << pointsIDlist[ix] << endl;
+					std::cout << pointsIDlist[ix] << std::endl;
 				}
 				// Run routine
 				application->CorridorFromPointList(pointsIDlist);
 			}
 			else {
-				cout << "Unable to open file" << endl;
+				std::cout << "Unable to open file" << std::endl;
 			}
 		}
 	}

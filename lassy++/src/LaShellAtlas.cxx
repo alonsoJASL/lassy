@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellAtlas.h"
 
-using namespace std;
+;
 
 
 void LaShellAtlas::SetAtlasConstructionToUseDirectCopy()
@@ -18,13 +18,13 @@ void LaShellAtlas::SetAtlasConstructionToUseClosestPoint()
 	_which_method = USE_CLOSEST_POINT; 
 }
 
-void LaShellAtlas::ReadShellComputeDisplacement(string poly_data_fn)
+void LaShellAtlas::ReadShellComputeDisplacement(std::string poly_data_fn)
 {
 	vtkSmartPointer<vtkPolyDataReader> reader1 = vtkSmartPointer<vtkPolyDataReader>::New();
 	reader1->SetFileName(poly_data_fn.c_str());
 	reader1->Update();
 
-	cout << "Processing next file for displacment: " << poly_data_fn << " ... ";
+	std::cout << "Processing next file for displacment: " << poly_data_fn << " ... ";
 	vtkSmartPointer<vtkPolyData> TargetPolyData = vtkSmartPointer<vtkPolyData>::New();
 	TargetPolyData = reader1->GetOutput();
 
@@ -38,7 +38,7 @@ void LaShellAtlas::ReadShellComputeDisplacement(string poly_data_fn)
 	Target_Scalars = vtkFloatArray::SafeDownCast(TargetPolyData->GetPointData()->GetScalars());
 
 
-	_displacements.resize(_SourcePolyData->GetNumberOfPoints(), vector<double>(_total_targets));
+	_displacements.resize(_SourcePolyData->GetNumberOfPoints(), std::vector<double>(_total_targets));
 
 	double source_vertex[3], target_vertex[3];
 	
@@ -70,7 +70,7 @@ void LaShellAtlas::ReadShellComputeDisplacement(string poly_data_fn)
 
 	_num_targets_read++; 
 
-	cout << "completed!" << endl;
+	std::cout << "completed!" << std::endl;
 }
 
 

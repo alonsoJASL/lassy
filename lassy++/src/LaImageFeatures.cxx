@@ -1,6 +1,7 @@
+#include <iomanip>
 #include "../include/LaImageFeatures.h"
 
-using namespace std;
+;
 
 
 LaImageFeatures::LaImageFeatures()
@@ -59,7 +60,7 @@ void LaImageFeatures::SetInputData(LaImage* img) {
 	}
 
 	// set feature vector 
-	_image_features = vector<vector<double> >(_total_size, vector<double>(_max_features));
+	_image_features = std::vector<std::vector<double> >(_total_size, std::vector<double>(_max_features));
 
 	for (int i = 0; i < _total_size; i++)
 	{
@@ -105,7 +106,7 @@ void LaImageFeatures::SetFeatureValue(int x, int y, int z, int feature_index, do
 			return; 
 		}
 	}
-	cout << "\nError in SetFeatureValue(): Could not assign feature value - out of bounds" << endl;
+	std::cout << "\nError in SetFeatureValue(): Could not assign feature value - out of bounds" << std::endl;
 
 }
 
@@ -294,10 +295,10 @@ void LaImageFeatures::Update()
 	ExtractFeature_SignedMaurerDistance();
 
 	// Write Features to File 
-	ofstream out;
+	std::ofstream out;
 	out.open(_csv_filename, std::fstream::out | std::fstream::trunc);
-	out << "Seq,Intensity,X,Y,Z,GradMag,MaurerDist,Class" << endl;
-	stringstream ss; 
+	out << "Seq,Intensity,X,Y,Z,GradMag,MaurerDist,Class" << std::endl;
+	std::stringstream ss; 
 	
 	int icount = 0;
 
@@ -320,11 +321,11 @@ void LaImageFeatures::Update()
 					if (k == 0)
 						ss << icount++ << "," << feature_value;
 					else 
-						ss << "," <<  setprecision(4) << feature_value;
+						ss << "," <<  std::setprecision(4) << feature_value;
 				}
 
 			}
-			ss << endl; 
+			ss << std::endl; 
 			out << ss.str().c_str(); 
 			ss.str(std::string());
 			
@@ -350,7 +351,7 @@ void LaImageFeatures::Update_Haralick()
 	InputImageType::Pointer mask = _mask_image->GetImage();
 	InputImageType::Pointer org_image = _image->GetImage();
 	
-	ofstream out;
+	std::ofstream out;
 	out.open(_csv_filename, std::fstream::out | std::fstream::trunc);
 
 	roiType::Pointer roi = roiType::New();
@@ -373,7 +374,7 @@ void LaImageFeatures::Update_Haralick()
 
 	centerIndex = 1;		// only one direction 
 	
-	out << "Offset,X,Y,Z,inertia,correlation,energy,intensity" << endl;
+	out << "Offset,X,Y,Z,inertia,correlation,energy,intensity" << std::endl;
 	for (unsigned int d = 0; d < centerIndex; d++)		// 13 offsets  i.e. 13 directions 
 	{
 		offset = neighborhood.GetOffset(d);
@@ -408,14 +409,14 @@ void LaImageFeatures::Update_Haralick()
 						featureCalc->SetInput(glcmGenerator->GetOutput());
 						featureCalc->Update();
 
-						// total 9 features 
-						double inertia = featureCalc->GetFeature(Hist2FeaturesType::Inertia);
-						double correlation = featureCalc->GetFeature(Hist2FeaturesType::Correlation);
-						double energy = featureCalc->GetFeature(Hist2FeaturesType::Energy);
+						// total 9 features
+						double inertia = featureCalc->GetFeature(Hist2FeaturesType::TextureFeatureEnum::Inertia);
+						double correlation = featureCalc->GetFeature(Hist2FeaturesType::TextureFeatureEnum::Correlation);
+						double energy = featureCalc->GetFeature(Hist2FeaturesType::TextureFeatureEnum::Energy);
 						short intensity; 
 						_image->GetIntensityAt(x, y, z, intensity);
 
-						out << d << "," << x << "," << y << "," << z << "," << inertia << "," << correlation << "," << energy <<"," << intensity << endl;
+						out << d << "," << x << "," << y << "," << z << "," << inertia << "," << correlation << "," << energy <<"," << intensity << std::endl;
 					
 					}	// end if 
 				}		// end for 

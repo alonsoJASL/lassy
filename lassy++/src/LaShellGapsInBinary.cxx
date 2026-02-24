@@ -6,7 +6,7 @@
 #include <string>      // using string
 #include "../include/LaShellGapsInBinary.h"
 
-using namespace std;
+;
 
 
 LaShellGapsInBinary::LaShellGapsInBinary()
@@ -70,14 +70,14 @@ void LaShellGapsInBinary::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
   vtkSmartPointer<vtkIdList> cellIdList = vtkSmartPointer<vtkIdList>::New();
   mesh->GetPointCells(seed, cellIdList);
 
-  //cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << endl;
+  //std::cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << std::endl;
 
   //loop through all the cells that use the seed point
 	for(vtkIdType i = 0; i < cellIdList->GetNumberOfIds(); i++)
 	{
 
 		vtkCell* cell = mesh->GetCell(cellIdList->GetId(i));
-		//cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << endl;
+		//std::cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << std::endl;
 
 		//if the cell doesn't have any edges, it is a line
 		if(cell->GetNumberOfEdges() <= 0)
@@ -92,7 +92,7 @@ void LaShellGapsInBinary::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
 			vtkCell* edge = cell->GetEdge(e);
 
 			vtkIdList* pointIdList = edge->GetPointIds();
-			//cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << endl;
+			//std::cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << std::endl;
 
 			if(pointIdList->GetId(0) == seed || pointIdList->GetId(1) == seed)
 			{
@@ -107,10 +107,10 @@ void LaShellGapsInBinary::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh
 			}
 		}
 	}
-   // cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << endl;
+   // std::cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << std::endl;
 }
 
-void LaShellGapsInBinary::RetainPointsInGlobalContainer(vector<int> p)
+void LaShellGapsInBinary::RetainPointsInGlobalContainer(std::vector<int> p)
 {
 	bool found = false;
 	for (int j=0;j<p.size();j++){
@@ -174,7 +174,7 @@ int LaShellGapsInBinary::RecursivePointNeighbours(vtkIdType pointId, int order)
 	}
 }
 
-void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int, int> >& pointNeighbourAndOrder, int max_order)
+void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, std::vector<std::pair<int, int> >& pointNeighbourAndOrder, int max_order)
 {
 	_visited_point_list.clear();			// container that stores neighbours (vertex ids)
 											// during recursive lookup around a mesh vertex
@@ -187,11 +187,11 @@ void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int
 		pointNeighbourAndOrder.push_back(std::make_pair(_visited_point_list[i].first,_visited_point_list[i].second));
 
 	}
-	cout << "This point has (recursive order n = " << max_order << ") = " << pointNeighbourAndOrder.size() << " neighbours";
-	cout << "\n";
+	std::cout << "This point has (recursive order n = " << max_order << ") = " << pointNeighbourAndOrder.size() << " neighbours";
+	std::cout << "\n";
 }
 
-/*void LaShellGapsInBinary::GetNeighboursAroundPoint(int pointID, vector<int>& pointNeighbours, int order)
+/*void LaShellGapsInBinary::GetNeighboursAroundPoint(int pointID, std::vector<int>& pointNeighbours, int order)
 {
 	_visited_point_list.clear();			// container that stores neighbours (vertex ids)
 											// during recursive lookup around a mesh vertex
@@ -203,12 +203,12 @@ void LaShellGapsInBinary::GetNeighboursAroundPoint2(int pointID, vector<pair<int
 		pointNeighbours.push_back(_visited_point_list[i]);
 
 	}
-	cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
-	cout << "\n";
+	std::cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
+	std::cout << "\n";
 
 }*/
 
-bool LaShellGapsInBinary::IsThisNeighbourhoodCompletelyFilled(vector<int> points)
+bool LaShellGapsInBinary::IsThisNeighbourhoodCompletelyFilled(std::vector<int> points)
 {
 	double fillingcounter = 0;
 	double total = points.size();
@@ -216,15 +216,15 @@ bool LaShellGapsInBinary::IsThisNeighbourhoodCompletelyFilled(vector<int> points
 	// bring al lthe scalars to an array
 	vtkFloatArray* scalars = vtkFloatArray::New();
 	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
-	cout << "Now exploring this point's neighbourhood: " << endl;
+	std::cout << "Now exploring this point's neighbourhood: " << std::endl;
 	for (int i=0;i<points.size();i++){
-		cout << "neighbour point = " << points[i] << ", scar value = " << scalars->GetTuple1(points[i]) << ", threshold satisfy? " << (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No") << endl;
+		std::cout << "neighbour point = " << points[i] << ", scar value = " << scalars->GetTuple1(points[i]) << ", threshold satisfy? " << (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No") << std::endl;
 		if (scalars->GetTuple1(points[i]) > _fill_threshold)
 			fillingcounter++;
 	}
 
 	double percentage_in_neighbourhood =  100*(fillingcounter/total);
-	cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
+	std::cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
 			<< ", threshold satisfy? "
 			<< (percentage_in_neighbourhood > _neighbourhood_size ? "Yes":"No")
 			<<"\n\n";
@@ -235,37 +235,37 @@ bool LaShellGapsInBinary::IsThisNeighbourhoodCompletelyFilled(vector<int> points
 		return false;
 }
 
-void LaShellGapsInBinary::NeighbourhoodFillingPercentage(vector<int> points){
+void LaShellGapsInBinary::NeighbourhoodFillingPercentage(std::vector<int> points){
 	double fillingcounter = 0;
 	double total = points.size();
 
 	// bring al lthe scalars to an array
 	vtkFloatArray* scalars = vtkFloatArray::New();
 	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
-	cout << "Exploring the predeteremined neighbourhood at threshold = "
-			<< _fill_threshold << endl;
-	cout << "Number of points: " << total << endl;
+	std::cout << "Exploring the predeteremined neighbourhood at threshold = "
+			<< _fill_threshold << std::endl;
+	std::cout << "Number of points: " << total << std::endl;
 	for (int i=0;i<points.size();i++){
-		// cout << "Neighbour point = " << points[i]
+		// std::cout << "Neighbour point = " << points[i]
 		// 		<< ", scar value = " << scalars->GetTuple1(points[i])
 		// 		<< ", threshold satisfy? "
 		// 		<< (scalars->GetTuple1(points[i]) > _fill_threshold ? "Yes":"No")
-		// 		<< endl;
+		// 		<< std::endl;
 		if (scalars->GetTuple1(points[i]) > _fill_threshold)
 			fillingcounter++;
 	}
 
 	double percentage_in_neighbourhood =  100*(fillingcounter/total);
-	cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
+	std::cout << "% scar in this neighbourhood = " << percentage_in_neighbourhood
 			<< ", threshold satisfy? "
 			<< (percentage_in_neighbourhood > _neighbourhood_size ? "Yes":"No")
 			<<"\n\n";
 
 }
 
-void LaShellGapsInBinary::StatsInNeighbourhood(vector<int> points, double& mean, double& variance)
+void LaShellGapsInBinary::StatsInNeighbourhood(std::vector<int> points, double& mean, double& variance)
 {
-	vector<double> point_neighbours;
+	std::vector<double> point_neighbours;
 	double isScar = 0, std;
 	vtkFloatArray* scalars = vtkFloatArray::New();
 	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());  // bring al lthe scalars to an array
@@ -280,21 +280,21 @@ void LaShellGapsInBinary::StatsInNeighbourhood(vector<int> points, double& mean,
 }
 
 void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
-	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
+	std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
 	double xyz[3];
 	bool ret;
 	double mean, variance;
-	typedef map<vtkIdType, int>::iterator it_type;
-	map<vtkIdType, int> vertex_ids;
+	typedef std::map<vtkIdType, int>::iterator it_type;
+	std::map<vtkIdType, int> vertex_ids;
 	int closestPointID=-1;
-	vector<pair<int, int> > pointNeighbours;
+	std::vector<std::pair<int, int> > pointNeighbours;
 
 	double pathSegmentHasScar=0;
 	int count=0;
-	ofstream out;
+	std::ofstream out;
 	xyz[0]=1e-10; xyz[1]=1e-10; xyz[2]=1e-10;
 
-	stringstream ss;
+	std::stringstream ss;
 
 	if (_fileOutNameUserDefined == false)
 		ss << _fileOutName << _run_count << ".csv";
@@ -302,7 +302,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
 		ss << _fileOutName;
 
 	out.open(ss.str().c_str(), std::ios_base::app);
-	out << "MainVertexSeq,VertexID,X,Y,Z,VertexDepth,MeshScalar" << endl;
+	out << "MainVertexSeq,VertexID,X,Y,Z,VertexDepth,MeshScalar" << std::endl;
 	// the recursive order - how many levels deep around a point do you want to explore?
 	// default is 3 levels deep, meaning neighbours neighbours neighbour.
 	int order = _neighbourhood_size;
@@ -327,16 +327,16 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
 
 		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++){
 			// map avoids duplicates
-			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
+			vertex_ids.insert(std::make_pair(vertices_in_shortest_path->GetId(j),-1));
 																			// only using keys, no associated value always -2
 		}
 	}
 
-	cout << "There were a total of " << vertex_ids.size()
-			<< " vertices in the shortest path you have selected\n" << endl;
+	std::cout << "There were a total of " << vertex_ids.size()
+			<< " vertices in the shortest path you have selected\n" << std::endl;
 
 	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
-		cout << "Exploring around vertex with id = "
+		std::cout << "Exploring around vertex with id = "
 			<< iterator->first << "\n============================\n";
 		double scalar = -1;
 
@@ -347,7 +347,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
 		}
 		out <<  count << "," << iterator->first << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2]
-				<< "," << 0 << "," << scalar << endl;
+				<< "," << 0 << "," << scalar << std::endl;
 		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the vertex id
 		//RetainPointsInGlobalContainer(pointNeighbours);
 		//pointNeighbours.clear();
@@ -366,7 +366,7 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
 			}
 			out <<  count << "," << pointNeighborID << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2] << ","
-				<< pointNeighborOrder << "," << scalar << endl;
+				<< pointNeighborOrder << "," << scalar << std::endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
 		}
 
@@ -387,22 +387,22 @@ void LaShellGapsInBinary::ExtractImageDataAlongTrajectory(
 }
 
 void LaShellGapsInBinary::ExtractCorridorData(
-	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
+	std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
 	double xyz[3];
 	bool ret;
 	double mean, variance;
-	typedef map<vtkIdType, int>::iterator it_type;
-	map<vtkIdType, int> vertex_ids;
+	typedef std::map<vtkIdType, int>::iterator it_type;
+	std::map<vtkIdType, int> vertex_ids;
 	int closestPointID=-1;
-	vector<pair<int, int> > pointNeighbours;
-  vector<int> pointIDsInCorridor;
+	std::vector<std::pair<int, int> > pointNeighbours;
+  std::vector<int> pointIDsInCorridor;
 
 	double pathSegmentHasScar=0;
 	int count=0;
-	ofstream out;
+	std::ofstream out;
 	xyz[0]=1e-10; xyz[1]=1e-10; xyz[2]=1e-10;
 
-	stringstream ss;
+	std::stringstream ss;
 
 	if (_fileOutNameUserDefined == false)
 		ss << _fileOutName << _run_count << ".csv";
@@ -410,7 +410,7 @@ void LaShellGapsInBinary::ExtractCorridorData(
 		ss << _fileOutName;
 
 	out.open(ss.str().c_str(), std::ios_base::app);
-	out << "MainVertexSeq,VertexID,X,Y,Z,VertexDepth,MeshScalar" << endl;
+	out << "MainVertexSeq,VertexID,X,Y,Z,VertexDepth,MeshScalar" << std::endl;
 	// the recursive order - how many levels deep around a point do you want to explore?
 	// default is 3 levels deep, meaning neighbours neighbours neighbour.
 	int order = _neighbourhood_size;
@@ -435,13 +435,13 @@ void LaShellGapsInBinary::ExtractCorridorData(
 
 		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++){
 			// map avoids duplicates
-			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
+			vertex_ids.insert(std::make_pair(vertices_in_shortest_path->GetId(j),-1));
 																			// only using keys, no associated value always -2
 		}
 	}
 
-	cout << "There were a total of " << vertex_ids.size()
-			<< " vertices in the shortest path you have selected\n" << endl;
+	std::cout << "There were a total of " << vertex_ids.size()
+			<< " vertices in the shortest path you have selected\n" << std::endl;
 
 	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
 		double scalar = -1;
@@ -455,7 +455,7 @@ void LaShellGapsInBinary::ExtractCorridorData(
 		}
 		out <<  count << "," << iterator->first << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2]
-				<< "," << 0 << "," << scalar << endl;
+				<< "," << 0 << "," << scalar << std::endl;
 		GetNeighboursAroundPoint2(iterator->first, pointNeighbours, order);			// the key is the
 
 		for (int j=0;j<pointNeighbours.size();j++){
@@ -475,7 +475,7 @@ void LaShellGapsInBinary::ExtractCorridorData(
 			}
 			out <<  count << "," << pointNeighborID << ","
 				<< xyz[0] << "," << xyz[1] << "," << xyz[2] << ","
-				<< pointNeighborOrder << "," << scalar << endl;
+				<< pointNeighborOrder << "," << scalar << std::endl;
 			exploration_corridor->SetTuple1(pointNeighborID, 1);
 			exploration_scalars->SetTuple1(pointNeighborID, scalar);
 		}
@@ -516,7 +516,8 @@ void LaShellGapsInBinary::ExtractCorridorData(
 
 	vtkSmartPointer<vtkThreshold> threshold =
 		vtkSmartPointer<vtkThreshold>::New();
-	threshold->ThresholdByUpper(_fill_threshold);
+	threshold->SetLowerThreshold(_fill_threshold);
+	threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_UPPER);
 	threshold->SetInputArrayToProcess(0, 0, 0,
 		vtkDataObject::FIELD_ASSOCIATION_POINTS,
 		vtkDataSetAttributes::SCALARS);
@@ -546,11 +547,11 @@ void LaShellGapsInBinary::ExtractCorridorData(
 }
 
 void LaShellGapsInBinary::getCorridorPoints(
-	vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
-	typedef map<vtkIdType, int>::iterator it_type;
-	map<vtkIdType, int> vertex_ids;
-	vector<pair<int, int> > pointNeighbours;
-  vector<int> pointIDsInCorridor;
+	std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > allShortestPaths){
+	typedef std::map<vtkIdType, int>::iterator it_type;
+	std::map<vtkIdType, int> vertex_ids;
+	std::vector<std::pair<int, int> > pointNeighbours;
+  std::vector<int> pointIDsInCorridor;
   int order = _neighbourhood_size;
 
 	for (int i=0;i<allShortestPaths.size();i++){
@@ -558,7 +559,7 @@ void LaShellGapsInBinary::getCorridorPoints(
 		vertices_in_shortest_path = allShortestPaths[i]->GetIdList();
 
 		for (int j=0;j<vertices_in_shortest_path->GetNumberOfIds();j++)
-			vertex_ids.insert(make_pair(vertices_in_shortest_path->GetId(j),-1));
+			vertex_ids.insert(std::make_pair(vertices_in_shortest_path->GetId(j),-1));
 	}
 
 	for (it_type iterator = vertex_ids.begin(); iterator != vertex_ids.end(); iterator++){
@@ -590,7 +591,7 @@ vtkIdType LaShellGapsInBinary::GetFirstCellVertex(vtkPolyData* poly, vtkIdType c
 	return vertID;
 }
 
-void LaShellGapsInBinary::CorridorFromPointList(vector<int> points){
+void LaShellGapsInBinary::CorridorFromPointList(std::vector<int> points){
 	vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
 	poly_data = this->GetSourcePolyData();
 	this->_pointidarray = points;
@@ -605,16 +606,16 @@ void LaShellGapsInBinary::CorridorFromPointList(vector<int> points){
 		if(i<lim-1){
 			dijkstra->SetStartVertex(this->_pointidarray[i]);
 			dijkstra->SetEndVertex(this->_pointidarray[i+1]);
-			// cout << "Computing shortest paths between points "
+			// std::cout << "Computing shortest paths between points "
 			// 	<< this->_pointidarray[i] << " and  "
-			// 	<< this->_pointidarray[i+1]  << endl;
+			// 	<< this->_pointidarray[i+1]  << std::endl;
 		}
 		else {
 			dijkstra->SetStartVertex(this->_pointidarray[i]);
 			dijkstra->SetEndVertex(this->_pointidarray[0]);
-			// cout << "Computing shortest paths between points "
+			// std::cout << "Computing shortest paths between points "
 			// 	<< this->_pointidarray[i] << " and  "
-			// 	<< this->_pointidarray[0]  << endl;
+			// 	<< this->_pointidarray[0]  << std::endl;
 		}
 		dijkstra->Update();
 		this->_shortestPaths.push_back(dijkstra);
@@ -675,7 +676,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 
 		pointID = LaShellGapsInBinary::GetFirstCellVertex(poly_data, cellID, pick_position);
 
-		cout << "Point id picked = " << pointID 
+		std::cout << "Point id picked = " << pointID 
 			<< " and co-ordinates of its position = "
 			<< pick_position[0] << ", " << pick_position[1] << "," << pick_position[2]
 			<< ")\n";
@@ -703,12 +704,12 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 					if(i<lim-1){
 						dijkstra->SetStartVertex(this_class_obj->_pointidarray[i]);
 						dijkstra->SetEndVertex(this_class_obj->_pointidarray[i+1]);
-						cout << "Computing shortest paths between points " << this_class_obj->_pointidarray[i] << " and  " << this_class_obj->_pointidarray[i+1]  << endl;
+						std::cout << "Computing shortest paths between points " << this_class_obj->_pointidarray[i] << " and  " << this_class_obj->_pointidarray[i+1]  << std::endl;
 					}
 					else if(iren->GetKeyCode()=='c' && i == lim-1){
 						dijkstra->SetStartVertex(this_class_obj->_pointidarray[i]);
 						dijkstra->SetEndVertex(this_class_obj->_pointidarray[0]);
-						cout << "Computing shortest paths between points " << this_class_obj->_pointidarray[i] << " and  " << this_class_obj->_pointidarray[0]  << endl;
+						std::cout << "Computing shortest paths between points " << this_class_obj->_pointidarray[i] << " and  " << this_class_obj->_pointidarray[0]  << std::endl;
 					}
 
 					dijkstra->Update();
@@ -749,18 +750,18 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 	}
 
 	else if (iren->GetKeyCode()=='s'){
-		ofstream out;
-		stringstream ss;
+		std::ofstream out;
+		std::stringstream ss;
 		int lim = this_class_obj->_pointidarray.size();
 
 		ss << "pointsIDlist.txt";
 		out.open(ss.str().c_str(), std::ios_base::trunc);
 		for(int ix=0;ix<lim;ix++)
-			out << this_class_obj->_pointidarray[ix] << endl;
+			out << this_class_obj->_pointidarray[ix] << std::endl;
 
 		out.close();
 
-		cout << "File: pointIDList.txt created. You can exit the application." << endl;
+		std::cout << "File: pointIDList.txt created. You can exit the application." << std::endl;
 	}
 
 	//delete [] pick_position;
@@ -807,8 +808,8 @@ void LaShellGapsInBinary::Run()
 		if (s < min_scalar)
 			min_scalar = s;
 	}
-	cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
-			 << ") scalars " << endl;
+	std::cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
+			 << ") scalars " << std::endl;
 	// this is your polydata mapper object
 	mapper->SetScalarRange(min_scalar, max_scalar);      // you must tell your mapper and lookuptable what is the range of scalars first
 	mapper->SetScalarModeToUsePointData();    // mapper->SetScalarModeToUsePointData(); is also possible if you are using cell data

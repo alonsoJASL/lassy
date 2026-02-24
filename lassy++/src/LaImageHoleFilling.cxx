@@ -5,7 +5,7 @@
 #include "../include/LaImageHoleFilling.h"
 
 
-using namespace std;
+;
 
 
 LaImageHoleFilling::LaImageHoleFilling()
@@ -56,7 +56,7 @@ void LaImageHoleFilling::Update()
 
     ImageType::Pointer input_im = _input_img->GetImage();
     _input_img->GetImageSize(max_x, max_y, max_z);
-    cout << max_x << "," << max_y << "," << max_z << endl;
+    std::cout << max_x << "," << max_y << "," << max_z << std::endl;
 
     OutputImageType::SpacingType spacing_out;
     OutputImageType::SizeType size;

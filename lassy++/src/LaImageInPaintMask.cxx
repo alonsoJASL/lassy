@@ -4,7 +4,7 @@
 #include <string>      // using string
 #include "../include/LaImageInPaintMask.h"
 
-using namespace std;
+;
 
 
 LaImageInPaintMask::LaImageInPaintMask()

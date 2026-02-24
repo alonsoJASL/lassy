@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellShellIntersectionMultiArray.h"
 
-using namespace std;
+;
 
 
 LaShellShellIntersectionMultiArray::LaShellShellIntersectionMultiArray()
@@ -25,13 +25,13 @@ LaShellShellIntersectionMultiArray::~LaShellShellIntersectionMultiArray()
 void LaShellShellIntersectionMultiArray::SetInputData(LaShell* shell)
 {
 	_source_la = shell; 
-    cout << "Source set "  << endl;
+    std::cout << "Source set "  << std::endl;
 }
 
 void LaShellShellIntersectionMultiArray::SetInputData2(LaShell* shell)
 {
 	_target_la = shell; 
-    cout << "Target set "  << endl;
+    std::cout << "Target set "  << std::endl;
 }
 
 LaShell* LaShellShellIntersectionMultiArray::GetOutput()
@@ -49,7 +49,7 @@ void LaShellShellIntersectionMultiArray::SetCopyScalarsUsingNormal()
 void LaShellShellIntersectionMultiArray::SetCopyScalarsUsingPointid()
 {
 	_which_mapping = COPY_USING_POINTID;
-    cout << "Warning: using pointid to copy, meshes must have equal vertices\n";
+    std::cout << "Warning: using pointid to copy, meshes must have equal vertices\n";
 }
 
 
@@ -66,26 +66,26 @@ void LaShellShellIntersectionMultiArray::Update()
 	Output_Poly->DeepCopy(Target_Poly);
 	
     int numberOfPointArraysInSource = Source_Poly->GetPointData()->GetNumberOfArrays();
-    cout << "Total arrays to transfer from target to source = " << numberOfPointArraysInSource << endl;
+    std::cout << "Total arrays to transfer from target to source = " << numberOfPointArraysInSource << std::endl;
     
-    vector< vector<double> > source_arrays;
-    vector<vector<double> > source_arrays_in_target;
-    vector<string> source_array_names; 
+    std::vector< std::vector<double> > source_arrays;
+    std::vector<std::vector<double> > source_arrays_in_target;
+    std::vector<std::string> source_array_names; 
 
 
     // create copy of arrays from source
     for (int i=0;i<numberOfPointArraysInSource;i++)
     {
-        string str = Source_Poly->GetPointData()->GetArray(i)->GetName();
+        std::string str = Source_Poly->GetPointData()->GetArray(i)->GetName();
         
         source_array_names.push_back(str);
         
-        vector<double> v(Source_Poly->GetPointData()->GetArray(i)->GetNumberOfTuples(), 0); 
+        std::vector<double> v(Source_Poly->GetPointData()->GetArray(i)->GetNumberOfTuples(), 0); 
         source_arrays.push_back(v);
         
         
     }
-    cout << "Array allocation completed .. ";
+    std::cout << "Array allocation completed .. ";
 
 
     for (int i=0;i<numberOfPointArraysInSource;i++)
@@ -99,7 +99,7 @@ void LaShellShellIntersectionMultiArray::Update()
             source_arrays[i][k]= value;
         }
 
-    //    cout << "In array " << Source_Poly->GetPointData()->GetArray(i)->GetName() << " Tuples = " << Source_Scalars->GetNumberOfTuples() << endl;
+    //    std::cout << "In array " << Source_Poly->GetPointData()->GetArray(i)->GetName() << " Tuples = " << Source_Scalars->GetNumberOfTuples() << std::endl;
     
     }
 
@@ -108,10 +108,10 @@ void LaShellShellIntersectionMultiArray::Update()
     
     for (int i=0;i<numberOfPointArraysInSource;i++)
     {
-        vector<double>  v(Target_Poly->GetNumberOfPoints(), 0);
+        std::vector<double>  v(Target_Poly->GetNumberOfPoints(), 0);
         source_arrays_in_target.push_back(v);        
     }
-    cout << "\nfinished initialising copy arrays ... " << endl;
+    std::cout << "\nfinished initialising copy arrays ... " << std::endl;
     
     
     vtkSmartPointer<vtkPointLocator> Source_Poly_PointLocator = vtkSmartPointer<vtkPointLocator>::New();

@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellShellIntersection.h"
 
-using namespace std;
+;
 
 
 LaShellShellIntersection::LaShellShellIntersection()
@@ -179,7 +179,7 @@ void LaShellShellIntersection::Update()
 			
 			Output_Poly_Scalar->InsertNextTuple1(_mapping_default_value);
 		}
-		//cout << i << ", distance = " << distance_to_target << endl; 
+		//std::cout << i << ", distance = " << distance_to_target << std::endl; 
 		//double this_scalar = Source_Poly_Scalar->GetTuple1(i);
 		//_mesh_vertex_values.push_back(this_scalar);
 		Output_Poly->GetPointData()->SetScalars(Output_Poly_Scalar);

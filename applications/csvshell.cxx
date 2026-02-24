@@ -17,7 +17,7 @@
 int main(int argc, char * argv[])
 {
 	char* input_img, *input_csv, *input_f2, *output_vtk;
-    char* scalar_array_name = "new_scalar";
+    const char* scalar_array_name = "new_scalar";
     int nn = 5;     // locate mesh vertex neighbours within a certain radius
     int scaling_factor = 1;
 
@@ -31,41 +31,41 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-vtk") {
+				if (std::string(argv[i]) == "-vtk") {
 					input_img = argv[i + 1];
 					foundArgs1 = true;
 				}
 
-				else if (string(argv[i]) == "-csv") {
+				else if (std::string(argv[i]) == "-csv") {
 					input_csv = argv[i + 1];
                     foundArgs2 = true; 
 				}
-                else if (string(argv[i]) == "-out") {
+                else if (std::string(argv[i]) == "-out") {
 					output_vtk = argv[i + 1];
 				}
 
-                else if (string(argv[i]) == "-method") {
+                else if (std::string(argv[i]) == "-method") {
 					method = atoi(argv[i + 1]);
                     foundArgs3 = true; 
 
 				}
 
-                else if (string(argv[i]) == "-nn") {
+                else if (std::string(argv[i]) == "-nn") {
 					nn = atoi(argv[i + 1]);
 
 				}
 
-                else if (string(argv[i]) == "-scaling") {
+                else if (std::string(argv[i]) == "-scaling") {
 					scaling_factor = atoi(argv[i + 1]);
 
 				}
 
-                else if (string(argv[i]) == "-scalarname") {
+                else if (std::string(argv[i]) == "-scalarname") {
 					scalar_array_name = argv[i + 1];
 
 				}
 			} // end outer if 
-			else if (string(argv[i]) == "--field") {
+			else if (std::string(argv[i]) == "--field") {
 				is_field_data = true; 
 			}
 
@@ -75,13 +75,13 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nReads a CSV file containing 3D points and scalar values. The scalars are appplied at these 3D locations on a LA mesh "
 			"\n\n(IMPORTANT) values v in csv outside the range -1e9 < v < 1e9 are set to 0"
 			"\n(Mandatory)\n\t-vtk <input shell> \n\t-csv <csv file>\n\t-out <vtk output>\n\n(Optional)\n\t-method <1=Point copy, 2=Neighbour copy>" 
             "\n\t-nn <neighbours within a certain radius default 5 mm> "
 			"\n\t-scalarname <name of the scalar>"
-			"\n\t--field to insert into field data" << endl;
+			"\n\t--field to insert into field data" << std::endl;
 			
 		exit(1);
 	}
@@ -99,7 +99,7 @@ int main(int argc, char * argv[])
 
 		if (is_field_data)
 		{
-			cout << "\nWriting as field data" << endl;
+			std::cout << "\nWriting as field data" << std::endl;
 			algorithm->SetWriteDataToField();
 		}
         
@@ -110,7 +110,7 @@ int main(int argc, char * argv[])
 				algorithm->SetCopyMethodToPointCopy();
                 algorithm->InsertScalarData();
 				
-                cout << "\nPoint copy method: copies scalars to individual points" << endl; 
+                std::cout << "\nPoint copy method: copies scalars to individual points" << std::endl; 
 				break;
 
             case NEIGHBOUR_COPY: 
@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
                 algorithm->SetNeighbourRadius(nn);
                 algorithm->LocateNeighboursOfPoints();
                 algorithm->InsertScalarData();
-                cout << "\nPoint copy method: copies scalars to neighbouring points around matched point" << endl; 
+                std::cout << "\nPoint copy method: copies scalars to neighbouring points around matched point" << std::endl; 
                 break; 
 			
 		}

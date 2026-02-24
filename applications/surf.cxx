@@ -30,42 +30,42 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i1") {
+				if (std::string(argv[i]) == "-i1") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
-				else if (string(argv[i]) == "-i3") {
+				else if (std::string(argv[i]) == "-i3") {
 					input_f3 = argv[i + 1];
 					foundArgs3 = true;
 				}
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs4 = true; 
 				}
-				else if (string(argv[i]) == "-m") {
+				else if (std::string(argv[i]) == "-m") {
 					mean = atof(argv[i + 1]);
 					foundArgs5 = true;
 				}
-				else if (string(argv[i]) == "-s") {
+				else if (std::string(argv[i]) == "-s") {
 					std = atof(argv[i + 1]);
 					foundArgs6 = true;
 				}
-				else if (string(argv[i]) == "-t") {
+				else if (std::string(argv[i]) == "-t") {
 					aggregate_method = atoi(argv[i + 1]);
 					foundArgs7 = true;
 				}
-				else if (string(argv[i]) == "-p") {
+				else if (std::string(argv[i]) == "-p") {
 					step_size = atof(argv[i + 1]);
 					
 				}
 				
 
 			}
-			else if (string(argv[i]) == "--nomap") {
+			else if (std::string(argv[i]) == "--nomap") {
 					foundArgs8 = true;
 					
 			}
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs4))
 	{
-		cerr << "Performs surface normal analysis\nCheeck your parameters\n\nUsage:"
+		std::cerr << "Performs surface normal analysis\nCheeck your parameters\n\nUsage:"
 			"\n(Mandatory)\n\t-i1 <intensity image for intterogation> \n\t-i2 <binary image for surface>" 
 			"\n\t-o <output_vtk>"
 			"\n\n(Optional)"
@@ -84,7 +84,7 @@ int main(int argc, char * argv[])
 			"\n\t-t <1-max, 2-integral, 3-mean>"
 			"\n\t-p <size of normal>\n" 
 			"\n\t--nomap (switch to enable no intensity mapping, only mesh generation)\n" 
-			<< endl; 
+			<< std::endl; 
 			
 		exit(1);
 	}
@@ -103,34 +103,34 @@ int main(int argc, char * argv[])
 		algorithm->SetOutputFileName(output_f); 
 
 		if (foundArgs3) {
-			cout << "Note: Using wall thickness map for traversing normals .." << endl; 
+			std::cout << "Note: Using wall thickness map for traversing normals .." << std::endl; 
 			thickness_map = new LaShell(input_f3);
 			algorithm->SetInputNormalStepShell(thickness_map);
 		}
 		else {
-			cout << "\nUsing a constant normal size of: "  << step_size << endl;
+			std::cout << "\nUsing a constant normal size of: "  << step_size << std::endl;
 			algorithm->SetStepSize(step_size);
 		}
 
 		if (foundArgs8)
 		{
-			cout << "\nNo mapping, only mesh generation requested .. " << endl;
+			std::cout << "\nNo mapping, only mesh generation requested .. " << std::endl;
 			algorithm->SetMethodToNoMapping();
 		}
 
 		else if (aggregate_method == 1)
 		{
-			cout << "\nAggregate method: Max" << endl;
+			std::cout << "\nAggregate method: Max" << std::endl;
 			algorithm->SetAggregationMethodToMax();
 		}
 		else if (aggregate_method == 2)	
 		{
-			cout << "\nAggregate method: Integral" << endl;
+			std::cout << "\nAggregate method: Integral" << std::endl;
 			algorithm->SetAggregationMethodToIntegral();
 		}
 		else if (aggregate_method == 3)	
 		{
-			cout << "\nAggregate method: Mean" << endl;
+			std::cout << "\nAggregate method: Mean" << std::endl;
 			algorithm->SetAggregationMethodToMean();
 		}
 		

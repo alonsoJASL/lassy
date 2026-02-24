@@ -34,7 +34,7 @@
 #include "LaImageFloat.h"
 #include "itkNeighborhoodIterator.h"
 
-using namespace std;
+;
 
 
 class LaImageHoleFilling : public LaImageAlgorithms {

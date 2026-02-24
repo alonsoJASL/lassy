@@ -3,7 +3,7 @@
 #include <string>      // using string
 #include "../include/LaImageMarkPoints.h"
 #include "../include/MathBox.h"
-using namespace std;
+;
 
 
 LaImageMarkPoints::LaImageMarkPoints() {
@@ -44,11 +44,11 @@ void LaImageMarkPoints::ReadCSVFile() {
 	    _csvfilestream.open(_csv_filename);
     else 
     {
-        cerr << "CSV input file for files not set" << endl; 
+        std::cerr << "CSV input file for files not set" << std::endl; 
         exit(1);
     }
 
-    vector<vector<string> > csv_content = CSVReader::readCSV(_csvfilestream);
+    std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(_csvfilestream);
     double x,y,z, xt, yt, zt, p[3], pt[3];
 	// The CSV iterator is from here: 
 	// https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
@@ -56,7 +56,7 @@ void LaImageMarkPoints::ReadCSVFile() {
     {
         x=-1e10; y=-1e10; z=-1e10; 
         xt=-1e10; yt=-1e10; zt=-1e10; 
-		vector<string> line = csv_content[i]; 
+		std::vector<std::string> line = csv_content[i]; 
 		
         for (int j=0;j<line.size();j++)
 		{
@@ -73,7 +73,7 @@ void LaImageMarkPoints::ReadCSVFile() {
         {
             p[0] = _scaling_factor*x; p[1] = _scaling_factor*y; p[2] = _scaling_factor*z;
             pt[0] = _scaling_factor*xt; pt[1] = _scaling_factor*yt; pt[2] = _scaling_factor*zt;
-            //cout << "reading point " << x << "," << y << "," << z << "," << scalar << endl;
+            //std::cout << "reading point " << x << "," << y << "," << z << "," << scalar << std::endl;
             _point_set->InsertNextPoint(p);
             _point_set_t->InsertNextPoint(pt);
 
@@ -137,13 +137,13 @@ void LaImageMarkPoints::Update()
         const bool isInside = image->TransformPhysicalPointToIndex( point_t, pixelIndex );
         if ( isInside )
         {
-            cout << "point (" << xyz_t[0] << "," << xyz_t[1]<< "," << xyz_t[2] << ") can be marked on the image" << endl;
+            std::cout << "point (" << xyz_t[0] << "," << xyz_t[1]<< "," << xyz_t[2] << ") can be marked on the image" << std::endl;
             MarkPoint(pixelIndex, 2);
             
         }
         else {
-            cout << "ERROR: point (" << xyz_t[0] << "," << xyz_t[1]<< "," << xyz_t[2] << ") is outside and was transformed to "
-            "= (" << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << ") outside of the image" << endl;
+            std::cout << "ERROR: point (" << xyz_t[0] << "," << xyz_t[1]<< "," << xyz_t[2] << ") is outside and was transformed to "
+            "= (" << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << ") outside of the image" << std::endl;
         }
     }
     

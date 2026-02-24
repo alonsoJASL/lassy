@@ -38,7 +38,7 @@
 #include "MathBox.h"
 
 
-using namespace std; 
+; 
 
 
 class LaShellShellIntersectionMultiArray : public LaShellShellIntersection {
@@ -49,7 +49,7 @@ private:
 	LaShell* _target_la; 
 	LaShell* _output_la;
 
-	vector<Point3> _intersections;
+	std::vector<Point3> _intersections;
 
 	int _which_mapping;
 

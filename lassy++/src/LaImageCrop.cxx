@@ -1,6 +1,6 @@
 #include "../include/LaImageCrop.h"
 
-using namespace std;
+;
 
 
 LaImageCrop::LaImageCrop()

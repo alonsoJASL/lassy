@@ -27,26 +27,26 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i1") {
+				if (std::string(argv[i]) == "-i1") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs3 = true; 
 				}
 
 			}
-			else if (string(argv[i]) == "--reverse") {
+			else if (std::string(argv[i]) == "--reverse") {
 				direction = -1;
 			}
 
-			else if (string(argv[i]) == "--distance") {
+			else if (std::string(argv[i]) == "--distance") {
 				direction = 2;
 			}
 		}
@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nCalculates the thickness from the source to target"
 			"\nThe final thickness is mapped to the source"
 			"\n(Mandatory)\n\t-i1 <source_mesh_vtk> \n\t-i2 <target_mesh_vtk> \n\t-o <output_vtk>"
@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
 		wt->SetMapIntersectionToDistance();
 
 		if (direction < 0) {
-			cout << "\n\nImportant: Computing thickness in reverse direction to surface normals pointing outwards" << endl;
+			std::cout << "\n\nImportant: Computing thickness in reverse direction to surface normals pointing outwards" << std::endl;
 			wt->SetDirectionToOppositeNormal();
 			
 			wt->Update(); 
@@ -85,7 +85,7 @@ int main(int argc, char * argv[])
 			
 		}
 		else if (direction == 1) {
-			cout << "\n\nComputing thickness in surface normal direction (pointing outwards)" << endl; 
+			std::cout << "\n\nComputing thickness in surface normal direction (pointing outwards)" << std::endl; 
 			
 			wt->Update(); 
 			la_out = wt->GetOutput(); 
@@ -94,7 +94,7 @@ int main(int argc, char * argv[])
 		}
 		else if (direction == 2)
 		{
-			cout << "\n\nComputing shortest distance to target surface" << endl; 
+			std::cout << "\n\nComputing shortest distance to target surface" << std::endl; 
 			
 			LaShell* la_out_d1 = new LaShell(input_f1);
 			LaShell* la_out_d2 = new LaShell(input_f2);

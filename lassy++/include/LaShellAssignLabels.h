@@ -80,10 +80,10 @@ public:
     vtkSmartPointer<vtkRenderWindow> _RenderWindow;
     vtkSmartPointer<vtkRenderWindowInteractor> _InteractorRenderWindow;
 
-    vector<int> _pointidarray;
-		vector<int> _assignedlabels;
-		vector<int> _codearray;
-		vector<int> _labelsinmesh, _labelsAssigned;
+    std::vector<int> _pointidarray;
+		std::vector<int> _assignedlabels;
+		std::vector<int> _codearray;
+		std::vector<int> _labelsinmesh, _labelsAssigned;
 
     // Helper Functions
 		void SetInputData(LaShell* shell);

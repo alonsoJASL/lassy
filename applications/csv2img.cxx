@@ -32,7 +32,7 @@ int main(int argc, char * argv[])
 	char* input_csv_fn, *output_fn, *input_img_fn; 
 	bool convert=true;
 	bool foundArgs1 = false, foundArgs2 = false, foundArgs3 = false;
-    ifstream csvfilestream;
+    std::ifstream csvfilestream;
     vtkSmartPointer<vtkPoints> point_set = vtkSmartPointer<vtkPoints>::New();
     typedef itk::Image< unsigned short, 3 >  InputImageType;
     typedef itk::Image< float, 3 >  OutputImageType;
@@ -43,25 +43,25 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-csv") {
+				if (std::string(argv[i]) == "-csv") {
 					input_csv_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-img") {
+				else if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs2 = true; 
 				}
 			
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_fn = argv[i + 1];
                     foundArgs3 = true; 
 					
 				}
-                else if (string(argv[i]) == "-x") {
+                else if (std::string(argv[i]) == "-x") {
                     x_translate = atof(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-y") {
+                else if (std::string(argv[i]) == "-y") {
                     y_translate = atof(argv[i+1]);
                 }
                 
@@ -74,10 +74,10 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nRequired parameters not found"
 			"\n(Mandatory)\n\t-csv <csv file with points> \n\t-img <3D image that will be set>\n\t-o <output image filename>"
-            "\n\t(optional)\n\t-y <translate in y direction>\n\t-x <translate in x direction>\n\n" << endl; 
+            "\n\t(optional)\n\t-y <translate in y direction>\n\t-x <translate in x direction>\n\n" << std::endl; 
 			
 		exit(1);
 	}
@@ -87,11 +87,11 @@ int main(int argc, char * argv[])
 	        csvfilestream.open(input_csv_fn);
         else 
         {
-            cerr << "CSV input file for files not set" << endl; 
+            std::cerr << "CSV input file for files not set" << std::endl; 
             exit(1);
         }
 
-        vector<vector<string> > csv_content = CSVReader::readCSV(csvfilestream);
+        std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(csvfilestream);
         double x,y,z, pixel_value, p[3], sp[3];
         int size_x, size_y, size_z; 
         
@@ -131,7 +131,7 @@ int main(int argc, char * argv[])
         {
             x=-1e10; y=-1e10; z=-1e10, pixel_value=-1e10; 
             
-            vector<string> line = csv_content[i]; 
+            std::vector<std::string> line = csv_content[i]; 
             
 
             for (int j=0;j<line.size();j++)
@@ -145,7 +145,7 @@ int main(int argc, char * argv[])
                     lines++;
                 }
                 else {
-                    cout << "Encountered an entry that is not a number, header? " << line[j] << endl;
+                    std::cout << "Encountered an entry that is not a number, header? " << line[j] << std::endl;
                 }
                 
                 
@@ -171,7 +171,7 @@ int main(int argc, char * argv[])
                     output_im->SetPixel(pixelIndex, pixel_value);
                 }
                 else { 
-                    cerr << "Pixel indices in csv out of bounds of image: (" << x << "," << y << "," << z << ")\n";
+                    std::cerr << "Pixel indices in csv out of bounds of image: (" << x << "," << y << "," << z << ")\n";
                     //exit(1);
                 }
                 

@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i") {
+				if (std::string(argv[i]) == "-i") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
@@ -42,11 +42,11 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1))
 	{
-		cerr << "Check your parameters\n\nUsage:"
+		std::cerr << "Check your parameters\n\nUsage:"
 			"\nExtracts mesh data from a user-defined trajectory on mesh. "
 			" Mesh data should be Point Scalars (VTK).\n Convert your Cell-Scalar meshes with ./mesh2vtk binary."
 			"\n(Mandatory)\n\t-i <source_mesh_vtk>"
-			<< endl;
+			<< std::endl;
 		exit(1);
 	}
 	else{
@@ -54,9 +54,9 @@ int main(int argc, char * argv[])
 		LaShellAssignLabels* application = new LaShellAssignLabels();
 		application->SetInputData(source);
 
-		cout << "input data OK..." << endl;
+		std::cout << "input data OK..." << std::endl;
 
-		cout << "Waiting for you to pick points on the mesh select the corresponding, \n"
+		std::cout << "Waiting for you to pick points on the mesh select the corresponding, \n"
 		"sections."
 		"\n - Press l for LV_endo; Press L for LV_epi"
 		"\n - Press r for RV_endo; Press R for RV_epi"

@@ -29,24 +29,24 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-source") {
+				if (std::string(argv[i]) == "-source") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				} 
-                else if (string(argv[i]) == "-target") {
+                else if (std::string(argv[i]) == "-target") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
-                else if (string(argv[i]) == "-starget") {
+                else if (std::string(argv[i]) == "-starget") {
 					input_f3 = argv[i + 1];
 					foundArgs3 = true;
 				}
 
-				else if (string(argv[i]) == "-csv") {
+				else if (std::string(argv[i]) == "-csv") {
 					input_csv = argv[i + 1];
                     foundArgs4 = true; 
 				}
-                else if (string(argv[i]) == "-out") {
+                else if (std::string(argv[i]) == "-out") {
 					output_csv = argv[i + 1];
                     foundArgs5 = true; 
 				}
@@ -61,11 +61,11 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3 && foundArgs4 && foundArgs5))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nReads a CSV file containing 3D points, locates them in source shell and then locates their closest points in target shell."
             "\nOutputs a CSV file containing cloest points xyz in target shell"
 			"\n(Mandatory)\n\t-source <source shell1> \n\t-target <target shell2> \n\t-starget (source registered to target vtk)"
-            "\n\t-csv <csv file>\n\t-out <csv output>\n" << endl;
+            "\n\t-csv <csv file>\n\t-out <csv output>\n" << std::endl;
 			
 		exit(1);
 	}

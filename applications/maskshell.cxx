@@ -24,26 +24,26 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-d") {
+				if (std::string(argv[i]) == "-d") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-m") {
+				else if (std::string(argv[i]) == "-m") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
 
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs3 = true;
 				}
-				else if (string(argv[i]) == "-a") {
+				else if (std::string(argv[i]) == "-a") {
 					operation = atoi(argv[i + 1]);
 					foundArgs4 = true;
 				}
 
 			}
-			else if (string(argv[i]) == "--sup") {
+			else if (std::string(argv[i]) == "--sup") {
 				isSuppress = true; 
 			}
 			
@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs4))
 	{
-		cerr << "Aggregates scalars masked in VTK mesh\nCheck your parameters\n\nUsage:"
+		std::cerr << "Aggregates scalars masked in VTK mesh\nCheck your parameters\n\nUsage:"
 			"\n(Mandatory)\n\t-d <1st Scalar data VTK mesh> \n\t-m <Mask data VTK mesh>"
 			"\n\t-a <which aggregate method: 1-MEAN, 2-MEDIAN, 3-STDEV>\n"
 			"\n\n(Optional)"
@@ -78,25 +78,25 @@ int main(int argc, char * argv[])
 		    case MEAN:
                 algorithm->SetOperationToMean();
                 algorithm->Update();
-                if (!isSuppress) cout << "\n\nMean = ";
-                cout << setprecision (2) << fixed << algorithm->GetOutputValue();
-				if (!isSuppress) cout << endl;
+                if (!isSuppress) std::cout << "\n\nMean = ";
+                std::cout << std::setprecision (2) << std::fixed << algorithm->GetOutputValue();
+				if (!isSuppress) std::cout << std::endl;
                 break;
 			
 			case MEDIAN:
                 algorithm->SetOperationToMedian();
                 algorithm->Update();
-                if (!isSuppress) cout << "\n\nMedian = "; 
-                cout << setprecision (2) << fixed << algorithm->GetOutputValue();
-				if (!isSuppress) cout << endl;
+                if (!isSuppress) std::cout << "\n\nMedian = "; 
+                std::cout << std::setprecision (2) << std::fixed << algorithm->GetOutputValue();
+				if (!isSuppress) std::cout << std::endl;
                 break;
 
 			case STDEV:
                 algorithm->SetOperationToStdev();
                 algorithm->Update();
-                if (!isSuppress) cout << "\n\nStdev = ";
-                cout << setprecision (2) << fixed << algorithm->GetOutputValue();
-				if (!isSuppress) cout << endl;
+                if (!isSuppress) std::cout << "\n\nStdev = ";
+                std::cout << std::setprecision (2) << std::fixed << algorithm->GetOutputValue();
+				if (!isSuppress) std::cout << std::endl;
                 break;
 
 		}

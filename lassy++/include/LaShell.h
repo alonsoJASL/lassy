@@ -33,14 +33,14 @@
 #include "LaImage.h"
 
 
-using namespace std;
+;
 
 
 class LaShell {
 private:
 	vtkSmartPointer<vtkPolyData> _mesh_3d;
 	vtkSmartPointer<vtkUnstructuredGrid> _ugrid_3d;
-	vector<double> _mesh_vertex_values;
+	std::vector<double> _mesh_vertex_values;
 
 
 public:
@@ -71,7 +71,7 @@ public:
 	void ConvertToCellData();
 	void Ugrid2PolyData();
 
-	vector<double> GetMeshVertexValues();
+	std::vector<double> GetMeshVertexValues();
 
 
 	void ComputeMeshNeighbourhoodTransform(vtkSmartPointer<vtkPolyData> new_mesh);

@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
 	char* input_fn, *output_fn_csv, *output_fn_img, *input_img_fn; 
 	bool convert=true;
 	bool foundArgs1 = false, foundArgs2 = false, foundArgs3 = false,foundArgs4=false;
-    ofstream out;
+    std::ofstream out;
     vtkSmartPointer<vtkPoints> point_set = vtkSmartPointer<vtkPoints>::New();
     typedef itk::Image< unsigned short, 3 >  ImageType;
     ImageType::IndexType pixelIndex;
@@ -41,22 +41,22 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-vtk") {
+				if (std::string(argv[i]) == "-vtk") {
 					input_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-img") {
+				else if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs2 = true; 
 				}
 			
-				else if (string(argv[i]) == "-csv") {
+				else if (std::string(argv[i]) == "-csv") {
 					output_fn_csv = argv[i + 1];
                     foundArgs3 = true; 
 					
 				}
-                else if (string(argv[i]) == "-out") {
+                else if (std::string(argv[i]) == "-out") {
 					output_fn_img = argv[i + 1];
                     foundArgs4 = true; 
 					
@@ -71,9 +71,9 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nFrom VTK point set to image"
-			"\n(Mandatory)\n\t-vtk <VTK points set> \n\t-img <3D image world to image space>\n\t-csv <csv output filename>\n\t(optional)\n\t-out <3D image with marked points>\n\n" << endl; 
+			"\n(Mandatory)\n\t-vtk <VTK points set> \n\t-img <3D image world to image space>\n\t-csv <csv output filename>\n\t(optional)\n\t-out <3D image with marked points>\n\n" << std::endl; 
 			
 		exit(1);
 	}
@@ -97,8 +97,8 @@ int main(int argc, char * argv[])
 
         if ( isInside )
         {
-            cout << "point (" << point[0] << "," << point[1]<< "," << point[2] << ") can be marked on the image" << endl;
-            out << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << endl;
+            std::cout << "point (" << point[0] << "," << point[1]<< "," << point[2] << ") can be marked on the image" << std::endl;
+            out << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << std::endl;
 
             if (foundArgs4) {
                 // MarkPoint(pixelIndex, 2);         
@@ -106,8 +106,8 @@ int main(int argc, char * argv[])
            
         }
         else {
-            cout << "ERROR: point (" << point[0] << "," << point[1]<< "," << point[2] << ") is outside and was transformed to "
-            "= (" << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << ") outside of the image" << endl;
+            std::cout << "ERROR: point (" << point[0] << "," << point[1]<< "," << point[2] << ") is outside and was transformed to "
+            "= (" << pixelIndex[0] << "," << pixelIndex[1] << "," << pixelIndex[2] << ") outside of the image" << std::endl;
         }
 
     }

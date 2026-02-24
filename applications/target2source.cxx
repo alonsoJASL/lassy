@@ -25,22 +25,22 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i1") {
+				if (std::string(argv[i]) == "-i1") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
 				
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs3 = true; 
 				}
 
 			}
-			else if (string(argv[i]) == "--reverse") {
+			else if (std::string(argv[i]) == "--reverse") {
 				direction = -1;
 			}
 		}
@@ -48,9 +48,9 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nCopies the target scalars to source\nbased on source vertex normal intersection with target\n\n"
-			"\n(Mandatory)\n\t-i1 <source_mesh_vtk> \n\t-i2 <target_mesh_vtk> \n\t-o <output_vtk>\n====Optional======\n\n\t--reverse <reverse the direction of intersection search>" << endl; 
+			"\n(Mandatory)\n\t-i1 <source_mesh_vtk> \n\t-i2 <target_mesh_vtk> \n\t-o <output_vtk>\n====Optional======\n\n\t--reverse <reverse the direction of intersection search>" << std::endl; 
 			
 
 		exit(1);
@@ -67,12 +67,12 @@ int main(int argc, char * argv[])
 		wt->SetMapIntersectionToCopyScalar();
 
 		if (direction < 0) {
-			cout << "\n\nImportant: Computing intersection in the reverse direction to surface normals pointing outwards" << endl;
+			std::cout << "\n\nImportant: Computing intersection in the reverse direction to surface normals pointing outwards" << std::endl;
 			wt->SetDirectionToOppositeNormal();
 			
 		}
 		else {
-			cout << "\n\nComputing intersection in surface normal direction (pointing outwards)" << endl; 
+			std::cout << "\n\nComputing intersection in surface normal direction (pointing outwards)" << std::endl; 
 		}
 
 		

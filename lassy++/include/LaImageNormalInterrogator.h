@@ -42,7 +42,7 @@ class LaImageNormalInterrogator : public LaImageAlgorithms {
 	double _zscore_mean;
 	double _zscore_std;
 
-	void GetStatisticalMeasure(vector<Point3> vals, int measure, double& returnVal);
+	void GetStatisticalMeasure(std::vector<Point3> vals, int measure, double& returnVal);
 	void ZScoreAggregator();
 
 public:

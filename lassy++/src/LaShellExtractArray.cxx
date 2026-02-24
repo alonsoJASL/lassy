@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellExtractArray.h"
 
-using namespace std;
+;
 
 
 LaShellExtractArray::LaShellExtractArray()
@@ -28,7 +28,7 @@ void LaShellExtractArray::SetInputData(LaShell* shell)
 
 void LaShellExtractArray::SetArrayName(const char* array_name)
 {
-	stringstream ss; 
+	std::stringstream ss; 
 	ss << array_name; 
 	_array_name = ss.str(); 
 }
@@ -49,19 +49,19 @@ void LaShellExtractArray::Update() {
 
 
 	vtkIdType numberOfPointArrays = source_poly_data->GetPointData()->GetNumberOfArrays();
-	cout << "Number of arrays =  " << numberOfPointArrays << endl;
+	std::cout << "Number of arrays =  " << numberOfPointArrays << std::endl;
 
 	for (vtkIdType i = 0; i < numberOfPointArrays; i++)
 	{
-		cout << "Array " << i << ", name = " << source_poly_data->GetPointData()->GetArray(i)->GetName() << endl;
+		std::cout << "Array " << i << ", name = " << source_poly_data->GetPointData()->GetArray(i)->GetName() << std::endl;
 		if (strcmp(source_poly_data->GetPointData()->GetArray(i)->GetName(), _array_name.c_str()) == 0) {
-			cout << "Found array at location " << i << endl;
+			std::cout << "Found array at location " << i << std::endl;
 			k = i;
 		}
 	}
 
 	if (k == -1)
-		cout << "\n\nERROR: Could not find array, could be due to case-senstivity" << endl;
+		std::cout << "\n\nERROR: Could not find array, could be due to case-senstivity" << std::endl;
 	else {
 
 		vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();

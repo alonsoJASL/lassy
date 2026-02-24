@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellShellDisplacement.h"
 
-using namespace std;
+;
 
 
 LaShellShellDisplacement::LaShellShellDisplacement()
@@ -28,7 +28,7 @@ LaShellShellDisplacement::~LaShellShellDisplacement() {
 
 void LaShellShellDisplacement::SetInputMultipleTargets(char* name_list)
 {
-	stringstream ss; 
+	std::stringstream ss; 
 	ss << name_list; 
 	_multiple_target_fn = ss.str(); 
 	_num_targets = MULTIPLE_TARGETS; 
@@ -43,7 +43,7 @@ void LaShellShellDisplacement::SetInputData(LaShell* shell) {
 }
 
 void LaShellShellDisplacement::SetInputData2(LaShell* shell) {
-	cout << "Fatal warning: Functionality not implemented yet!" << endl; 
+	std::cout << "Fatal warning: Functionality not implemented yet!" << std::endl; 
 }
 
 void LaShellShellDisplacement::SetAggregateMethodToMedian()
@@ -72,20 +72,20 @@ double LaShellShellDisplacement::GetEuclidean(double* p1, double* p2)
 
 bool LaShellShellDisplacement::ReadShellNameList(const char* fn)
 {
-	ifstream infile(fn);
-	cout << "Reading mutliple target filename list .. \n";
+	std::ifstream infile(fn);
+	std::cout << "Reading mutliple target filename list .. \n";
 	std::string line;
 
 	while (getline(infile, line))
 	{
-		istringstream iss(line);
-		string filename;
+		std::stringstream iss(line);
+		std::string filename;
 		if (!(iss >> filename)) {
-			cout << "Error reading file containing filenames, check format" << endl;
+			std::cout << "Error reading file containing filenames, check format" << std::endl;
 			return false;
 		} // error
 		else {
-			cout << "Found " << filename << endl;
+			std::cout << "Found " << filename << std::endl;
 			_filename_list.push_back(filename);
 			_total_targets++;
 		}
@@ -118,24 +118,22 @@ int LaShellShellDisplacement::IsPointOutsideOrInsideShell(vtkIdType shell_point,
 	double test_to_outside_point = GetEuclidean(test_point, small_step_outside_shell);
 
 	if (test_to_inside_point < test_to_outside_point)
-	{
-		// inside point is closer to test point 
-		return -1; 
-	}
+		return -1; // inside point is closer to test point
 	else if (test_to_inside_point >= test_to_outside_point)
-	{
 		return 1; 
-	}
+	else 
+		return 0; // should not happen
+
 	
 }
 
-void LaShellShellDisplacement::ReadShellComputeDisplacement(string poly_data_fn)
+void LaShellShellDisplacement::ReadShellComputeDisplacement(std::string poly_data_fn)
 {
 	vtkSmartPointer<vtkPolyDataReader> reader1 = vtkSmartPointer<vtkPolyDataReader>::New();
 	reader1->SetFileName(poly_data_fn.c_str());
 	reader1->Update();
 
-	cout << "Processing next file for displacment: " << poly_data_fn << " ... ";
+	std::cout << "Processing next file for displacment: " << poly_data_fn << " ... ";
 	vtkSmartPointer<vtkPolyData> TargetPolyData = vtkSmartPointer<vtkPolyData>::New();
 	TargetPolyData = reader1->GetOutput();
 
@@ -152,9 +150,9 @@ void LaShellShellDisplacement::ReadShellComputeDisplacement(string poly_data_fn)
 
 	_SourcePolyNormals = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetNormals());
 
-	_displacements.resize(_SourcePolyData->GetNumberOfPoints(), vector<double>(_total_targets));
+	_displacements.resize(_SourcePolyData->GetNumberOfPoints(), std::vector<double>(_total_targets));
 
-	//_displacement_direction.resize(_SourcePolyData->GetNumberOfPoints(), vector<double>(_total_targets));
+	//_displacement_direction.resize(_SourcePolyData->GetNumberOfPoints(), std::vector<double>(_total_targets));
 
 	double source_vertex[3], target_vertex[3];
 	
@@ -180,7 +178,7 @@ void LaShellShellDisplacement::ReadShellComputeDisplacement(string poly_data_fn)
 
 	_num_targets_read++; 
 
-	cout << "completed!" << endl;
+	std::cout << "completed!" << std::endl;
 }
 
 
@@ -190,12 +188,12 @@ void LaShellShellDisplacement::AggregateAllDisplacements()
 	vtkSmartPointer<vtkPolyData> shell_poly = vtkSmartPointer<vtkPolyData>::New();
 	_source_la->GetMesh3D(shell_poly); 
 	
-	cout << "Aggregating displacements .. " << endl;
+	std::cout << "Aggregating displacements .. " << std::endl;
 
-	cout << "Size of 2D container = " << _displacements.size(); 
+	std::cout << "Size of 2D container = " << _displacements.size(); 
 
 	/*for (int i = 0; i < _displacements.size(); ++i) {
-		cout << "\ni=" << i << ", size=" << _displacements[i].size() << endl; 
+		std::cout << "\ni=" << i << ", size=" << _displacements[i].size() << std::endl; 
 	}*/
 
 	// prepare output 

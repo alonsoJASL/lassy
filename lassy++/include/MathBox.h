@@ -1,7 +1,7 @@
 #define HAS_VTK 1
 #pragma once
 
-using namespace std; 
+; 
 
 
 #include <math.h>
@@ -14,9 +14,9 @@ private:
 	
 public:
 	static void normalizeVector(double &a, double &b, double &c);
-	static double CalcMean(vector<double> d);
-	static double CalcMedian(vector<double> d);
-	static double CalcStd(vector<double> scores, double mean);
+	static double CalcMean(std::vector<double> d);
+	static double CalcMedian(std::vector<double> d);
+	static double CalcStd(std::vector<double> scores, double mean);
 	static double EuclideanDistance(double *p1, double *p2);
 }; 
 

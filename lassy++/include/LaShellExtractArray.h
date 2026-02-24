@@ -23,7 +23,7 @@ private:
 	LaShell* _source_la;
 	LaShell* _output_la; 
 	
-	string _array_name;
+	std::string _array_name;
 	
 public:
 	// Constructor with default values for data members

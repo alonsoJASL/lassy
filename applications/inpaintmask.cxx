@@ -26,37 +26,37 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-bin") {
+				if (std::string(argv[i]) == "-bin") {
 					input_bin_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-img") {
+				else if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs2 = true; 
 				}
 			
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_fn = argv[i + 1];
                     foundArgs3 = true; 
 					
 				}
-                else if (string(argv[i]) == "-x") {
+                else if (std::string(argv[i]) == "-x") {
                     x = atoi(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-y") {
+                else if (std::string(argv[i]) == "-y") {
                     y = atoi(argv[i+1]);
                 }
-                 else if (string(argv[i]) == "-z") {
+                 else if (std::string(argv[i]) == "-z") {
                     z = atoi(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-l") {
+                else if (std::string(argv[i]) == "-l") {
                     l = atoi(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-w") {
+                else if (std::string(argv[i]) == "-w") {
                     w = atoi(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-h") {
+                else if (std::string(argv[i]) == "-h") {
                     h = atoi(argv[i+1]);
                 }
 
@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nIn-paints a mask into a greyscale image. \nIt is assumed that mask was created from a cropped"
             "version of the greyscale image. \nCropping parameters are (x,y,z,l,w,h)"
 			"\n(Mandatory)\n\t-img <greyscale img> \n\t-bin <binary img>\n\t-o <new image filename>" 

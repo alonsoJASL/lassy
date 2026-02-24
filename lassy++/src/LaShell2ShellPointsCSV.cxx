@@ -3,7 +3,7 @@
 #include <string>      // using string
 #include "../include/LaShell2ShellPointsCSV.h"
 #include "../include/MathBox.h"
-using namespace std;
+;
 
 
 LaShell2ShellPointsCSV::LaShell2ShellPointsCSV() {
@@ -42,7 +42,7 @@ void LaShell2ShellPointsCSV::ReadCSVFile(const char* input_fn) {
 
 	_csvfilestream.open(input_fn);
 
-    vector<vector<string> > csv_content = CSVReader::readCSV(_csvfilestream);
+    std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(_csvfilestream);
     double x,y,z, p[3];
     float scalar;
 	// The CSV iterator is from here: 
@@ -50,7 +50,7 @@ void LaShell2ShellPointsCSV::ReadCSVFile(const char* input_fn) {
 	for (int i=0;i<csv_content.size();i++)
     {
         x=-1e10; y=-1e10; z=-1e10; scalar=-1;
-		vector<string> line = csv_content[i]; 
+		std::vector<std::string> line = csv_content[i]; 
 		
         for (int j=0;j<line.size();j++)
 		{
@@ -61,14 +61,14 @@ void LaShell2ShellPointsCSV::ReadCSVFile(const char* input_fn) {
                 else if (j==2) z = num ;
                 //else if (j==3) scalar = num;
             }else {
-                cout << "Encountered an entry that is not a number, header? " << line[j] << endl;
+                std::cout << "Encountered an entry that is not a number, header? " << line[j] << std::endl;
             }
 		}
 
         if (x>-1e10 && y>-1e10 && z>-1e10)
         {
             p[0] = _scaling_factor*x; p[1] = _scaling_factor*y; p[2] = _scaling_factor*z;
-            cout << "reading point " << p[0] << "," << p[1] << "," << p[2] << "," << scalar << endl;
+            std::cout << "reading point " << p[0] << "," << p[1] << "," << p[2] << "," << scalar << std::endl;
             _point_set->InsertNextPoint(p);
 
         }   
@@ -109,7 +109,7 @@ void LaShell2ShellPointsCSV::LocateCSVPointsInSource() {
         }
         else {
             _closest_point_ids_in_source.push_back(-1);
-            cout << "Colocation failed for this point: " << xyz[0] << "," << xyz[1] << "," << xyz[2] << endl;
+            std::cout << "Colocation failed for this point: " << xyz[0] << "," << xyz[1] << "," << xyz[2] << std::endl;
         }
 
     }
@@ -135,7 +135,7 @@ void LaShell2ShellPointsCSV::LocateSourcePointsOnTarget() {
 	point_locator->BuildLocator();
     target_mesh->BuildLinks();
 
-    ofstream out; 
+    std::ofstream out; 
     out.open(_csv_filename);
     out << "x,y,z\n";
 
@@ -153,15 +153,15 @@ void LaShell2ShellPointsCSV::LocateSourcePointsOnTarget() {
                 _closest_point_ids_in_target.push_back(closestPointID);
                 target_mesh->GetPoint(closestPointID, xyz_target);
 
-                out << xyz_target[0] << "," << xyz_target[1] << "," << xyz_target[2] << endl;
+                out << xyz_target[0] << "," << xyz_target[1] << "," << xyz_target[2] << std::endl;
             }
             else {
-                out << "0,0,0" << endl;
+                out << "0,0,0" << std::endl;
             }
 
         }
         else { 
-            out << "0,0,0" << endl;
+            out << "0,0,0" << std::endl;
         }
         
         

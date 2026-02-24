@@ -26,32 +26,32 @@ int main(int argc, char * argv[])
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
 				
-				 if (string(argv[i]) == "-img") {
+				 if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs1 = true; 
 				}
 			
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_fn = argv[i + 1];
                     foundArgs2 = true; 
 					
 				}
-                else if (string(argv[i]) == "-nn") {
+                else if (std::string(argv[i]) == "-nn") {
                     nn = atoi(argv[i+1]);
                 }
-                else if (string(argv[i]) == "-iter") {
+                else if (std::string(argv[i]) == "-iter") {
                     iter = atoi(argv[i+1]);
                 }
                 
                
 			}
-            else if (string(argv[i]) == "--xy") {
+            else if (std::string(argv[i]) == "--xy") {
                 direc = XY;
             }
-            else if (string(argv[i]) == "--yz") {
+            else if (std::string(argv[i]) == "--yz") {
                 direc = YZ;
             }
-            else if (string(argv[i]) == "--xz") {
+            else if (std::string(argv[i]) == "--xz") {
                 direc = XZ;
             }
 			
@@ -60,7 +60,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 ))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nfills holes in an image's pixels with mean of its non-zero neighbours"
 			"\n(Mandatory)\n\t-img <img> \n\t-o <new image filename>"
             "\n(Optional)\n\t-nn min neighbours required for mean"
@@ -81,8 +81,8 @@ int main(int argc, char * argv[])
         algorithm->SetNumberOfIterations(iter);
         algorithm->SetInterpolateDirection(direc);
 
-        cout << "Running algorithm with\n\tNeighour size = " << nn << "\n\tIterations"
-        "= " << iter << "\n\tdirection = " << direc << endl;
+        std::cout << "Running algorithm with\n\tNeighour size = " << nn << "\n\tIterations"
+        "= " << iter << "\n\tdirection = " << direc << std::endl;
         algorithm->Update();
 
         

@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
 	char* input_csv_fn, *output_fn, *input_img_fn; 
 	bool convert=true;
 	bool foundArgs1 = false, foundArgs2 = false, foundArgs3 = false;
-    ifstream csvfilestream;
+    std::ifstream csvfilestream;
     vtkSmartPointer<vtkPoints> point_set = vtkSmartPointer<vtkPoints>::New();
     typedef itk::Image< unsigned short, 3 >  ImageType;
     int lines=0, num_points=0;
@@ -38,24 +38,24 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-csv") {
+				if (std::string(argv[i]) == "-csv") {
 					input_csv_fn = argv[i + 1];
 					foundArgs1 = true;
 				}
 				
-				else if (string(argv[i]) == "-img") {
+				else if (std::string(argv[i]) == "-img") {
 					input_img_fn = argv[i + 1];
 					foundArgs2 = true; 
 				}
 			
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_fn = argv[i + 1];
                     foundArgs3 = true; 
 					
 				}
                 
 			}
-            else if (string(argv[i]) == "--convert") {
+            else if (std::string(argv[i]) == "--convert") {
                 convert = true;
             }
 			
@@ -65,9 +65,9 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs3))
 	{
-		cerr << "Cheeck your parameters\n\nUsage:"
+		std::cerr << "Cheeck your parameters\n\nUsage:"
 			"\nPoints listed on a csv point to a VTK point set"
-			"\n(Mandatory)\n\t-csv <csv file with points> \n\t-o <vtk points>\n\t(optional)\n\t-img <3D image>\n\t--convert <csv points from image to world>\n\n" << endl; 
+			"\n(Mandatory)\n\t-csv <csv file with points> \n\t-o <vtk points>\n\t(optional)\n\t-img <3D image>\n\t--convert <csv points from image to world>\n\n" << std::endl; 
 			
 		exit(1);
 	}
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
     {
         if (!foundArgs2)
         {
-            cerr << "Check your parameters: no image included with -img switch if --convert switch is on" << endl;
+            std::cerr << "Check your parameters: no image included with -img switch if --convert switch is on" << std::endl;
         }
     }
 	
@@ -83,11 +83,11 @@ int main(int argc, char * argv[])
 	        csvfilestream.open(input_csv_fn);
         else 
         {
-            cerr << "CSV input file for files not set" << endl; 
+            std::cerr << "CSV input file for files not set" << std::endl; 
             exit(1);
         }
 
-        vector<vector<string> > csv_content = CSVReader::readCSV(csvfilestream);
+        std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(csvfilestream);
         double x,y,z, p[3];
         // The CSV iterator is from here: 
         // https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
@@ -95,7 +95,7 @@ int main(int argc, char * argv[])
         {
             x=-1e10; y=-1e10; z=-1e10; 
             
-            vector<string> line = csv_content[i]; 
+            std::vector<std::string> line = csv_content[i]; 
             
 
             for (int j=0;j<line.size();j++)
@@ -106,10 +106,10 @@ int main(int argc, char * argv[])
                     else if (j==1) y = num ;
                     else if (j==2) z = num ;
                     lines++;
-                    cout << "reading point (" << x << "," << y << "," << z << ")\n";
+                    std::cout << "reading point (" << x << "," << y << "," << z << ")\n";
                 }
                 else {
-                    cout << "Encountered an entry that is not a number, header? " << line[j] << endl;
+                    std::cout << "Encountered an entry that is not a number, header? " << line[j] << std::endl;
                 }
                 
             }
@@ -156,7 +156,7 @@ int main(int argc, char * argv[])
             writer->Update();
         }
         else { 
-            cerr << "Not all CSV lines could not converted to points, num_line" << lines << ", num_points=" << num_points; 
+            std::cerr << "Not all CSV lines could not converted to points, num_line" << lines << ", num_points=" << num_points; 
             exit(1);
         }
 	

@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellShellCombine.h"
 
-using namespace std;
+;
 
 
 LaShellShellCombine::LaShellShellCombine()
@@ -65,16 +65,16 @@ int LaShellShellCombine::FindScalarArray(LaShell* shell, const char* array_name)
 
 	for(vtkIdType i = 0; i < numberOfPointArrays; i++)
     {
-		//cout << "Array " << i << ", name = " << Source_Poly1->GetPointData()->GetArray(i)->GetName() << endl;
+		//std::cout << "Array " << i << ", name = " << Source_Poly1->GetPointData()->GetArray(i)->GetName() << std::endl;
         if (!_write_to_field_data) {
             if (strcmp(Source_Poly1->GetPointData()->GetArray(i)->GetName(), array_name) == 0) {
-                //cout << "Found array at location " << i << endl;
+                //std::cout << "Found array at location " << i << std::endl;
                 location = i; 
             }
         }
         else {
              if (strcmp(Source_Poly1->GetFieldData()->GetArray(i)->GetName(), array_name) == 0) {
-                //cout << "Found array at location " << i << endl;
+                //std::cout << "Found array at location " << i << std::endl;
                 location = i; 
             }
         }
@@ -92,22 +92,22 @@ bool LaShellShellCombine::SetScalarArrayNames(const char* array_name1, const cha
     if (location1 < 0 || location2 < 0)
     {
         if (location1 < 0)
-            cerr << "The array with name: " << array_name1 << " does not exist" << endl;
+            std::cerr << "The array with name: " << array_name1 << " does not exist" << std::endl;
         else 
-            cerr << "The array with name: " << array_name2 << " does not exist" << endl;
+            std::cerr << "The array with name: " << array_name2 << " does not exist" << std::endl;
         return false;
     }
     else { 
         _scalar_array_location_in_source1 = location1; 
         _scalar_array_location_in_source2 = location2; 
-        cout << "Array with this name exists at location w/index " << location1 << ", and in second mesh at location w/index "<< location2 << endl;
+        std::cout << "Array with this name exists at location w/index " << location1 << ", and in second mesh at location w/index "<< location2 << std::endl;
         return true;
     }
 
     
 }
 
-void LaShellShellCombine::SetOutputScalarName(string array_name)
+void LaShellShellCombine::SetOutputScalarName(std::string array_name)
 {
     _output_scalar_name = array_name;
 }
@@ -155,12 +155,12 @@ void LaShellShellCombine::Update()
 
 
     Output_Poly_Scalar->SetName(_output_scalar_name.c_str());
-    cout << "New array name = " << _output_scalar_name << endl;
-cout << "Array size = something else" << Scalars_Poly1->GetNumberOfComponents() << endl;
+    std::cout << "New array name = " << _output_scalar_name << std::endl;
+std::cout << "Array size = something else" << Scalars_Poly1->GetNumberOfComponents() << std::endl;
     for(vtkIdType i = 0; i < Scalars_Poly1->GetNumberOfTuples(); i++)
     {   
         float s1, s2;
-        //cout << "s1=" << s1 << ", s2=" << s2 << endl;
+        //std::cout << "s1=" << s1 << ", s2=" << s2 << std::endl;
         s1 = Scalars_Poly1->GetValue(i); 
         
         if ( i < Scalars_Poly2->GetNumberOfTuples()) {

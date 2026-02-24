@@ -24,39 +24,39 @@ int main(int argc, char * argv[])
 	{
 		for (int i = 1; i < argc; i++) {
 			if (i + 1 != argc) {
-				if (string(argv[i]) == "-i1") {
+				if (std::string(argv[i]) == "-i1") {
 					input_f1 = argv[i + 1];
 					foundArgs1 = true;
 				}
-				else if (string(argv[i]) == "-i2") {
+				else if (std::string(argv[i]) == "-i2") {
 					input_f2 = argv[i + 1];
 					foundArgs2 = true;
 				}
 
-				else if (string(argv[i]) == "-o") {
+				else if (std::string(argv[i]) == "-o") {
 					output_f = argv[i + 1];
 					foundArgs3 = true;
 				}
-				else if (string(argv[i]) == "-overlap") {
+				else if (std::string(argv[i]) == "-overlap") {
 					operation = atoi(argv[i + 1]);
 					foundArgs4 = true;
 				}
-                else if (string(argv[i]) == "-scalar1") {
+                else if (std::string(argv[i]) == "-scalar1") {
 					scalar_array_name1 = argv[i + 1];
 					foundArgs5 = true;
 				}
-				else if (string(argv[i]) == "-scalar2") {
+				else if (std::string(argv[i]) == "-scalar2") {
 					scalar_array_name2 = argv[i + 1];
 					foundArgs6 = true;
 					
 				}
-                else if (string(argv[i]) == "-scalar_out") {
+                else if (std::string(argv[i]) == "-scalar_out") {
 					output_scalar_name = argv[i + 1];
 					
 				}
 
 			}
-			else if (string(argv[i]) == "--field") {
+			else if (std::string(argv[i]) == "--field") {
 				is_field_data = true; 
 			}
 			
@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
 
 	if (!(foundArgs1 && foundArgs2 && foundArgs3 && foundArgs5 && foundArgs6))
 	{
-		cerr << "Combines scalars from two meshes\nCheck your parameters\n\nUsage:"
+		std::cerr << "Combines scalars from two meshes\nCheck your parameters\n\nUsage:"
 			"\n(Mandatory)\n\t-i1 <1st Mesh in VTK> \n\t-i2 <2nd Mesh in VTK>"
 			"\n\t-o <output_vtk>"
 			"\n\t-scalar1 <input scalar array name in mesh 1>"
@@ -73,7 +73,7 @@ int main(int argc, char * argv[])
 			"\n\t-scalar_out <output scalar array name in output mesh>"
 			"\n\n(Optional)"
 			"\n\t--field (read and write as field data)"
-			"\n\t-overlap <when overlap, which scalar?: 1-Scalar of Mesh-1, 2-Scalar of Mesh-2>\n" << endl;
+			"\n\t-overlap <when overlap, which scalar?: 1-Scalar of Mesh-1, 2-Scalar of Mesh-2>\n" << std::endl;
 
 
 		exit(1);
@@ -93,7 +93,7 @@ int main(int argc, char * argv[])
 
 		if (is_field_data)
 		{
-			cout << "\nReading and writing field data" << endl;
+			std::cout << "\nReading and writing field data" << std::endl;
 			algorithm->SetWriteDataToField();
 		}
 

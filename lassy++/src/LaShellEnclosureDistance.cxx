@@ -5,7 +5,7 @@
 #include <string>      // using string
 #include "../include/LaShellEnclosureDistance.h"
 
-using namespace std;
+;
 
 
 LaShellEnclosureDistance::LaShellEnclosureDistance()
@@ -71,7 +71,7 @@ void LaShellEnclosureDistance::Update() {
 	if (_do_logging) {
 		ofs.open("Shell_Enclosure_Distance_Log.csv", std::ofstream::out | std::ofstream::trunc);
 
-		ofs << "pointID,pX,pY,pZ,Line_Start_X,Line_Start_Y,Line_Start_Z,Line_End_X, Line_End_Y,Line_End_Z, intersect_X,intersect_Y,intersect_Z,distance" << endl;
+		ofs << "pointID,pX,pY,pZ,Line_Start_X,Line_Start_Y,Line_Start_Z,Line_End_X, Line_End_Y,Line_End_Z, intersect_X,intersect_Y,intersect_Z,distance" << std::endl;
 		
 	}
 
@@ -121,7 +121,7 @@ void LaShellEnclosureDistance::Update() {
 		{
 			ofs << i << "," << pStart[0] << "," << pStart[1] << "," << pStart[2] << "," << new_pStart[0] << "," << new_pStart[1] << "," << new_pStart[2] << ","
 				"" << pEnd[0] << "," << pEnd[1] << "," << pEnd[2] << ""
-				"," << x[0] << "," << x[1] << "," << x[2] << "," << distance_to_target << endl;
+				"," << x[0] << "," << x[1] << "," << x[2] << "," << distance_to_target << std::endl;
  		}
 
 		OutputPolyScalars->InsertNextTuple1(distance_to_target);

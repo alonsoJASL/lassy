@@ -26,7 +26,7 @@
 #include "LaImage.h"
 #include "LaImageAlgorithms.h"
 
-using namespace std;
+;
 
 
 class LaImageCrop : public LaImageAlgorithms {

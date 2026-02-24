@@ -4,13 +4,13 @@
 #include <iostream>    // using IO functions
 #include <string>      // using string
 #include "../include/ShellEntropy.h"
-using namespace std;
+;
 
 
 ShellEntropy::ShellEntropy(vtkSmartPointer<vtkPolyData> mesh) {  
 	if( mesh->GetPointData()->GetNumberOfArrays() <= 0) 
 	{
-		cout << "Error creating ShellEntropy class object, no point data in mesh! " << endl; 
+		std::cout << "Error creating ShellEntropy class object, no point data in mesh! " << std::endl; 
 		exit(1);
 	}
 	_mesh_3d->DeepCopy(mesh);
@@ -40,14 +40,14 @@ ShellEntropy::ShellEntropy(const char* vtk_fn)
 
 void ShellEntropy::GetPointEntropy(int pointID)
 {
-	vector<int> pointNeighbours; 
+	std::vector<int> pointNeighbours; 
 	int nhood = 9; 
-	cout << "\nGetting point neighbourhood information ... ";
+	std::cout << "\nGetting point neighbourhood information ... ";
 	GetNeighboursAroundPoint(pointID, pointNeighbours, nhood); 
-	cout << "completed! Now printing to file .... " << endl; 
+	std::cout << "completed! Now printing to file .... " << std::endl; 
 
-	ofstream out;
-	stringstream ss; 
+	std::ofstream out;
+	std::stringstream ss; 
 	ss << "pixels_around_" << pointID << "_nhood_" << nhood << ".csv"; 
 	out.open(ss.str().c_str());
 	
@@ -56,7 +56,7 @@ void ShellEntropy::GetPointEntropy(int pointID)
 
 	for (int k = 0; k < pointNeighbours.size(); k++)
 	{
-		out << scalar_array->GetTuple1(k) << endl;
+		out << scalar_array->GetTuple1(k) << std::endl;
 	}
 
 	out.close(); 
@@ -75,7 +75,7 @@ bool ShellEntropy::InsertPointIntoVisitedList(vtkIdType id)
 }
 
 
-void ShellEntropy::GetNeighboursAroundPoint(int pointID, vector<int>& pointNeighbours, int order)
+void ShellEntropy::GetNeighboursAroundPoint(int pointID, std::vector<int>& pointNeighbours, int order)
 {
 	
 	_visited_point_list.clear();			// container that stores neighbours (vertex ids) 
@@ -88,8 +88,8 @@ void ShellEntropy::GetNeighboursAroundPoint(int pointID, vector<int>& pointNeigh
 		pointNeighbours.push_back(_visited_point_list[i]);
 
 	}
-	cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
-	cout << "\n";
+	std::cout << "This point has (recursive order n = " << order << ") = " << pointNeighbours.size() << " neighbours";
+	std::cout << "\n";
 
 }
 
@@ -129,14 +129,14 @@ void ShellEntropy::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh, int s
   vtkSmartPointer<vtkIdList> cellIdList = vtkSmartPointer<vtkIdList>::New(); 
   mesh->GetPointCells(seed, cellIdList); 
 
-  //cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << endl; 
+  //std::cout << "There are " << cellIdList->GetNumberOfIds() << " cells that use point " << seed << std::endl; 
 
   //loop through all the cells that use the seed point 
 	for(vtkIdType i = 0; i < cellIdList->GetNumberOfIds(); i++) 
 	{ 
 
 		vtkCell* cell = mesh->GetCell(cellIdList->GetId(i)); 
-		//cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << endl; 
+		//std::cout << "The cell has " << cell->GetNumberOfEdges() << " edges." << std::endl; 
 
 		//if the cell doesn't have any edges, it is a line 
 		if(cell->GetNumberOfEdges() <= 0) 
@@ -151,7 +151,7 @@ void ShellEntropy::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh, int s
 			vtkCell* edge = cell->GetEdge(e); 
 
 			vtkIdList* pointIdList = edge->GetPointIds(); 
-			//cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << endl; 
+			//std::cout << "This cell uses " << pointIdList->GetNumberOfIds() << " points" << std::endl; 
 
 			if(pointIdList->GetId(0) == seed || pointIdList->GetId(1) == seed) 
 			{ 
@@ -170,7 +170,7 @@ void ShellEntropy::GetConnectedVertices(vtkSmartPointer<vtkPolyData> mesh, int s
 	} 
 
 
-   // cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << endl; 
+   // std::cout << "There are " << connectedVertices->GetNumberOfIds() << " points connected to point " << seed << std::endl; 
 } 
 
 

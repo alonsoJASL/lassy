@@ -18,8 +18,8 @@ void LaShellGapsInBinary::Run()
 		if (s < min_scalar)
 			min_scalar = s;
 	}
-	cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
-			 << ") scalars " << endl;
+	std::cout << "Maximum (" << max_scalar << "), and minimum (" << min_scalar
+			 << ") scalars " << std::endl;
 	// this is your polydata mapper object
 	mapper->SetScalarRange(min_scalar, max_scalar);      // you must tell your mapper and lookuptable what is the range of scalars first
 	mapper->SetScalarModeToUsePointData();    // mapper->SetScalarModeToUsePointData(); is also possible if you are using cell data

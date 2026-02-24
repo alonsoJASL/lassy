@@ -5,7 +5,7 @@
 
 #include "../include/LaImage.h"
 #include "../include/CSVReader.h"
-using namespace std;
+;
 
 
 void LaImage::Export(const char* output_fn)
@@ -21,7 +21,7 @@ void LaImage::Export(const char* output_fn)
 // Pixel iterator 
 void LaImage::PixelToFile(const char* output_fn)
 {
-	ofstream out;
+	std::ofstream out;
 	typedef itk::ImageRegionIterator<InputImageType>       IteratorType;
 
 	out.open(output_fn);
@@ -38,7 +38,7 @@ void LaImage::PixelToFile(const char* output_fn)
 
 void LaImage::FileToPixel(const char* input_fn)
 {
-	ifstream infile(input_fn); 
+	std::ifstream infile(input_fn); 
 	double x,y,z,pixel; 
 	typedef unsigned short PixelType;
 	typedef itk::Image< PixelType, 3 >  ImageType;
@@ -48,14 +48,14 @@ void LaImage::FileToPixel(const char* input_fn)
 	int size_y = region.GetSize()[1];
 	int size_z = region.GetSize()[2];
 
-	vector<vector<string> > csv_content = CSVReader::readCSV(infile);
+	std::vector<std::vector<std::string> > csv_content = CSVReader::readCSV(infile);
 
 	// The CSV iterator is from here: 
 	// https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
 	for (int i=0;i<csv_content.size();i++)
     {
 		x=-1; y=-1; z=-1; pixel=-1;
-		vector<string> line = csv_content[i]; 
+		std::vector<std::string> line = csv_content[i]; 
 		for (int j=0;j<line.size();j++)
 		{
 			int num = atoi(line[j].c_str()); 
@@ -64,7 +64,7 @@ void LaImage::FileToPixel(const char* input_fn)
 			else if (j==2) z = num ;
 			else if (j==3) pixel = num;
 		}
-		//cout << "read line:  " << x << ","  << y << "," << z << "," << pixel << endl;
+		//std::cout << "read line:  " << x << ","  << y << "," << z << "," << pixel << std::endl;
 		if (x >= 0 && x < size_x && y >= 0 && y < size_y && z >=0 && z < size_z && pixel >= 0)
 		{
 			ImageType::IndexType pixelIndex;
@@ -75,7 +75,7 @@ void LaImage::FileToPixel(const char* input_fn)
 			_image->SetPixel(pixelIndex, pixel);
 		}
 		else {
-			cout << "\nOut of bounds while reading line: " << x << ","  << y << "," << z << "," << pixel << ", carrying on ...";
+			std::cout << "\nOut of bounds while reading line: " << x << ","  << y << "," << z << "," << pixel << ", carrying on ...";
 		}
 		
 	}
@@ -122,9 +122,9 @@ void LaImage::WorldToImage(double &x, double &y, double &z)
 
 	point[0] = x; 
 	point[1] = y; 
-	point[2] = z; 
-	
-	_image->TransformPhysicalPointToIndex(point, pixelIndex);
+	point[2] = z;
+
+	const bool isInside_image = _image->TransformPhysicalPointToIndex(point, pixelIndex);
 	x = pixelIndex[0]; 
 	y = pixelIndex[1];
 	z = pixelIndex[2];
