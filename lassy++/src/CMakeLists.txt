@@ -31,6 +31,7 @@ SET(LASSY_INCLUDES
 	"../include/LaImageFloat.h"
 	"../include/LaShell2ShellPointsCSV.h"
 	"../include/LaShellShellIntersectionMultiArray.h"
+	"../include/LaShellSyntheticScar.h"
 )
 
 SET(LASSY_SRCS
@@ -66,6 +67,7 @@ SET(LASSY_SRCS
 	LaImageHoleFilling.cxx
 	LaShell2ShellPointsCSV.cxx
 	LaShellShellIntersectionMultiArray.cxx
+	LaShellSyntheticScar.cxx
 )
 
 ADD_LIBRARY(lassy++ ${LASSY_SRCS} ${LASSY_INCLUDES})

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 cmake_policy(SET CMP0167 NEW)
 
+set(CMAKE_CXX_STANDARD 17)
+
 project(lassy)
 
 find_package(ITK REQUIRED)
@@ -47,6 +49,7 @@ add_executable(gapmeasurements applications/gapmeasurements.cxx)
 add_executable(assignmeshlabels applications/assignmeshlabels.cxx)
 add_executable(mesh2vtk applications/mesh2vtk.cxx)
 add_executable(ugrid2vtk applications/ugrid2vtk.cxx)
+add_executable(syntheticScar applications/syntheticScar.cxx)
 
 if(APPLE)
 	add_executable(encirclement MACOSX_BUNDLE applications/encirclement.cxx)
@@ -89,6 +92,8 @@ target_link_libraries(inpaintmask lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 target_link_libraries(gapfill lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 target_link_libraries(csvshell2shell lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
 target_link_libraries(target2source2 lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(syntheticScar lassy++ ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+
 if (UNIX)
 	#INSTALL(TARGETS ugrid2vtk DESTINATION /usr/local/bin)
 	#INSTALL(TARGETS mesh2vtk DESTINATION /usr/local/bin)
@@ -121,4 +126,5 @@ INSTALL(TARGETS inpaintmask DESTINATION /usr/local/bin)
 INSTALL(TARGETS gapfill DESTINATION /usr/local/bin)
 INSTALL(TARGETS csvshell2shell DESTINATION /usr/local/bin)
 INSTALL(TARGETS target2source2 DESTINATION /usr/local/bin)
+INSTALL(TARGETS syntheticScar DESTINATION /usr/local/bin)
 endif (UNIX)

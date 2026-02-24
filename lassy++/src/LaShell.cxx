@@ -65,8 +65,7 @@ void LaShell::SetMesh3D(vtkSmartPointer<vtkPolyData> input) {  // Member functio
 	_mesh_3d->DeepCopy(input);
 }
 
-void LaShell::ExportVTK(char* vtk_fn)
-{
+void LaShell::ExportVTK(const char* vtk_fn) {
 	vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
 	writer->SetInputData(_mesh_3d);
 	writer->SetFileName(vtk_fn);

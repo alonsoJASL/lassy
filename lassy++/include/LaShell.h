@@ -55,7 +55,7 @@ public:
 	/*
 	*	Exports the VTK mesh to a file
 	*/
-	void ExportVTK(char* vtk_fn);
+	void ExportVTK(const char *vtk_fn);
 
 	/*
 	*	Converts a binary 3D image to a smooth mesh.

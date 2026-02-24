@@ -799,6 +799,19 @@ void LaShellGapsInBinary::Run()
 	vtkFloatArray *scalars = vtkFloatArray::New();
 	scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());  // bring al lthe scalars to an array
 
+	if (!scalars) {
+    std::cerr << "LaShellGapsInBinary::Run — no scalar array on input mesh. "
+            "Adding a zero scalar array to proceed." << std::endl;
+    vtkSmartPointer<vtkFloatArray> zero_scalars = vtkSmartPointer<vtkFloatArray>::New();
+    zero_scalars->SetNumberOfComponents(1);
+    zero_scalars->SetName("default");
+    for (vtkIdType i = 0; i < _SourcePolyData->GetNumberOfPoints(); ++i)
+        zero_scalars->InsertNextValue(0.0f);
+    
+		_SourcePolyData->GetPointData()->SetScalars(zero_scalars);
+    scalars = vtkFloatArray::SafeDownCast(_SourcePolyData->GetPointData()->GetScalars());
+}
+
 	for (vtkIdType i=0;i<_SourcePolyData->GetNumberOfPoints();i++)		// running through each point i
 	{
 		s = scalars->GetTuple1(i);
