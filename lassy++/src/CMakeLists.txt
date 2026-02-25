@@ -32,6 +32,10 @@ SET(LASSY_INCLUDES
 	"../include/LaShell2ShellPointsCSV.h"
 	"../include/LaShellShellIntersectionMultiArray.h"
 	"../include/LaShellSyntheticScar.h"
+	"../include/LaVolume.h"
+	"../include/LaVolumeAlgorithms.h"
+	"../include/LaVolumeGraphTraversal.h"
+	"../include/LaVolumeSyntheticScar.h"
 )
 
 SET(LASSY_SRCS
@@ -68,6 +72,11 @@ SET(LASSY_SRCS
 	LaShell2ShellPointsCSV.cxx
 	LaShellShellIntersectionMultiArray.cxx
 	LaShellSyntheticScar.cxx
+	LaVolume.cxx
+	LaVolumeAlgorithms.cxx
+	LaVolumeGraphTraversal.cxx
+	LaVolumeSyntheticScar.cxx
+	VTKinit.cxx
 )
 
 ADD_LIBRARY(lassy++ ${LASSY_SRCS} ${LASSY_INCLUDES})

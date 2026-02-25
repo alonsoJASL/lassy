@@ -218,7 +218,7 @@ std::string LaShellSyntheticScar::UniqueArrayName(vtkPolyData* poly,
         if (name) existing.push_back(string(name));
     }
 
-    auto name_taken = [&](const string& n) {
+    auto name_taken = [&](const std::string& n) {
         return find(existing.begin(), existing.end(), n) != existing.end();
     };
 
