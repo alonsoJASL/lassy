@@ -49,7 +49,7 @@ add_executable(gapmeasurements applications/gapmeasurements.cxx)
 add_executable(assignmeshlabels applications/assignmeshlabels.cxx)
 add_executable(mesh2vtk applications/mesh2vtk.cxx)
 add_executable(ugrid2vtk applications/ugrid2vtk.cxx)
-add_executable(syntheticScar applications/syntheticScar.cxx)
+add_executable(syntheticScar applications/syntheticscar.cxx)
 
 if(APPLE)
 	add_executable(encirclement MACOSX_BUNDLE applications/encirclement.cxx)
