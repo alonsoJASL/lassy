@@ -11,7 +11,7 @@
 LaShellShellIntersection::LaShellShellIntersection()
 {
 	_which_direction = 1;
-	_which_mapping = MAPPING_METHOD_DISTANCE; 
+	_which_mapping = MappingMethod::Distance; 
 	_output_la = std::make_unique<LaShell>(); 
 	_mapping_default_value = 0; 
 	
@@ -22,23 +22,19 @@ LaShellShellIntersection::~LaShellShellIntersection()
 	 
 }
 
-void LaShellShellIntersection::SetInputData(LaShell* shell)
-{
+void LaShellShellIntersection::SetInputData(LaShell* shell) {
 	_source_la = shell; 
 }
 
-void LaShellShellIntersection::SetInputData2(LaShell* shell)
-{
+void LaShellShellIntersection::SetInputData2(LaShell* shell) {
 	_target_la = shell; 
 }
 
-LaShell* LaShellShellIntersection::GetOutput()
-{
+LaShell* LaShellShellIntersection::GetOutput() {
 	return _output_la.get(); 
 }
 
-double LaShellShellIntersection::GetEuclidean(double* p1, double* p2)
-{
+double LaShellShellIntersection::GetEuclidean(double* p1, double* p2){
 	double sum; 
 	sum = ((p1[0] - p2[0])*(p1[0] - p2[0])) + ((p1[1] - p2[1])*(p1[1] - p2[1])) + ((p1[2] - p2[2])*(p1[2] - p2[2]));
 	return sqrt(sum); 
@@ -61,12 +57,12 @@ void LaShellShellIntersection::SetDirectionToOppositeNormal()
 
 void LaShellShellIntersection::SetMapIntersectionToDistance()
 {
-	_which_mapping = MAPPING_METHOD_DISTANCE;
+	_which_mapping = MappingMethod::Distance;
 }
 
 void LaShellShellIntersection::SetMapIntersectionToCopyScalar()
 {
-	_which_mapping = MAPPING_METHOD_TRANSFER;
+	_which_mapping = MappingMethod::Transfer;
 }
 
 void LaShellShellIntersection::SetDefaultMappingValue(double v)
@@ -149,14 +145,14 @@ void LaShellShellIntersection::Update()
 			float mapped_value = 0, distance_to_target = 0, target_scalar = 0;
 			switch (_which_mapping)
 			{
-				case MAPPING_METHOD_DISTANCE:
+				case MappingMethod::Distance:
 					distance_to_target = GetEuclidean(pStart, x);
 					mapped_value = distance_to_target;
 					Output_Poly_Scalar->InsertNextTuple1(mapped_value);
 
 					break;
 
-				case MAPPING_METHOD_TRANSFER:
+				case MappingMethod::Transfer:
 					vtkIdType id_on_target = Target_Poly_PointLocator->FindClosestPoint(x);
 
 					if (id_on_target > 0)

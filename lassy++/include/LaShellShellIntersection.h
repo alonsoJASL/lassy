@@ -15,6 +15,11 @@
 
 #define MAPPING_METHOD_DISTANCE 1 
 #define MAPPING_METHOD_TRANSFER 2
+
+enum MappingMethod {
+	Distance = 1,
+	Transfer = 2
+};
  
 
 
@@ -45,6 +50,7 @@ class LaShellShellIntersection : public LaShellAlgorithms {
 
 private:
 	// No private members
+	MappingMethod _which_mapping;
 
 protected:
 	LaShell* _source_la; 
@@ -53,7 +59,6 @@ protected:
 
 	std::vector<Point3> _intersections;
 
-	int _which_mapping;
 
 	// when no intersection is found, this value is mapped, default is 0
 	double _mapping_default_value;		
