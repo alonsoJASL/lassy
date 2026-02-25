@@ -11,13 +11,10 @@
 LaShellExtractArray::LaShellExtractArray()
 {
 	_source_la = new LaShell(); 
-	_output_la = new LaShell(); 
+	_output_la = std::make_unique<LaShell>(); 
 }
 
-LaShellExtractArray::~LaShellExtractArray() {
-
-	delete _source_la; 
-	delete _output_la; 
+LaShellExtractArray::~LaShellExtractArray() {	 
 }
 
 
@@ -36,7 +33,7 @@ void LaShellExtractArray::SetArrayName(const char* array_name)
 
 
 LaShell* LaShellExtractArray::GetOutput() {
-	return _output_la; 
+	return _output_la.get(); 
 }
 
 

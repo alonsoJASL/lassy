@@ -44,9 +44,12 @@ class LaShellShellIntersection : public LaShellAlgorithms {
 
 
 private:
+	// No private members
+
+protected:
 	LaShell* _source_la; 
 	LaShell* _target_la; 
-	LaShell* _output_la;
+	std::unique_ptr<LaShell> _output_la;
 
 	std::vector<Point3> _intersections;
 
@@ -54,12 +57,9 @@ private:
 
 	// when no intersection is found, this value is mapped, default is 0
 	double _mapping_default_value;		
-	
-	double _which_direction;
-	
-	
 
-protected:
+	double _which_direction;
+
 	static double GetEuclidean(double* p1, double* p2); 
 	static void GetFiniteLine(double* start, double* direction, double max_distance, double which_direction, double* end);
 	

@@ -10,14 +10,12 @@
 
 LaShellEnclosureDistance::LaShellEnclosureDistance()
 {
-	_output_shell = new LaShell();
+	_output_shell = std::make_unique<LaShell>();
 	_which_direction = -1;		// Always -1 to measure enclosed distance using direction opposite to surface normal
 	_do_logging = false;
 }
 
 LaShellEnclosureDistance::~LaShellEnclosureDistance() {
-	delete _output_shell; 
-
 }
 
 
@@ -33,7 +31,7 @@ void LaShellEnclosureDistance::SetLoggingToTrue()
 
 
 LaShell* LaShellEnclosureDistance::GetOutput() {
-	return _output_shell; 
+	return _output_shell.get(); 
 }
 
 

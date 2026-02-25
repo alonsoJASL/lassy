@@ -73,7 +73,7 @@ protected:
 
 	LaShell* _source_la;
 	LaShell* _target_la;
-    LaShell* _output_la;
+    std::unique_ptr<LaShell> _output_la;
 
 public:
     int _neighbourhood_size;

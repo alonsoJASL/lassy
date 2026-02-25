@@ -41,7 +41,7 @@ class LaShellShellDisplacement : public LaShellAlgorithms {
 protected: 
 	LaShell* _source_la;
 	LaShell* _target_la;
-	LaShell* _output_la;
+	std::unique_ptr<LaShell> _output_la;
 
 	std::string _multiple_target_fn; 
 	std::vector<std::string> _filename_list; 

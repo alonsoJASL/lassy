@@ -33,7 +33,7 @@ class LaShellShellArithmetic : public LaShellAlgorithms {
 
 	LaShell* _source_la_1;
 	LaShell* _source_la_2;
-	LaShell* _output_la;
+	std::unique_ptr<LaShell> _output_la;
 
 	Operation _operation; 
 	double _factor;

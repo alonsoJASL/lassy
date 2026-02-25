@@ -13,16 +13,16 @@ LaMaskDataShellOperations::LaMaskDataShellOperations()
 {
 	_data_shell = new LaShell(); 
 	_mask_shell = new LaShell(); 
-	_output_la  = new LaShell();
+	_output_la  = std::make_unique<LaShell>();
 	
-	_which_operation = MEAN;
+	_which_operation = StatisticalOperation::Mean;
 }
 
 LaMaskDataShellOperations::~LaMaskDataShellOperations() {
 
 	delete _data_shell; 
 	delete _mask_shell; 
-	delete _output_la;
+	
 }
 
 
@@ -42,25 +42,25 @@ double LaMaskDataShellOperations::GetOutputValue()
 }
 
 LaShell* LaMaskDataShellOperations::GetOutput() {
-	return _output_la;
+	return _output_la.get();
 }
 
 void LaMaskDataShellOperations::SetOperationToMean() 
 {
 	//std::cout << "\n\ntPerforming Mean ...\n";
-	_which_operation = MEAN; 
+	_which_operation = StatisticalOperation::Mean; 
 }
 
 void LaMaskDataShellOperations::SetOperationToMedian() 
 {
 	//std::cout << "\n\ntPerforming Mean ...\n";
-	_which_operation = MEDIAN; 
+	_which_operation = StatisticalOperation::Median; 
 }
 
 void LaMaskDataShellOperations::SetOperationToStdev() 
 {
 	//std::cout << "\n\ntPerforming Mean ...\n";
-	_which_operation = STDEV; 
+	_which_operation = StatisticalOperation::Stdev; 
 }
 
 
@@ -132,17 +132,17 @@ void LaMaskDataShellOperations::Update() {
 	{
 		double mean, median, stdev; 
 
-		case MEAN: 
+		case StatisticalOperation::Mean: 
 			mean = MathBox::CalcMean(data_in_mask);
 			_scalar_aggregate = mean;
 			break;
 		
-		case MEDIAN: 
+		case StatisticalOperation::Median: 
 			median = MathBox::CalcMedian(data_in_mask);
 			_scalar_aggregate = median;
 			break;
 
-		case STDEV: 
+		case StatisticalOperation::Stdev: 
 			mean = MathBox::CalcMean(data_in_mask);
 			stdev = MathBox::CalcStd(data_in_mask, mean);
 			_scalar_aggregate = stdev;

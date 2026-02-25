@@ -40,7 +40,7 @@ class LaShellPointsCSV : public LaShellAlgorithms {
 protected: 
 
 	LaShell* _source_la;
-    LaShell* _output_la;
+    std::unique_ptr<LaShell> _output_la;
 
     std::ifstream _csvfilestream;
     vtkSmartPointer<vtkPoints> _point_set;  // csv points - points listed in csv file

@@ -13,9 +13,10 @@
 #pragma once
 #define HAS_VTK 1
 
-#define COPY_USING_POINTID 1 
-#define COPY_USING_NORMAL 2
- 
+enum IntersectionMappingMethod {
+	CopyUsingPointId = 1, 
+	CopyUsingNormal = 2
+}; 
 
 
 #include <vtkPointData.h>
@@ -45,20 +46,9 @@ class LaShellShellIntersectionMultiArray : public LaShellShellIntersection {
 
 
 private:
-	LaShell* _source_la; 
-	LaShell* _target_la; 
-	LaShell* _output_la;
+	//  Inherited from LaShellShellIntersection
 
-	std::vector<Point3> _intersections;
-
-	int _which_mapping;
-
-	// when no intersection is found, this value is mapped, default is 0
-	double _mapping_default_value;		
-	
-	double _which_direction;
-	
-	
+	IntersectionMappingMethod _copy_method;
 
 protected:
 	static double GetEuclidean(double* p1, double* p2); 

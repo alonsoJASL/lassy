@@ -12,7 +12,7 @@ LaShellShellDisplacement::LaShellShellDisplacement()
 {
 	_source_la = new LaShell();
 	_target_la = new LaShell();
-	_output_la = new LaShell();
+	_output_la = std::make_unique<LaShell>();
 	_SourcePolyData = vtkSmartPointer<vtkPolyData>::New();
 	_num_targets = ONE_TARGET;
 	_num_targets_read = 0; 
@@ -21,9 +21,6 @@ LaShellShellDisplacement::LaShellShellDisplacement()
 }
 
 LaShellShellDisplacement::~LaShellShellDisplacement() {
-	delete _source_la; 
-	delete _target_la; 
-	delete _output_la;
 }
 
 void LaShellShellDisplacement::SetInputMultipleTargets(char* name_list)
@@ -59,7 +56,7 @@ void LaShellShellDisplacement::SetAggregateMethodToMean()
 
 
 LaShell* LaShellShellDisplacement::GetOutput() {
-	return _output_la;
+	return _output_la.get();
 }
 
 

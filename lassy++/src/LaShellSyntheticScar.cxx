@@ -20,7 +20,7 @@ using namespace std;
 
 LaShellSyntheticScar::LaShellSyntheticScar() {
     _source_la         = new LaShell();
-    _output_la         = new LaShell();
+    _output_la         = std::make_unique<LaShell>();
     _source_poly       = vtkSmartPointer<vtkPolyData>::New();
     _neighbourhood_size = 3;
     _sigma             = -1.0;   // sentinel: recompute from neighbourhood_size
@@ -28,9 +28,7 @@ LaShellSyntheticScar::LaShellSyntheticScar() {
     _output_array_name = "synthetic_scar";
 }
 
-LaShellSyntheticScar::~LaShellSyntheticScar() {
-    delete _source_la;
-    delete _output_la;
+LaShellSyntheticScar::~LaShellSyntheticScar() {    
 }
 
 
@@ -356,5 +354,5 @@ void LaShellSyntheticScar::Update() {
 // ============================================================
 
 LaShell* LaShellSyntheticScar::GetOutput() {
-    return _output_la;
+    return _output_la.get();
 }

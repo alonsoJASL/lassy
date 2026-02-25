@@ -35,7 +35,7 @@ class LaShellEnclosureDistance : public LaShellShellIntersection {
 
 private:
 	LaShell* _source_shell;
-	LaShell* _output_shell;
+	std::unique_ptr<LaShell> _output_shell;
 	
 
 	int _which_direction;	

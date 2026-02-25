@@ -8,7 +8,7 @@
 
 LaShellPointsCSV::LaShellPointsCSV() {
     _source_la = new LaShell();
-    _output_la = new LaShell();
+    _output_la = std::make_unique<LaShell>();
     _copy_method = POINT_COPY;
     _neighbour_radius = 5;
     _new_scalar_array_name = "new_scalar";
@@ -260,7 +260,7 @@ void LaShellPointsCSV::VisualisePoints() {
 
 LaShell* LaShellPointsCSV::GetOutput() {
 
-    return _output_la;
+    return _output_la.get();
 }
 
 
@@ -311,7 +311,4 @@ void LaShellPointsCSV::Update()
 
 
 LaShellPointsCSV::~LaShellPointsCSV() {
-
-	delete _source_la;
-
 }

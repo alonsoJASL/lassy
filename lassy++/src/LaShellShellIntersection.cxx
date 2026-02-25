@@ -12,14 +12,14 @@ LaShellShellIntersection::LaShellShellIntersection()
 {
 	_which_direction = 1;
 	_which_mapping = MAPPING_METHOD_DISTANCE; 
-	_output_la = new LaShell(); 
+	_output_la = std::make_unique<LaShell>(); 
 	_mapping_default_value = 0; 
 	
 }
 
 LaShellShellIntersection::~LaShellShellIntersection()
 {
-	delete _output_la; 
+	 
 }
 
 void LaShellShellIntersection::SetInputData(LaShell* shell)
@@ -34,7 +34,7 @@ void LaShellShellIntersection::SetInputData2(LaShell* shell)
 
 LaShell* LaShellShellIntersection::GetOutput()
 {
-	return _output_la; 
+	return _output_la.get(); 
 }
 
 double LaShellShellIntersection::GetEuclidean(double* p1, double* p2)

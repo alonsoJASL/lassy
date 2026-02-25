@@ -26,7 +26,7 @@ class LaShellShellCombine : public LaShellAlgorithms {
 
 	LaShell* _source_la_1;
 	LaShell* _source_la_2;
-	LaShell* _output_la;
+	std::unique_ptr<LaShell> _output_la;
     const char* _scalar_array_name;
 	std::string _output_scalar_name;
     int _scalar_array_location_in_source1; 

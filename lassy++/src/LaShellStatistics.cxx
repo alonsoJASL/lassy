@@ -15,7 +15,6 @@ LaShellStatistics::LaShellStatistics()
 }
 
 LaShellStatistics::~LaShellStatistics() {
-	delete _source_la; 
 }
 
 

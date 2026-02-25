@@ -16,7 +16,6 @@ LaShellAssignLabels::LaShellAssignLabels(){
 }
 
 LaShellAssignLabels::~LaShellAssignLabels() {
-	delete _source_la;
 }
 
 void LaShellAssignLabels::SetInputData(LaShell* shell) {

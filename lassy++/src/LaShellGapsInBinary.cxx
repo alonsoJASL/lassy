@@ -13,7 +13,7 @@ LaShellGapsInBinary::LaShellGapsInBinary()
 {
 	_source_la = new LaShell();
 	_target_la = new LaShell();
-	_output_la = new LaShell();
+	_output_la = std::make_unique<LaShell>();
 	_SourcePolyData = vtkSmartPointer<vtkPolyData>::New();
 
 	_neighbourhood_size = 3;
@@ -24,9 +24,7 @@ LaShellGapsInBinary::LaShellGapsInBinary()
 }
 
 LaShellGapsInBinary::~LaShellGapsInBinary() {
-	delete _source_la;
-	delete _target_la;
-	delete _output_la;
+	
 }
 
 void LaShellGapsInBinary::SetInputData(LaShell* shell) {

@@ -11,15 +11,15 @@
 LaShellShellIntersectionMultiArray::LaShellShellIntersectionMultiArray()
 {
 	
-	_which_mapping = COPY_USING_NORMAL; 
-	_output_la = new LaShell(); 
+	_copy_method = IntersectionMappingMethod::CopyUsingNormal; 
+	_output_la = std::make_unique<LaShell>(); 
 	
 	
 }
 
 LaShellShellIntersectionMultiArray::~LaShellShellIntersectionMultiArray()
 {
-	delete _output_la; 
+	 
 }
 
 void LaShellShellIntersectionMultiArray::SetInputData(LaShell* shell)
@@ -36,19 +36,19 @@ void LaShellShellIntersectionMultiArray::SetInputData2(LaShell* shell)
 
 LaShell* LaShellShellIntersectionMultiArray::GetOutput()
 {
-	return _output_la; 
+	return _output_la.get(); 
 }
 
 
 
 void LaShellShellIntersectionMultiArray::SetCopyScalarsUsingNormal()
 {
-	_which_mapping = COPY_USING_NORMAL;
+	_copy_method = IntersectionMappingMethod::CopyUsingNormal;
 }
 
 void LaShellShellIntersectionMultiArray::SetCopyScalarsUsingPointid()
 {
-	_which_mapping = COPY_USING_POINTID;
+	_copy_method = IntersectionMappingMethod::CopyUsingPointId;
     std::cout << "Warning: using pointid to copy, meshes must have equal vertices\n";
 }
 
@@ -128,7 +128,7 @@ void LaShellShellIntersectionMultiArray::Update()
 		//LaShellShellIntersection::GetFiniteLine(pStart, pN, max_dist, _which_direction, pEnd);
 
 		// find intersection with source 
-        if (_which_mapping == COPY_USING_NORMAL) 
+        if (_copy_method == IntersectionMappingMethod::CopyUsingNormal) 
         {
             
             vtkIdType iD = Source_Poly_PointLocator->FindClosestPoint(pStart);
@@ -151,7 +151,7 @@ void LaShellShellIntersectionMultiArray::Update()
             }
                 
         }
-        else if (_which_mapping == COPY_USING_POINTID)
+        else if (_copy_method == IntersectionMappingMethod::CopyUsingPointId)
         {
             // copy every array value 
             for (int k=0;k<numberOfPointArraysInSource;k++)

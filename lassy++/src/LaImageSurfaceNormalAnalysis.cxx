@@ -18,7 +18,7 @@ LaImageSurfaceNormalAnalysis::LaImageSurfaceNormalAnalysis()
 	_mask_image = NULL;
 	_step_size = 4;
 	_normal_step_shell = NULL;
-	_output_shell = new LaShell();
+	_output_shell = std::make_unique<LaShell>();
 
 	_normal_interrogate_algorithm = new LaImageNormalInterrogator();
 	
@@ -29,7 +29,6 @@ LaImageSurfaceNormalAnalysis::LaImageSurfaceNormalAnalysis()
 LaImageSurfaceNormalAnalysis::~LaImageSurfaceNormalAnalysis() {
 	delete _la_shell;
 	delete _normal_interrogate_algorithm;
-	delete _output_shell;
 }
 
 void LaImageSurfaceNormalAnalysis::SetStepSize(double steps)
@@ -68,7 +67,7 @@ void LaImageSurfaceNormalAnalysis::SetInputDataImageMask(LaImage* mask_img) {
 LaShell* LaImageSurfaceNormalAnalysis::GetOutput() {
 	
 	
-	return _output_shell;
+	return _output_shell.get();
 }
 
 void LaImageSurfaceNormalAnalysis::SetOutputFileName(char* fn)

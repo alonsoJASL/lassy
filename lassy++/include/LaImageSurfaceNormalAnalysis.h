@@ -48,7 +48,7 @@ private:
 	 char* _output_fn;
 	
 public:
-	LaShell* _output_shell;
+	std::unique_ptr<LaShell> _output_shell;
 	// Constructor with default values for data members
 	/*static LaShellAlgorithms *New();*/
 	

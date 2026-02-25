@@ -12,9 +12,11 @@
 */
 #pragma once
 
-#define MEAN 1 
-#define MEDIAN 2 
-#define STDEV 3
+enum StatisticalOperation {
+	Mean = 1,
+	Median = 2,
+	Stdev = 3
+};
 
 #include "LaShellAlgorithms.h"
 #include "vtkPointLocator.h"
@@ -29,8 +31,8 @@ private:
 	LaShell* _data_shell; 
 	LaShell* _mask_shell;
 	
-	LaShell* _output_la;
-	int _which_operation; 
+	std::unique_ptr<LaShell> _output_la;
+	StatisticalOperation _which_operation; 
 	double _scalar_aggregate; 
 
 public:

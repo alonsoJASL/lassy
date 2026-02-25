@@ -10,7 +10,7 @@
 
 LaShellShellArithmetic::LaShellShellArithmetic()
 {
-	_output_la = new LaShell();
+	_output_la = std::make_unique<LaShell>();
 	_operation = Operation::Add;
 	_factor = 1.0; 
 	_single_shell = false; 
@@ -18,7 +18,7 @@ LaShellShellArithmetic::LaShellShellArithmetic()
 }
 
 LaShellShellArithmetic::~LaShellShellArithmetic() {
-	delete _output_la; 
+	 
 }
 
 
@@ -41,7 +41,7 @@ void  LaShellShellArithmetic::SetSingleShellModeValue(double val)
 }
 
 LaShell* LaShellShellArithmetic::GetOutput() {
-	return _output_la;
+	return _output_la.get();
 }
 
 void LaShellShellArithmetic::SetArithmetricOperationToAdd() {

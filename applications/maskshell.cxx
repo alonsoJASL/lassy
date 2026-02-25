@@ -16,7 +16,7 @@
 int main(int argc, char * argv[])
 {
 	char* input_f1, *input_f2, *output_f;
-	int operation = MEAN;
+	StatisticalOperation operation = StatisticalOperation::Mean;
 	bool foundArgs1 = false, foundArgs2 = false, foundArgs3 = false, foundArgs4=false;
 	bool isSuppress = false; 
 
@@ -38,7 +38,7 @@ int main(int argc, char * argv[])
 					foundArgs3 = true;
 				}
 				else if (std::string(argv[i]) == "-a") {
-					operation = atoi(argv[i + 1]);
+					operation = static_cast<StatisticalOperation>(atoi(argv[i + 1]));
 					foundArgs4 = true;
 				}
 
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
 		
 		switch (operation)
 		{
-		    case MEAN:
+		    case StatisticalOperation::Mean:
                 algorithm->SetOperationToMean();
                 algorithm->Update();
                 if (!isSuppress) std::cout << "\n\nMean = ";
@@ -83,7 +83,7 @@ int main(int argc, char * argv[])
 				if (!isSuppress) std::cout << std::endl;
                 break;
 			
-			case MEDIAN:
+			case StatisticalOperation::Median:
                 algorithm->SetOperationToMedian();
                 algorithm->Update();
                 if (!isSuppress) std::cout << "\n\nMedian = "; 
@@ -91,7 +91,7 @@ int main(int argc, char * argv[])
 				if (!isSuppress) std::cout << std::endl;
                 break;
 
-			case STDEV:
+			case StatisticalOperation::Stdev:
                 algorithm->SetOperationToStdev();
                 algorithm->Update();
                 if (!isSuppress) std::cout << "\n\nStdev = ";

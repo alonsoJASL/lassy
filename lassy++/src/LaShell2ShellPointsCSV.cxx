@@ -182,7 +182,4 @@ void LaShell2ShellPointsCSV::Update()
 
 
 LaShell2ShellPointsCSV::~LaShell2ShellPointsCSV() {
-
-	delete _source_la; 
-
 }

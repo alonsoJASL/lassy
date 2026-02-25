@@ -10,7 +10,7 @@
 
 LaShellShellCombine::LaShellShellCombine()
 {
-	_output_la = new LaShell();
+	_output_la = std::make_unique<LaShell>();
 	_overlap_preference = WHEN_OVERLAP_USE_SOURCE1;
     _scalar_array_location_in_source1 = -1;
     _scalar_array_location_in_source2 = -1;
@@ -21,7 +21,7 @@ LaShellShellCombine::LaShellShellCombine()
 
 
 LaShellShellCombine::~LaShellShellCombine() {
-	delete _output_la; 
+	 
 }
 
 
@@ -113,7 +113,7 @@ void LaShellShellCombine::SetOutputScalarName(std::string array_name)
 }
 
 LaShell* LaShellShellCombine::GetOutput() {
-	return _output_la;
+	return _output_la.get();
 }
 
 
