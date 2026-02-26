@@ -9,8 +9,7 @@
 ;
 
 
-LaShellGapsInBinary::LaShellGapsInBinary()
-{
+LaShellGapsInBinary::LaShellGapsInBinary(){
 	_source_la = new LaShell();
 	_target_la = new LaShell();
 	_output_la = std::make_unique<LaShell>();
@@ -589,6 +588,10 @@ vtkIdType LaShellGapsInBinary::GetFirstCellVertex(vtkPolyData* poly, vtkIdType c
 	return vertID;
 }
 
+const std::vector<std::array<double, 3>>& LaShellGapsInBinary::GetPickedPositions() const {
+	return _pickpositionarray;
+}
+
 void LaShellGapsInBinary::CorridorFromPointList(std::vector<int> points){
 	vtkSmartPointer<vtkPolyData> poly_data = vtkSmartPointer<vtkPolyData>::New();
 	poly_data = this->GetSourcePolyData();
@@ -680,6 +683,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 			<< ")\n";
 
 		this_class_obj->_pointidarray.push_back(pointID);
+		this_class_obj->_pickpositionarray.push_back({pick_position[0], pick_position[1], pick_position[2]});
 
 		LaShellGapsInBinary::CreateSphere(renderer, 1.5, pick_position);		// now draw the sphere
 
@@ -748,17 +752,7 @@ void LaShellGapsInBinary::KeyPressEventHandler(vtkObject* obj, unsigned long eve
 	}
 
 	else if (iren->GetKeyCode()=='s'){
-		std::ofstream out;
-		std::stringstream ss;
-		int lim = this_class_obj->_pointidarray.size();
-
-		ss << "pointsIDlist.txt";
-		out.open(ss.str().c_str(), std::ios_base::trunc);
-		for(int ix=0;ix<lim;ix++)
-			out << this_class_obj->_pointidarray[ix] << std::endl;
-
-		out.close();
-
+		
 		std::cout << "File: pointIDList.txt created. You can exit the application." << std::endl;
 	}
 

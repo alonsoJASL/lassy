@@ -4,9 +4,15 @@
  *  Generates a synthetic scar scalar field on a volumetric mesh (LaVolume).
  *
  *  Mirrors the public API of LaShellSyntheticScar exactly, with one
- *  addition: SetSurfaceSeeds(), which accepts a surface shell and surface
- *  point IDs (e.g. picked interactively via the encirclement viewer) and
- *  maps them to the nearest volumetric nodes via vtkPointLocator.
+ *  addition: SetSurfaceSeeds(), retained as a fallback for callers that
+ *  have surface point IDs rather than world coordinates.
+ *
+ *  Seed input methods:
+ *    ReadPointsFile()         — auto-detect or explicit coordinate/ID format
+ *    ReadPointCoordinatesFile() — coordinate format, resolved via vtkPointLocator
+ *    ReadPointIDFile()          — legacy integer ID format
+ *    SetNodeIDList()            — in-memory volumetric node IDs
+ *    SetSurfaceSeeds()          — maps surface point IDs to volume nodes
  *
  *  Internally uses LaVolumeGraphTraversal for shortest-path computation
  *  and neighbourhood expansion, replacing vtkDijkstraGraphGeodesicPath
@@ -44,15 +50,14 @@ class LaVolumeSyntheticScar : public LaVolumeAlgorithms {
 
 private:
 
-    LaVolume*  _source_volume;              // non-owning
-    std::unique_ptr<LaVolume>  _output_volume;
-
+    LaVolume*                         _source_volume;   // non-owning
+    std::unique_ptr<LaVolume>         _output_volume;
     std::unique_ptr<LaVolumeGraphTraversal> _graph;
 
-    std::vector<vtkIdType>  _seed_node_ids; // volumetric node IDs
+    std::vector<vtkIdType>  _seed_node_ids;
 
     int                  _neighbourhood_size;
-    double               _sigma;            // -1 = auto-derive
+    double               _sigma;
     VolumeFalloffKernel  _falloff;
     std::string          _output_array_name;
 
@@ -60,24 +65,11 @@ private:
     // Internal helpers
     // ------------------------------------------------------------------
 
-    /*
-     * Evaluates the chosen falloff kernel.
-     * d     — distance from corridor point to nearest path node
-     * max_d — normalisation radius in world units
-     */
     double EvaluateFalloff(double d, double max_d) const;
 
-    /*
-     * Scans existing point data arrays on the grid for name collisions
-     * with candidate.  Appends _1, _2, ... until the name is unique.
-     */
     static std::string UniqueArrayName(vtkUnstructuredGrid* grid,
                                        const std::string& candidate);
 
-    /*
-     * Estimates mean edge length from a sample of nodes.
-     * Used to derive max_d (world-space corridor radius).
-     */
     double EstimateMeanEdgeLength() const;
 
 public:
@@ -89,23 +81,47 @@ public:
     void SetInputData(LaVolume* volume);
 
     /*
+     * Sets volumetric node IDs directly.
+     */
+    void SetNodeIDList(const std::vector<vtkIdType>& ids);
+
+    /*
      * Maps surface point IDs to the nearest volumetric nodes using
-     * vtkPointLocator.  Call this when seeds were picked on a surface
-     * shell derived from this volume.
+     * vtkPointLocator.  Retained as a fallback; prefer coordinate-based
+     * methods for new workflows.
      */
     void SetSurfaceSeeds(LaShell* surface_shell,
                          const std::vector<int>& surface_point_ids);
 
     /*
-     * Sets volumetric node IDs directly — use when you already have
-     * IDs in the volume's coordinate space.
+     * Dispatcher. Reads a seed file in either coordinate or legacy ID format.
+     *
+     * Default behaviour (is_coordinates=true, guess_format=false):
+     *   treats the file as coordinate format — the standard output of the
+     *   interactive picker.
+     *
+     * guess_format=true overrides is_coordinates and auto-detects format
+     *   by inspecting the first non-empty line.
+     *
+     * is_coordinates=false, guess_format=false: legacy integer ID format.
+     *
+     * Coordinates are resolved to the nearest volumetric node directly
+     * via vtkPointLocator — no surface shell required.
      */
-    void SetNodeIDList(const std::vector<vtkIdType>& ids);
+    void ReadPointsFile(const char* filename,
+                        bool is_coordinates = true,
+                        bool guess_format   = false);
 
     /*
-     * Reads seed IDs from a plain-text file (one integer per line).
-     * IDs are interpreted as volumetric node IDs unless
-     * SetSurfaceSeeds() is used instead.
+     * Reads seed coordinates from a plain-text file (x y z per line).
+     * Resolves each coordinate to the nearest volumetric node via
+     * vtkPointLocator on the volumetric grid directly.
+     */
+    void ReadPointCoordinatesFile(const char* filename);
+
+    /*
+     * Reads volumetric node IDs from a plain-text file (one integer per line).
+     * Legacy format — prefer ReadPointsFile or ReadPointCoordinatesFile.
      */
     void ReadPointIDFile(const char* filename);
 

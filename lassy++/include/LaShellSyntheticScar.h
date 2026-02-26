@@ -134,11 +134,28 @@ public:
     void SetPointIDList(const std::vector<int> &ids);
 
     /*
+    * Reads seed point file (IDs or coordinates) and populates the seed point list.
+    * If guess_format is true, the method will attempt to auto-detect whether the file
+    * contains point IDs (one integer per line) or point coordinates (three floats per line).
+    * If is_coordinates is explicitly set to true, the file will be treated as containing point coordinates regardless of its content.
+    * Default: guess_format = false, is_coordinates = true (i.e. treat as coordinates by default)
+    */
+    void ReadPointsFile(const char *filename, bool is_coordinates = true, bool guess_format = false);
+
+    /*
      * Reads seed point IDs from a plain-text file, one integer per line.
      * This is the same format that encirclement writes when the user
      * presses 's' in the interactive viewer.
      */
     void ReadPointIDFile(const char *filename);
+
+    /*
+    * Reads seed point coordinates from a plain-text file, one triplet of
+    * floats per line.  The points are snapped to the nearest mesh vertex
+    * and deduplicated to produce the seed point ID list.
+    */
+    void ReadPointCoordinatesFile(const char *filename);
+
 
     /*
      * Number of neighbourhood hops used to expand the corridor around

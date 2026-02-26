@@ -1,102 +1,93 @@
 #define HAS_VTK 1
 
+#include "LaShell.h"
 #include "LaShellSyntheticScar.h"
-#include "LaShellGapsInBinary.h"   // for interactive picking via Run()
+#include "LaShellGapsInBinary.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
+#include <array>
 #include <vector>
-
-#define DEFAULT_NEIGHBOURHOOD_SIZE 15
 
 /*
  *  Author:
  *  Dr. José Alonso Solís-Lemus
  *
- *  Generates a synthetic scar scalar field on a vtkPolyData mesh.
+ *  Generates a synthetic scar scalar field on a surface mesh (LaShell).
  *
- *  Seed point IDs define a closed boundary path on the surface.
- *  Dijkstra shortest paths connect consecutive seeds (closing the loop).
- *  Each mesh vertex within the neighbourhood radius receives a
- *  distance-weighted scalar contribution; contributions are summed so
- *  converging path segments produce higher intensity naturally.
- *  The result is normalised to [0, 1] and written as a named scalar array.
+ *  Seed points can be provided in two ways:
  *
- *  Two modes:
- *    --file     Non-interactive.  Reads seed IDs from a text file
- *               (one integer per line — same format written by encirclement).
- *    --pick     Interactive.  Opens the VTK viewer so the user can pick
- *               points on the mesh (press 'x'), then press 's' to save IDs
- *               and exit; the application then runs the scar generation.
+ *    -pts <file>   Non-interactive. Reads seed coordinates from a text file.
+ *                  Format: one point per line, "x y z" (space-separated).
+ *                  Legacy single-integer-per-line format also accepted.
+ *
+ *    --pick        Interactive. Opens the VTK viewer (press 'x' to pick,
+ *                  's' to confirm). Saves coordinates to <o>_seeds.txt
+ *                  for reproducibility, then runs scar generation in
+ *                  memory without a file read-back.
  */
+
+static void SaveCoordinates(const char* path,
+                             const std::vector<std::array<double, 3>>& pts) {
+    std::ofstream out(path);
+    if (!out.is_open()) {
+        std::cerr << "syntheticScar: cannot write seed file: " << path
+                  << std::endl;
+        return;
+    }
+    for (const auto& p : pts)
+        out << p[0] << " " << p[1] << " " << p[2] << "\n";
+    std::cout << "Seed coordinates saved: " << path << std::endl;
+}
+
 int main(int argc, char* argv[]) {
-    const char* input_fn    = nullptr;
-    const char* pts_fn      = nullptr;
-    const char* output_fn   = nullptr;
-    const char* array_name  = nullptr;
-    int    neighbourhood    = DEFAULT_NEIGHBOURHOOD_SIZE;
-    double sigma            = -1.0;   // sentinel: auto-derive
-    int    falloff_mode     = 1;      // 1 = Gaussian (default), 2 = Linear
-    bool   interactive_mode = false;
+    const char* input_fn   = nullptr;
+    const char* pts_fn     = nullptr;
+    const char* output_fn  = nullptr;
+    const char* array_name = nullptr;
+    int    neighbourhood   = 15;
+    double sigma           = -1.0;
+    int    falloff_mode    = 1;
+    bool   interactive     = false;
 
     bool found_input  = false;
     bool found_output = false;
 
-    if (argc < 2) {
-        std::cerr << "syntheticScar: too few arguments.\n";
-    } else {
-        for (int i = 1; i < argc; ++i) {
-            const std::string arg(argv[i]);
-
-            if (arg == "--pick") {
-                interactive_mode = true;
-                continue;
-            }
-
-            if (i + 1 == argc) continue;   // flag needs a value; skip
-
-            if (arg == "-i") {
-                input_fn   = argv[++i];
-                found_input = true;
-            } else if (arg == "-pts") {
-                pts_fn = argv[++i];
-            } else if (arg == "-o") {
-                output_fn   = argv[++i];
-                found_output = true;
-            } else if (arg == "-n") {
-                neighbourhood = std::atoi(argv[++i]);
-            } else if (arg == "-sigma") {
-                sigma = std::atof(argv[++i]);
-            } else if (arg == "-falloff") {
-                falloff_mode = std::atoi(argv[++i]);
-            } else if (arg == "-name") {
-                array_name = argv[++i];
-            }
-        }
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg(argv[i]);
+        if (arg == "--pick") { interactive = true; continue; }
+        if (i + 1 == argc)  continue;
+        if      (arg == "-i")       { input_fn      = argv[++i]; found_input  = true; }
+        else if (arg == "-pts")     { pts_fn        = argv[++i]; }
+        else if (arg == "-o")       { output_fn     = argv[++i]; found_output = true; }
+        else if (arg == "-n")       { neighbourhood = atoi(argv[++i]); }
+        else if (arg == "-sigma")   { sigma         = atof(argv[++i]); }
+        else if (arg == "-falloff") { falloff_mode  = atoi(argv[++i]); }
+        else if (arg == "-name")    { array_name    = argv[++i]; }
     }
 
-    // ----------------------------------------------------------------
-    // Validate
-    // ----------------------------------------------------------------
     const bool has_pts = (pts_fn != nullptr);
 
-    if (!found_input || !found_output || (!has_pts && !interactive_mode)) {
-        std::cerr << "Generates a synthetic scar scalar field on a VTK PolyData mesh.\n"
-                "\nUsage:\n"
-                "  syntheticScar -i <mesh.vtk> -pts <ids.txt> -o <output.vtk> [options]\n"
-                "  syntheticScar -i <mesh.vtk> --pick        -o <output.vtk> [options]\n"
-                "\n(Mandatory)\n"
-                "  -i   <mesh.vtk>     Input VTK PolyData mesh\n"
-                "  -o   <output.vtk>   Output VTK mesh with scar scalar array\n"
-                "  -pts <ids.txt>      Seed point ID file (one ID per line)\n"
-                "                      OR use --pick for interactive selection\n"
-                "\n(Optional)\n"
-                "  -n       <int>      Neighbourhood hops for corridor spread (default: 15)\n"
-                "  -sigma   <float>    Gaussian sigma in world units (default: auto)\n"
-                "  -falloff <int>      1 = Gaussian (default), 2 = Linear\n"
-                "  -name    <string>   Output scalar array name (default: synthetic_scar)\n"
-                "  --pick              Interactive point picking mode\n"
-             << std::endl;
+    if (!found_input || !found_output || (!has_pts && !interactive)) {
+        std::cerr <<
+            "Generates a synthetic scar scalar field on a surface mesh.\n"
+            "\nUsage:\n"
+            "  syntheticScar -i <mesh.vtk> -pts <coords.txt> -o <out.vtk> [options]\n"
+            "  syntheticScar -i <mesh.vtk> --pick             -o <out.vtk> [options]\n"
+            "\n(Mandatory)\n"
+            "  -i   <mesh>       Input surface mesh (.vtk)\n"
+            "  -o   <out>        Output mesh (.vtk)\n"
+            "  -pts <coords.txt> Seed coordinate file (x y z per line)\n"
+            "                    OR use --pick for interactive picking\n"
+            "\n(Optional)\n"
+            "  -n        <int>   Neighbourhood hops (default: 15)\n"
+            "  -sigma    <float> Gaussian sigma in world units (default: auto)\n"
+            "  -falloff  <int>   1=Gaussian (default), 2=Linear\n"
+            "  -name     <str>   Output array name (default: synthetic_scar)\n"
+            "  --pick            Interactive picking\n"
+            << std::endl;
         return 1;
     }
 
@@ -106,33 +97,12 @@ int main(int argc, char* argv[]) {
     LaShell* source_mesh = new LaShell(input_fn);
 
     // ----------------------------------------------------------------
-    // Interactive picking: open the viewer, let the user press 'x' to
-    // mark points and 's' to save pointsIDlist.txt, then exit.
-    // ----------------------------------------------------------------
-    const char* picked_ids_file = "pointsIDlist.txt";
-
-    if (interactive_mode) {
-        std::cout << "\nInteractive mode:\n"
-                "  Press 'x' to pick seed points on the mesh.\n"
-                "  Press 's' to save point IDs and exit the viewer.\n"
-                "  The scar will then be generated from those IDs.\n\n";
-
-        LaShellGapsInBinary* picker = new LaShellGapsInBinary();
-        picker->SetInputData(source_mesh);
-        picker->Run();
-        pts_fn = picked_ids_file;
-    }
-
-    // ----------------------------------------------------------------
-    // Run scar generation
+    // Build algorithm
     // ----------------------------------------------------------------
     LaShellSyntheticScar* algorithm = new LaShellSyntheticScar();
     algorithm->SetInputData(source_mesh);
-    algorithm->ReadPointIDFile(pts_fn);
     algorithm->SetNeighbourhoodSize(neighbourhood);
-
     if (sigma > 0.0) algorithm->SetSigma(sigma);
-
     if (falloff_mode == 2) {
         std::cout << "Falloff: Linear\n";
         algorithm->SetFalloffToLinear();
@@ -140,18 +110,67 @@ int main(int argc, char* argv[]) {
         std::cout << "Falloff: Gaussian\n";
         algorithm->SetFalloffToGaussian();
     }
-
     if (array_name != nullptr) algorithm->SetOutputArrayName(array_name);
 
+    // ----------------------------------------------------------------
+    // Seeds
+    // ----------------------------------------------------------------
+    if (interactive) {
+        std::cout << "\nInteractive mode:\n"
+                     "  Press 'x' to pick seed points on the mesh.\n"
+                     "  Press 's' to confirm and close the viewer.\n\n";
+
+        LaShellGapsInBinary* picker = new LaShellGapsInBinary();
+        picker->SetInputData(source_mesh);
+        picker->Run();
+
+        const auto& positions = picker->GetPickedPositions();
+
+        if (positions.empty()) {
+            std::cerr << "syntheticScar: no points picked. Exiting." << std::endl;
+            return 1;
+        }
+
+        // Save coordinates for reproducibility
+        std::string seed_file = std::string(output_fn) + "_seeds.txt";
+        SaveCoordinates(seed_file.c_str(), positions);
+
+        // Resolve to mesh point IDs in memory — no file read-back needed
+        vtkSmartPointer<vtkPolyData> source_poly =
+            vtkSmartPointer<vtkPolyData>::New();
+        source_mesh->GetMesh3D(source_poly);
+
+        vtkSmartPointer<vtkPointLocator> locator =
+            vtkSmartPointer<vtkPointLocator>::New();
+        locator->SetDataSet(source_poly);
+        locator->BuildLocator();
+
+        std::vector<int> seed_ids;
+        seed_ids.reserve(positions.size());
+        for (const auto& p : positions) {
+            double pt[3] = {p[0], p[1], p[2]};
+            seed_ids.push_back(
+                static_cast<int>(locator->FindClosestPoint(pt)));
+        }
+        algorithm->SetPointIDList(seed_ids);
+
+        // picker intentionally not deleted — RAII pass
+    } else {
+        // Default: treat as coordinate file (is_coordinates=true)
+        algorithm->ReadPointsFile(pts_fn);
+    }
+
+    // ----------------------------------------------------------------
+    // Run
+    // ----------------------------------------------------------------
     algorithm->Update();
 
-    LaShell* output_mesh = algorithm->GetOutput();
-    output_mesh->ExportVTK(output_fn);
+    LaShell* output = algorithm->GetOutput();
+    output->ExportVTK(const_cast<char*>(output_fn));
+    std::cout << "Saved: " << output_fn << std::endl;
 
-    std::cout << "Saved: " << output_fn << endl;
-
-    // delete algorithm;
-    // delete source_mesh;
+    delete algorithm;
+    delete source_mesh;
 
     return 0;
 }

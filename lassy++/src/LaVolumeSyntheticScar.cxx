@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -39,20 +40,24 @@ void LaVolumeSyntheticScar::SetInputData(LaVolume* volume) {
     _source_volume = volume;
 }
 
-void LaVolumeSyntheticScar::SetSurfaceSeeds(LaShell* surface_shell,
-                                             const std::vector<int>& surface_point_ids) {
+void LaVolumeSyntheticScar::SetNodeIDList(const std::vector<vtkIdType>& ids) {
+    _seed_node_ids = ids;
+}
+
+void LaVolumeSyntheticScar::SetSurfaceSeeds(
+    LaShell* surface_shell,
+    const std::vector<int>& surface_point_ids) {
+
     if (!_source_volume) {
-        std::cerr << "LaVolumeSyntheticScar::SetSurfaceSeeds — call SetInputData first."
-             << std::endl;
+        std::cerr << "LaVolumeSyntheticScar::SetSurfaceSeeds — "
+                     "call SetInputData first." << std::endl;
         return;
     }
 
-    // Extract surface shell poly data for the locator
     vtkSmartPointer<vtkPolyData> surface_poly =
         vtkSmartPointer<vtkPolyData>::New();
     surface_shell->GetMesh3D(surface_poly);
 
-    // Build a point locator on the volumetric grid
     vtkSmartPointer<vtkPointLocator> locator =
         vtkSmartPointer<vtkPointLocator>::New();
     locator->SetDataSet(_source_volume->GetGridPointer());
@@ -64,40 +69,103 @@ void LaVolumeSyntheticScar::SetSurfaceSeeds(LaShell* surface_shell,
     for (const int surface_id : surface_point_ids) {
         double pt[3];
         surface_poly->GetPoint(surface_id, pt);
-        const vtkIdType volume_id = locator->FindClosestPoint(pt);
-        _seed_node_ids.push_back(volume_id);
+        _seed_node_ids.push_back(locator->FindClosestPoint(pt));
     }
 
-    std::cout << "LaVolumeSyntheticScar: mapped " << surface_point_ids.size()
-         << " surface seeds to " << _seed_node_ids.size()
-         << " volumetric nodes." << std::endl;
+    std::cout << "LaVolumeSyntheticScar: mapped "
+              << surface_point_ids.size() << " surface seeds to "
+              << _seed_node_ids.size() << " volumetric nodes." << std::endl;
 }
 
-void LaVolumeSyntheticScar::SetNodeIDList(const std::vector<vtkIdType>& ids) {
-    _seed_node_ids = ids;
+void LaVolumeSyntheticScar::ReadPointsFile(const char* filename,
+                                            bool is_coordinates,
+                                            bool guess_format) {
+    _seed_node_ids.clear();
+
+    if (!_source_volume) {
+        std::cerr << "LaVolumeSyntheticScar::ReadPointsFile — "
+                     "call SetInputData before ReadPointsFile." << std::endl;
+        return;
+    }
+
+    if (guess_format) {
+        std::ifstream probe(filename);
+        std::string first_line;
+        while (std::getline(probe, first_line)) {
+            if (!first_line.empty()) break;
+        }
+        is_coordinates = (first_line.find(' ')  != std::string::npos ||
+                          first_line.find('\t') != std::string::npos);
+    }
+
+    if (is_coordinates) {
+        ReadPointCoordinatesFile(filename);
+    } else {
+        ReadPointIDFile(filename);
+    }
+}
+
+void LaVolumeSyntheticScar::ReadPointCoordinatesFile(const char* filename) {
+    if (!_source_volume) {
+        std::cerr << "LaVolumeSyntheticScar::ReadPointCoordinatesFile — "
+                     "call SetInputData first." << std::endl;
+        return;
+    }
+
+    std::ifstream in(filename);
+    if (!in.is_open()) {
+        std::cerr << "LaVolumeSyntheticScar::ReadPointCoordinatesFile — "
+                     "cannot open: " << filename << std::endl;
+        return;
+    }
+
+    vtkSmartPointer<vtkPointLocator> locator =
+        vtkSmartPointer<vtkPointLocator>::New();
+    locator->SetDataSet(_source_volume->GetGridPointer());
+    locator->BuildLocator();
+
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line.empty()) continue;
+        std::istringstream ss(line);
+        double x, y, z;
+        if (!(ss >> x >> y >> z)) {
+            std::cerr << "LaVolumeSyntheticScar::ReadPointCoordinatesFile — "
+                         "skipping malformed line: " << line << std::endl;
+            continue;
+        }
+        double pt[3] = {x, y, z};
+        _seed_node_ids.push_back(locator->FindClosestPoint(pt));
+    }
+
+    std::cout << "Read " << _seed_node_ids.size()
+              << " seed nodes (coordinate format) from " << filename
+              << std::endl;
 }
 
 void LaVolumeSyntheticScar::ReadPointIDFile(const char* filename) {
-    _seed_node_ids.clear();
     std::ifstream in(filename);
     if (!in.is_open()) {
-        std::cerr << "LaVolumeSyntheticScar::ReadPointIDFile — cannot open: "
-             << filename << std::endl;
+        std::cerr << "LaVolumeSyntheticScar::ReadPointIDFile — "
+                     "cannot open: " << filename << std::endl;
         return;
     }
+
     std::string line;
-    while (getline(in, line)) {
+    while (std::getline(in, line)) {
         if (line.empty()) continue;
         try {
             _seed_node_ids.push_back(
-                static_cast<vtkIdType>(stoi(line)));
+                static_cast<vtkIdType>(std::stoi(line)));
         } catch (...) {
-            std::cerr << "LaVolumeSyntheticScar::ReadPointIDFile — skipping "
-                    "non-integer line: " << line << std::endl;
+            std::cerr << "LaVolumeSyntheticScar::ReadPointIDFile — "
+                         "skipping non-integer line: " << line << std::endl;
         }
     }
+
     std::cout << "Read " << _seed_node_ids.size()
-         << " seed node IDs from " << filename << std::endl;
+              << " seed node IDs (legacy format) from " << filename
+              << std::endl;
 }
 
 void LaVolumeSyntheticScar::SetNeighbourhoodSize(int n) {
@@ -141,8 +209,10 @@ double LaVolumeSyntheticScar::EvaluateFalloff(double d, double max_d) const {
     return 0.0;
 }
 
-std::string LaVolumeSyntheticScar::UniqueArrayName(vtkUnstructuredGrid* grid,
-                                               const std::string& candidate) {
+std::string LaVolumeSyntheticScar::UniqueArrayName(
+    vtkUnstructuredGrid* grid,
+    const std::string& candidate) {
+
     const int num_arrays = grid->GetPointData()->GetNumberOfArrays();
     std::vector<std::string> existing;
     for (int i = 0; i < num_arrays; ++i) {
@@ -151,7 +221,7 @@ std::string LaVolumeSyntheticScar::UniqueArrayName(vtkUnstructuredGrid* grid,
     }
 
     auto name_taken = [&](const std::string& n) {
-        return find(existing.begin(), existing.end(), n) != existing.end();
+        return std::find(existing.begin(), existing.end(), n) != existing.end();
     };
 
     if (!name_taken(candidate)) return candidate;
@@ -181,7 +251,6 @@ double LaVolumeSyntheticScar::EstimateMeanEdgeLength() const {
 
         double pi[3], pj[3];
         grid->GetPoint(i, pi);
-        // neighbours[0] is the seed itself, neighbours[1] is first hop
         grid->GetPoint(neighbours[1].first, pj);
         total += LaVolumeGraphTraversal::Euclidean(pi, pj);
         ++sampled;
@@ -202,7 +271,7 @@ void LaVolumeSyntheticScar::Update() {
     }
     if (_seed_node_ids.size() < 2) {
         std::cerr << "LaVolumeSyntheticScar::Update — at least 2 seed node IDs "
-                "required." << std::endl;
+                     "required." << std::endl;
         return;
     }
 
@@ -211,7 +280,7 @@ void LaVolumeSyntheticScar::Update() {
 
     if (num_points == 0) {
         std::cerr << "LaVolumeSyntheticScar::Update — source grid has no points."
-             << std::endl;
+                  << std::endl;
         return;
     }
 
@@ -242,14 +311,14 @@ void LaVolumeSyntheticScar::Update() {
     }
 
     std::cout << "Path built from " << num_seeds << " seeds, "
-         << path_vertices.size() << " unique path nodes." << std::endl;
+              << path_vertices.size() << " unique path nodes." << std::endl;
 
     // ---- Step 3: estimate world-space corridor radius -----------------
     const double mean_edge = EstimateMeanEdgeLength();
     const double max_d     = mean_edge * _neighbourhood_size;
 
     std::cout << "Estimated mean edge length: " << mean_edge
-         << ", corridor radius (max_d): " << max_d << std::endl;
+              << ", corridor radius (max_d): " << max_d << std::endl;
 
     // ---- Step 4: accumulate scalar contributions ----------------------
     std::vector<double> accumulator(static_cast<size_t>(num_points), 0.0);
@@ -258,11 +327,9 @@ void LaVolumeSyntheticScar::Update() {
         double path_point[3];
         grid->GetPoint(path_vtx, path_point);
 
-        // Path vertex itself — distance 0
         accumulator[static_cast<size_t>(path_vtx)] +=
             EvaluateFalloff(0.0, max_d);
 
-        // N-hop neighbourhood
         const auto neighbours =
             _graph->GetNeighboursAroundPoint(path_vtx, _neighbourhood_size);
 
@@ -282,11 +349,12 @@ void LaVolumeSyntheticScar::Update() {
 
     // ---- Step 5: normalise to [0, 1] ----------------------------------
     const double max_acc =
-        *max_element(accumulator.begin(), accumulator.end());
+        *std::max_element(accumulator.begin(), accumulator.end());
 
     if (max_acc <= 0.0) {
-        std::cerr << "LaVolumeSyntheticScar::Update — all accumulator values are "
-                "zero. Check seed IDs and neighbourhood size." << std::endl;
+        std::cerr << "LaVolumeSyntheticScar::Update — all accumulator values "
+                     "are zero. Check seed IDs and neighbourhood size."
+                  << std::endl;
         return;
     }
 
@@ -295,7 +363,8 @@ void LaVolumeSyntheticScar::Update() {
         vtkSmartPointer<vtkUnstructuredGrid>::New();
     output_grid->DeepCopy(grid);
 
-    const std::string array_name = UniqueArrayName(output_grid, _output_array_name);
+    const std::string array_name =
+        UniqueArrayName(output_grid, _output_array_name);
     std::cout << "Writing scalar array: " << array_name << std::endl;
 
     vtkSmartPointer<vtkFloatArray> scar_scalars =
@@ -313,7 +382,7 @@ void LaVolumeSyntheticScar::Update() {
     _output_volume->SetGrid(output_grid);
 
     std::cout << "LaVolumeSyntheticScar::Update complete. Array \""
-         << array_name << "\" added to output volume." << std::endl;
+              << array_name << "\" added to output volume." << std::endl;
 }
 
 

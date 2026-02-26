@@ -45,26 +45,90 @@ void LaShellSyntheticScar::SetPointIDList(const std::vector<int>& ids) {
     _seed_point_ids = ids;
 }
 
-void LaShellSyntheticScar::ReadPointIDFile(const char* filename) {
+void LaShellSyntheticScar::ReadPointsFile(const char* filename, bool is_coordinates, bool guess_format) {
+    const std::string INFO = "LaShellSyntheticScar::ReadPointsFile — ";
     _seed_point_ids.clear();
-    ifstream in(filename);
-    if (!in.is_open()) {
-        cerr << "LaShellSyntheticScar::ReadPointIDFile — cannot open: "
-             << filename << endl;
+    
+    if (!_source_la) {
+        std::cerr << INFO << "call SetInputData before ReadPointsFile." << std::endl;
         return;
     }
-    string line;
-    while (getline(in, line)) {
+    
+    if (guess_format) {
+        // Peek at first non-empty line to detect format
+        std::ifstream in(filename);
+        std::string first_line;
+        while (getline(in, first_line)) {
+            if (!first_line.empty()) break;
+        }
+        is_coordinates = (first_line.find(' ') != std::string::npos ||
+        first_line.find('\t') !=std::string::npos);
+    }
+    
+    if (is_coordinates) {
+        ReadPointCoordinatesFile(filename);
+    } else {
+        ReadPointIDFile(filename);
+    }
+}
+
+void LaShellSyntheticScar::ReadPointCoordinatesFile(const char* filename) {
+    const std::string INFO = "LaShellSyntheticScar::ReadPointCoordinatesFile — ";
+    std::ifstream in(filename);
+    if (!in.is_open()) {
+        std::cerr << INFO << "cannot open: " << filename << std::endl;
+        return;
+    }
+    
+    // Build point locator on source mesh
+    vtkSmartPointer<vtkPolyData> source_poly =
+        vtkSmartPointer<vtkPolyData>::New();
+    _source_la->GetMesh3D(source_poly);
+    
+    vtkSmartPointer<vtkPointLocator> locator =
+        vtkSmartPointer<vtkPointLocator>::New();
+    locator->SetDataSet(source_poly);
+    locator->BuildLocator();
+    
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line.empty()) continue;
+        std::istringstream ss(line);
+        double x, y, z;
+        if (!(ss >> x >> y >> z)) {
+            std::cerr << INFO << "skipping malformed line: " << line << std::endl;
+            continue;
+        }
+        double pt[3] = {x, y, z};
+        _seed_point_ids.push_back(
+            static_cast<int>(locator->FindClosestPoint(pt)));
+    }
+    std::cout << "Read " << _seed_point_ids.size()
+              << " seed points (coordinate format) from " << filename
+              << std::endl;
+}
+
+void LaShellSyntheticScar::ReadPointIDFile(const char* filename) {
+    const std::string INFO = "LaShellSyntheticScar::ReadPointIDFile — ";
+    std::ifstream in(filename);
+    if (!in.is_open()) {
+        std::cerr << INFO << "cannot open: " << filename << std::endl;
+        return;
+    }
+
+    // Legacy: plain integer IDs
+    std::string line;
+    while (std::getline(in, line)) {
         if (line.empty()) continue;
         try {
-            _seed_point_ids.push_back(stoi(line));
+            _seed_point_ids.push_back(std::stoi(line));
         } catch (...) {
-            cerr << "LaShellSyntheticScar::ReadPointIDFile — skipping "
-                    "non-integer line: " << line << endl;
+            std::cerr << INFO << "skipping non-integer line: " << line << std::endl;
         }
     }
-    cout << "Read " << _seed_point_ids.size()
-         << " seed point IDs from " << filename << endl;
+    std::cout << "Read " << _seed_point_ids.size()
+              << " seed point IDs (legacy format) from " << filename
+              << std::endl;
 }
 
 void LaShellSyntheticScar::SetNeighbourhoodSize(int n) {

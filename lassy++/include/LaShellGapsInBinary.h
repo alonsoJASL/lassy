@@ -61,6 +61,7 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 #include <string>
 #include <sstream>
+#include <array>
 #include <vtkPointPicker.h>
 
 #include "LaShellAlgorithms.h"
@@ -73,7 +74,7 @@ protected:
 
 	LaShell* _source_la;
 	LaShell* _target_la;
-    std::unique_ptr<LaShell> _output_la;
+  std::unique_ptr<LaShell> _output_la;
 
 public:
     int _neighbourhood_size;
@@ -96,7 +97,8 @@ public:
 
     std::vector<vtkSmartPointer<vtkDijkstraGraphGeodesicPath> > _shortestPaths;
     std::vector<int> _pointidarray;
-		std::vector<int> _corridoridarray;
+    std::vector<std::array<double, 3> > _pickpositionarray;
+    std::vector<int> _corridoridarray;
     std::vector<vtkSmartPointer<vtkPolyDataMapper> > _pathMappers;			// container to store shortest paths between points selected by user
 
     // Helper Functions
@@ -126,6 +128,7 @@ public:
     vtkSmartPointer<vtkPolyData> GetSourcePolyData();
     vtkSmartPointer<vtkRenderWindowInteractor> GetWindowInteractor();
     vtkSmartPointer<vtkCellPicker> GetCellPicker();
+    const std::vector<std::array<double, 3>> &GetPickedPositions() const;
 
     void Run();
 		void CorridorFromPointList(std::vector<int> points);
